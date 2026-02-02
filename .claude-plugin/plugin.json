@@ -1,0 +1,47 @@
+{
+  "name": "vex-talon",
+  "version": "0.1.0",
+  "description": "20-layer defense-in-depth security for Claude Code - hooks, policies, and monitoring dashboard",
+  "author": "Kelvin Lomboy",
+  "repository": "https://github.com/0K-cool/vex-talon",
+  "license": "MIT",
+  "keywords": [
+    "security",
+    "defense-in-depth",
+    "prompt-injection",
+    "owasp",
+    "mitre-atlas",
+    "claude-code"
+  ],
+  "hooks": {
+    "directory": "../hooks"
+  },
+  "skills": {
+    "directory": "../skills"
+  },
+  "commands": {
+    "directory": "../commands"
+  },
+  "configuration": {
+    "policyFile": {
+      "type": "string",
+      "default": "policies/governor-policies.yml",
+      "description": "Path to Governor policy file"
+    },
+    "auditLogDir": {
+      "type": "string",
+      "default": ".claude/logs",
+      "description": "Directory for audit logs"
+    },
+    "dashboardPort": {
+      "type": "number",
+      "default": 3333,
+      "description": "Port for security dashboard"
+    },
+    "enabledLayers": {
+      "type": "array",
+      "default": ["L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10", "L12", "L14", "L15", "L16", "L17", "L19"],
+      "description": "Security layers to enable (L11, L13, L18 require optional dependencies)"
+    }
+  }
+}
