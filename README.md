@@ -4,6 +4,29 @@
 
 Vex-Talon packages Vex's battle-tested security architecture into a distributable Claude Code plugin with a monitoring dashboard.
 
+## Why Vex-Talon?
+
+**The Problem:** Most AI coding projects have zero security layers. When Claude Code runs in a typical repository, there's no protection against:
+- Prompt injection from files, web content, or tool outputs
+- Accidental credential exposure in commits
+- Data exfiltration via malicious instructions
+- Supply chain attacks from compromised packages
+- Memory poisoning in persistent storage
+
+**The Solution:** Vex-Talon brings production-grade, battle-tested security to any Claude Code project. Install once, get 17+ security layers automatically.
+
+```
+WITHOUT Vex-Talon:          WITH Vex-Talon:
+┌─────────────────┐         ┌─────────────────┐
+│  Your Project   │         │  Your Project   │
+│                 │         │  ┌───────────┐  │
+│  (no protection)│         │  │ L0-L19    │  │
+│                 │         │  │ Security  │  │
+└─────────────────┘         │  │ Layers    │  │
+                            │  └───────────┘  │
+                            └─────────────────┘
+```
+
 ## Features
 
 - **17 Bundled Security Layers** - Pre-execution, post-execution, and git hooks
@@ -123,6 +146,20 @@ vex-talon/
 ├── skills/         # Vex-Talon skills
 └── commands/       # CLI commands
 ```
+
+## Security
+
+Vex-Talon itself is developed with security in mind:
+
+- **No telemetry** - Zero data sent anywhere
+- **Local-only processing** - All security checks run on your machine
+- **Auditable code** - Open source, review every hook
+- **Minimal dependencies** - Reduced supply chain attack surface
+- **OWASP/ATLAS aligned** - Maps to industry threat frameworks
+
+### Reporting Vulnerabilities
+
+Found a security issue? Please report privately via GitHub Security Advisories or email.
 
 ## Credits
 
