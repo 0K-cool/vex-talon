@@ -13,7 +13,7 @@ Vex-Talon packages Vex's battle-tested security architecture into a distributabl
 - Supply chain attacks from compromised packages
 - Memory poisoning in persistent storage
 
-**The Solution:** Vex-Talon brings production-grade, battle-tested security to any Claude Code project. Install once, get 17+ security layers automatically.
+**The Solution:** Vex-Talon brings production-grade, battle-tested security to any Claude Code project. Install once, get 20 security layers automatically.
 
 ```
 WITHOUT Vex-Talon:          WITH Vex-Talon:
@@ -29,7 +29,7 @@ WITHOUT Vex-Talon:          WITH Vex-Talon:
 
 ## Features
 
-- **17 Bundled Security Layers** - Pre-execution, post-execution, and git hooks
+- **20-Layer Defense-in-Depth** - Complete L0-L19 security architecture
 - **Security Dashboard** - Real-time monitoring of blocks, alerts, and coverage
 - **OWASP/ATLAS Coverage** - Maps to OWASP LLM Top 10 2025 and MITRE ATLAS
 - **Themed Components** - Reusable UI library for security dashboards
