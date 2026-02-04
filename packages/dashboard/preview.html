@@ -821,18 +821,7 @@
     }
 
     /* Optional connector lines (enabled via data-connectors="true") */
-    /* Positioned to the LEFT of technique boxes, like DetectIQ mockup */
-    [data-connectors="true"] .tactic-column::before {
-      content: '';
-      position: absolute;
-      top: 48px;           /* Start at first technique cell center */
-      bottom: 18px;        /* End at last technique cell center */
-      left: 4px;           /* Align with horizontal line start */
-      width: 2px;          /* Same width as horizontal lines */
-      background: var(--zerok-text-muted);  /* Same grey as horizontal lines */
-      opacity: 0.5;        /* Same opacity as horizontal lines */
-      z-index: 0;
-    }
+    /* Bracket-style connectors - no tails, connects cell to cell */
 
     [data-connectors="true"] .technique-cell {
       position: relative;
@@ -840,7 +829,7 @@
       margin-left: 14px;   /* Space for connector line on left */
     }
 
-    /* Horizontal connector lines from vertical line to technique boxes */
+    /* Horizontal connector from each cell to vertical line */
     [data-connectors="true"] .technique-cell::before {
       content: '';
       position: absolute;
@@ -848,7 +837,19 @@
       left: -10px;         /* Start at vertical line position */
       width: 10px;         /* Connect to cell edge */
       height: 2px;
-      background: var(--zerok-text-muted);  /* Light grey like framework labels */
+      background: var(--zerok-text-muted);
+      opacity: 0.5;
+    }
+
+    /* Vertical segment connecting to cell above (skip first cell) */
+    [data-connectors="true"] .technique-cell + .technique-cell::after {
+      content: '';
+      position: absolute;
+      bottom: 50%;         /* Start from this cell's center going up */
+      left: -10px;         /* Same X position as horizontal line */
+      width: 2px;
+      height: calc(100% + 4px);  /* Full cell height + gap to reach previous cell center */
+      background: var(--zerok-text-muted);
       opacity: 0.5;
     }
 
