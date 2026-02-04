@@ -826,9 +826,9 @@
       content: '';
       position: absolute;
       top: 48px;           /* Start at first technique cell center */
-      left: 3px;           /* Left edge of column */
+      bottom: 18px;        /* End at last technique cell center */
+      left: 4px;           /* Align with horizontal line start */
       width: 2px;          /* Same width as horizontal lines */
-      height: calc(100% - 66px);  /* End at last technique center */
       background: var(--zerok-text-muted);  /* Same grey as horizontal lines */
       opacity: 0.5;        /* Same opacity as horizontal lines */
       z-index: 0;
@@ -845,8 +845,8 @@
       content: '';
       position: absolute;
       top: 50%;            /* Center vertically on the cell */
-      left: -11px;         /* Start from the vertical line */
-      width: 8px;          /* Length of horizontal connector */
+      left: -10px;         /* Start at vertical line position */
+      width: 10px;         /* Connect to cell edge */
       height: 2px;
       background: var(--zerok-text-muted);  /* Light grey like framework labels */
       opacity: 0.5;
