@@ -186,13 +186,13 @@ Update the sidebar brand for your project:
 
 ```
 packages/dashboard/
-├── preview.html    # Full template with theme switcher
+├── 0k-dashboard.html    # Full template with theme switcher
 └── README.md       # This file
 ```
 
 ## Preview
 
-Open `preview.html` in a browser. Use Settings > Theme and Accent to preview combinations.
+Open `0k-dashboard.html` in a browser. Use Settings > Theme and Accent to preview combinations.
 
 ---
 
