@@ -31,8 +31,10 @@ interface CircuitResult {
 // Configuration
 // ============================================================================
 
-const FAILURE_THRESHOLD = 3;
-const RESET_TIMEOUT_MS = 30000; // 30 seconds
+// Threshold raised from 3→5 to prevent deliberate circuit tripping (weaponization).
+// Reset lowered from 30s→15s to recover faster when circuit does open.
+const FAILURE_THRESHOLD = 5;
+const RESET_TIMEOUT_MS = 15000; // 15 seconds
 
 // ============================================================================
 // State Management

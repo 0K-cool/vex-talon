@@ -5,7 +5,7 @@
  * for the Least Privilege system.
  */
 
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync, statSync } from 'fs';
 import { join } from 'path';
 import { STATE_DIR } from './talon-paths';
 
@@ -47,12 +47,19 @@ function getActiveProfilePath(): string {
 }
 
 /**
- * Load the active profile set by L12 SessionStart hook
+ * Load the active profile set by L12 SessionStart hook.
+ * Validates file ownership to prevent profile injection attacks.
  */
 export function loadActiveProfile(): Profile | null {
   try {
     const profilePath = getActiveProfilePath();
     if (existsSync(profilePath)) {
+      // Verify file is owned by current user (prevent profile injection)
+      const stat = statSync(profilePath);
+      if (stat.uid !== process.getuid?.()) {
+        console.error(`[profile-loader] WARNING: ${profilePath} not owned by current user. Ignoring.`);
+        return null;
+      }
       const content = readFileSync(profilePath, 'utf-8');
       return JSON.parse(content) as Profile;
     }

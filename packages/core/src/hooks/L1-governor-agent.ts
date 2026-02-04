@@ -32,6 +32,18 @@ const HOOK_NAME = 'L1-governor-agent';
 // Pattern to detect (split to avoid self-detection)
 const SANDBOX_BYPASS_PATTERN = 'dangerous' + 'lyDisable' + 'Sandbox';
 
+/**
+ * Check if a path is an .env file (catches .env, .env.local, .env.production, etc.)
+ * Excludes safe files: .env.example, .env.1password
+ */
+function isEnvFile(filePath: string): boolean {
+  const basename = filePath.split('/').pop() || '';
+  // Match .env or .env.* but not .env.example or .env.1password
+  const isEnv = /^\.env($|\..+)/.test(basename);
+  const isSafe = /\.(example|sample|template|1password)$/i.test(basename);
+  return isEnv && !isSafe;
+}
+
 // ============================================================================
 // Types
 // ============================================================================
@@ -89,12 +101,14 @@ const POLICIES: Policy[] = [
   },
 
   // === CRITICAL: .env File Protection ===
+  // Matches .env, .env.local, .env.production, .env.development, etc.
+  // Excludes .env.example and .env.1password (safe reference files)
   {
     name: 'block-env-reads',
     tool: 'Read',
     match: (_tool, params) => {
       const path = String(params.file_path || '');
-      return path.endsWith('.env') && !path.includes('.env.example');
+      return isEnvFile(path);
     },
     action: 'BLOCK',
     severity: 'CRITICAL',
@@ -108,7 +122,7 @@ const POLICIES: Policy[] = [
     tool: 'Write',
     match: (_tool, params) => {
       const path = String(params.file_path || '');
-      return path.endsWith('.env') && !path.includes('.env.example');
+      return isEnvFile(path);
     },
     action: 'BLOCK',
     severity: 'CRITICAL',
@@ -123,7 +137,7 @@ const POLICIES: Policy[] = [
     tool: 'Edit',
     match: (_tool, params) => {
       const path = String(params.file_path || '');
-      return path.endsWith('.env') && !path.includes('.env.example');
+      return isEnvFile(path);
     },
     action: 'BLOCK',
     severity: 'CRITICAL',

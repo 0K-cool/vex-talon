@@ -28,7 +28,6 @@
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
-import { execSync } from 'child_process';
 import { TALON_DIR, LOGS_DIR, ensureDirectories } from './lib/talon-paths';
 
 // ============================================================================
@@ -521,25 +520,25 @@ function generateHTML(events: SecurityEvent[], sessionId?: string): string {
     ` : Object.entries(byLayer).sort((a, b) => a[0].localeCompare(b[0])).map(([layer, layerEvents]) => `
     <div class="section">
       <div class="section-header" onclick="toggleSection(this)">
-        <span class="layer-badge">${layer}</span>
-        <span class="section-title">${layerEvents[0]?.layerName || 'Unknown'}</span>
+        <span class="layer-badge">${escapeHtml(layer)}</span>
+        <span class="section-title">${escapeHtml(layerEvents[0]?.layerName || 'Unknown')}</span>
         <span class="section-count">${layerEvents.length}</span>
         <span>▼</span>
       </div>
       <div class="section-content">
         ${layerEvents.map(e => `
-        <div class="event" data-severity="${e.severity}" data-decision="${e.decision || ''}">
+        <div class="event" data-severity="${escapeHtml(e.severity)}" data-decision="${escapeHtml(e.decision || '')}">
           <div class="event-header" onclick="toggleEvent(this)">
-            <span class="severity-badge severity-${e.severity}">${e.severity}</span>
+            <span class="severity-badge severity-${escapeHtml(e.severity)}">${escapeHtml(e.severity)}</span>
             <span class="event-summary">${escapeHtml(e.summary)}</span>
-            ${e.tool ? `<code>${e.tool}</code>` : ''}
+            ${e.tool ? `<code>${escapeHtml(e.tool)}</code>` : ''}
             <span class="event-time">${new Date(e.timestamp).toLocaleTimeString()}</span>
           </div>
           <div class="event-details">
-            ${e.tool ? `<div class="detail-row"><span class="detail-label">Tool</span><span class="detail-value">${e.tool}</span></div>` : ''}
+            ${e.tool ? `<div class="detail-row"><span class="detail-label">Tool</span><span class="detail-value">${escapeHtml(e.tool)}</span></div>` : ''}
             ${e.filePath ? `<div class="detail-row"><span class="detail-label">File</span><span class="detail-value">${escapeHtml(e.filePath)}</span></div>` : ''}
             ${e.command ? `<div class="detail-row"><span class="detail-label">Command</span><span class="detail-value">${escapeHtml(e.command)}</span></div>` : ''}
-            ${e.decision ? `<div class="detail-row"><span class="detail-label">Decision</span><span class="detail-value">${e.decision}</span></div>` : ''}
+            ${e.decision ? `<div class="detail-row"><span class="detail-label">Decision</span><span class="detail-value">${escapeHtml(e.decision)}</span></div>` : ''}
             <div class="detail-row"><span class="detail-label">Timestamp</span><span class="detail-value">${e.timestamp}</span></div>
             <pre>${escapeHtml(JSON.stringify(e.details, null, 2))}</pre>
           </div>
@@ -671,9 +670,11 @@ async function main(): Promise<void> {
     if (criticalHigh >= AUTO_OPEN_THRESHOLD) {
       try {
         // macOS: open, Linux: xdg-open, Windows: start
+        // Use execFileSync with arg list to prevent command injection via file path
+        const { execFileSync } = require('child_process');
         const platform = process.platform;
         const openCmd = platform === 'darwin' ? 'open' : platform === 'win32' ? 'start' : 'xdg-open';
-        execSync(`${openCmd} "${reportPath}"`, { stdio: 'ignore' });
+        execFileSync(openCmd, [reportPath], { stdio: 'ignore' });
       } catch {
         // Silently fail if browser open doesn't work
       }

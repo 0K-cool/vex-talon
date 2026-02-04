@@ -18,7 +18,7 @@
  */
 
 import { getStateFilePath } from './lib/talon-paths';
-import { atomicWriteFileSync, readJsonFileSync } from './lib/atomic-file';
+import { atomicUpdateJsonFile, readJsonFileSync } from './lib/atomic-file';
 
 const HOOK_NAME = 'L17-spend-alerting';
 
@@ -59,9 +59,12 @@ function loadState(sessionId: string): SessionState {
 
 function saveState(state: SessionState): void {
   const path = getStateFilePath(HOOK_NAME, 'session.json');
-  const all = readJsonFileSync<Record<string, SessionState>>(path, {});
-  all[state.session_id] = state;
-  atomicWriteFileSync(path, JSON.stringify(all, null, 2));
+  // Use atomicUpdateJsonFile to prevent TOCTOU race conditions
+  atomicUpdateJsonFile<Record<string, SessionState>>(
+    path,
+    (current) => { current[state.session_id] = state; return current; },
+    { [state.session_id]: state }
+  );
 }
 
 function displayAlert(threshold: string, cost: number): void {

@@ -36,7 +36,7 @@ import {
   getAuditLogPath,
   getStateFilePath,
 } from './lib/talon-paths';
-import { atomicWriteFileSync, readJsonFileSync } from './lib/atomic-file';
+import { atomicWriteFileSync, atomicUpdateJsonFile, readJsonFileSync } from './lib/atomic-file';
 import { checkCircuit, recordSuccess, recordFailure } from './lib/circuit-breaker';
 
 const HOOK_NAME = 'L9-egress-scanner';
@@ -106,7 +106,7 @@ const SECRET_PATTERNS = [
   { name: 'Private Key', pattern: /-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----/, severity: 'CRITICAL' as const },
   { name: 'Generic API Key', pattern: /api[_-]?key["']?\s*[:=]\s*["'][^"']{20,}/, severity: 'HIGH' as const },
   { name: 'JWT Token', pattern: /eyJ[A-Za-z0-9-_]+\.eyJ[A-Za-z0-9-_]+\.[A-Za-z0-9-_.+\/=]*/, severity: 'HIGH' as const },
-  { name: 'Password Assignment', pattern: /password["']?\s*[:=]\s*["'][^"']{8,}["']/, severity: 'HIGH' as const },
+  { name: 'Password Assignment', pattern: /(?:password|passwd|pwd)["']?\s*[:=]\s*(?:["'][^"']{8,}["']|\S{8,})/i, severity: 'HIGH' as const },
 ];
 
 // ============================================================================
@@ -150,9 +150,12 @@ function loadSessionState(sessionId: string): SessionState {
 
 function saveSessionState(state: SessionState): void {
   const statePath = getStateFilePath(HOOK_NAME, 'session.json');
-  const allState = readJsonFileSync<Record<string, SessionState>>(statePath, {});
-  allState[state.session_id] = state;
-  atomicWriteFileSync(statePath, JSON.stringify(allState, null, 2));
+  // Use atomicUpdateJsonFile to prevent TOCTOU race conditions
+  atomicUpdateJsonFile<Record<string, SessionState>>(
+    statePath,
+    (current) => { current[state.session_id] = state; return current; },
+    { [state.session_id]: state }
+  );
 }
 
 // ============================================================================
