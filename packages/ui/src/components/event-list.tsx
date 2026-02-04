@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 export interface SecurityEvent {
   id: number | string;
   timestamp: string;

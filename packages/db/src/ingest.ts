@@ -218,7 +218,7 @@ export function watchLogFile(filePath: string, onIngest?: (result: IngestResult)
     lastSize = statSync(filePath).size;
   }
 
-  watchFile(filePath, { interval: 1000 }, (curr, prev) => {
+  watchFile(filePath, { interval: 1000 }, (curr, _prev) => {
     if (curr.size > lastSize) {
       const result = ingestLogFile(filePath);
       lastSize = curr.size;

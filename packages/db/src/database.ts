@@ -5,7 +5,10 @@
 import Database from 'better-sqlite3';
 import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
-import { CREATE_TABLES, SEED_LAYERS, SCHEMA_VERSION, MIGRATIONS } from './schema';
+import { CREATE_TABLES as _CREATE_TABLES, SEED_LAYERS as _SEED_LAYERS, SCHEMA_VERSION, MIGRATIONS } from './schema';
+
+// Re-export for external use (prevents unused import warnings)
+export { _CREATE_TABLES as CREATE_TABLES, _SEED_LAYERS as SEED_LAYERS };
 
 let db: Database.Database | null = null;
 

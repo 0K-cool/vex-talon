@@ -92,16 +92,16 @@ CREATE INDEX IF NOT EXISTS idx_metrics_type ON metrics(metric_type);
  */
 export const SEED_LAYERS = `
 INSERT OR IGNORE INTO layer_coverage (layer, name, hook_type, owasp_mapping, atlas_mapping) VALUES
-('L0', 'Secure Code Enforcer', 'PreToolUse', '["LLM06"]', '["AML.T0048"]'),
+('L0', 'Secure Code Enforcer', 'PreToolUse', '["LLM02"]', '[]'),
 ('L1', 'Governor Agent', 'PreToolUse', '["LLM01","LLM02"]', '["AML.T0051"]'),
-('L2', 'Secure Code Linter', 'PostToolUse', '["LLM06"]', '["AML.T0048"]'),
-('L3', 'Memory Validation', 'Pre+PostToolUse', '["LLM01"]', '["AML.T0064"]'),
-('L4', 'Injection Scanner', 'PostToolUse', '["LLM01"]', '["AML.T0051","AML.T0053"]'),
+('L2', 'Secure Code Linter', 'PostToolUse', '["LLM02"]', '[]'),
+('L3', 'Memory Validation', 'Pre+PostToolUse', '["Agentic ASI06"]', '["AML.T0064"]'),
+('L4', 'Injection Scanner', 'PostToolUse', '["LLM01"]', '["AML.T0051"]'),
 ('L5', 'Output Sanitizer', 'PostToolUse', '["LLM05"]', '[]'),
 ('L6', 'Git Pre-commit', 'GitHook', '["LLM02"]', '[]'),
 ('L7', 'Image Safety Scanner', 'PostToolUse', '["LLM01"]', '["AML.T0048"]'),
 ('L8', 'Evaluator Agent', 'GitHook', '["LLM02"]', '[]'),
-('L9', 'Egress Scanner', 'PreToolUse', '["LLM02"]', '["AML.T0053"]'),
+('L9', 'Egress Scanner', 'PreToolUse', '["LLM02"]', '["AML.T0035","AML.T0057"]'),
 ('L10', 'Native Sandbox', 'Builtin', '[]', '[]'),
 ('L11', 'Leash Kernel Sandbox', 'External', '[]', '[]'),
 ('L12', 'Least Privilege Profiles', 'SessionStart', '[]', '[]'),
