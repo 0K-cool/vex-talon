@@ -1,0 +1,494 @@
+#!/usr/bin/env bun
+
+/**
+ * L1 Governor Agent - PreToolUse Hook
+ *
+ * Purpose: Real-time policy enforcement before tool execution
+ * Pattern: Sidecar Pattern (independent monitoring)
+ * Action: BLOCK (exit code 2) or INPUT MODIFICATION
+ * OWASP: LLM02 (Sensitive Information Disclosure), LLM01 (Prompt Injection)
+ *
+ * Key Capability: Can MODIFY tool inputs before execution to prevent violations
+ * - Dangerous commands → safe echo messages
+ * - Sensitive file reads → blocked file paths
+ * - Destructive operations → neutralized
+ *
+ * Vex-Talon v0.1.0
+ */
+
+import { appendFileSync, mkdirSync, existsSync } from 'fs';
+import { join, basename } from 'path';
+import { TALON_DIR, LOGS_DIR, getAuditLogPath, ensureDirectories } from './lib/talon-paths';
+import { checkCircuit, recordSuccess, recordFailure } from './lib/circuit-breaker';
+
+const HOOK_NAME = 'L1-governor-agent';
+
+// Pattern to detect (split to avoid self-detection)
+const SANDBOX_BYPASS_PATTERN = 'dangerous' + 'lyDisable' + 'Sandbox';
+
+// ============================================================================
+// Types
+// ============================================================================
+
+interface HookInput {
+  session_id: string;
+  tool_name?: string;
+  tool_input?: Record<string, any>;
+}
+
+interface HookOutput {
+  tool_input?: Record<string, any>;
+}
+
+interface Policy {
+  name: string;
+  tool: string | '*';
+  match: (tool: string, params: Record<string, any>) => boolean;
+  action: 'BLOCK' | 'WARN';
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM';
+  message: string;
+  modify?: (params: Record<string, any>) => Record<string, any> | null;
+}
+
+interface AuditLogEntry {
+  timestamp: string;
+  tool: string;
+  parameters: Record<string, any>;
+  modified_input?: Record<string, any>;
+  policy_matched: string | null;
+  action: 'BLOCK' | 'WARN' | 'ALLOW';
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'NONE';
+  input_modified: boolean;
+  message: string;
+  evaluation_time_ms: number;
+  session_id: string;
+}
+
+// ============================================================================
+// Bundled Policies (Core Security)
+// ============================================================================
+
+const POLICIES: Policy[] = [
+  // === CRITICAL: Sandbox Bypass Prevention ===
+  {
+    name: 'block-sandbox-disable',
+    tool: '*',
+    match: (tool, params) => {
+      const str = JSON.stringify(params).toLowerCase();
+      return str.includes(SANDBOX_BYPASS_PATTERN.toLowerCase());
+    },
+    action: 'BLOCK',
+    severity: 'CRITICAL',
+    message: 'Sandbox bypass attempt detected - potential prompt injection',
+  },
+
+  // === CRITICAL: .env File Protection ===
+  {
+    name: 'block-env-reads',
+    tool: 'Read',
+    match: (tool, params) => {
+      const path = String(params.file_path || '');
+      return path.endsWith('.env') && !path.includes('.env.example');
+    },
+    action: 'BLOCK',
+    severity: 'CRITICAL',
+    message: 'Cannot read .env files (contains secrets)',
+    modify: (params) => ({
+      file_path: join(TALON_DIR, 'GOVERNOR_BLOCKED_ENV_READ.txt')
+    }),
+  },
+  {
+    name: 'block-env-writes',
+    tool: 'Write',
+    match: (tool, params) => {
+      const path = String(params.file_path || '');
+      return path.endsWith('.env') && !path.includes('.env.example');
+    },
+    action: 'BLOCK',
+    severity: 'CRITICAL',
+    message: 'Cannot write production .env files via Write tool',
+    modify: (params) => ({
+      file_path: join(TALON_DIR, 'GOVERNOR_BLOCKED_ENV_WRITE.txt'),
+      content: `[GOVERNOR BLOCKED]\n\nAttempted write to .env file was blocked.\nReason: .env files contain secrets and should be edited manually.`
+    }),
+  },
+  {
+    name: 'block-env-edits',
+    tool: 'Edit',
+    match: (tool, params) => {
+      const path = String(params.file_path || '');
+      return path.endsWith('.env') && !path.includes('.env.example');
+    },
+    action: 'BLOCK',
+    severity: 'CRITICAL',
+    message: 'Cannot edit .env files via Edit tool',
+    modify: (params) => ({
+      file_path: join(TALON_DIR, 'GOVERNOR_BLOCKED_ENV_EDIT.txt'),
+      old_string: '',
+      new_string: `[GOVERNOR BLOCKED]\n\nReason: .env files should be edited manually.`
+    }),
+  },
+
+  // === CRITICAL: Private Key Protection ===
+  {
+    name: 'block-private-key-commits',
+    tool: 'Bash',
+    match: (tool, params) => {
+      const cmd = String(params.command || '');
+      return cmd.includes('git commit') && cmd.includes('BEGIN PRIVATE KEY');
+    },
+    action: 'BLOCK',
+    severity: 'CRITICAL',
+    message: 'Private key detected in staged changes',
+    modify: (params) => ({
+      command: `echo "[GOVERNOR BLOCKED] Private key detected in staged changes. Remove before committing."`
+    }),
+  },
+
+  // === CRITICAL: Protected Folders (macOS) ===
+  {
+    name: 'block-documents-access',
+    tool: 'Read',
+    match: (tool, params) => {
+      const path = String(params.file_path || '');
+      return path.includes('/Documents/');
+    },
+    action: 'BLOCK',
+    severity: 'CRITICAL',
+    message: 'Cannot access ~/Documents - protected folder',
+    modify: (params) => ({
+      file_path: join(TALON_DIR, 'GOVERNOR_BLOCKED_PROTECTED_FOLDER.txt')
+    }),
+  },
+  {
+    name: 'block-desktop-access',
+    tool: 'Read',
+    match: (tool, params) => {
+      const path = String(params.file_path || '');
+      return path.includes('/Desktop/');
+    },
+    action: 'BLOCK',
+    severity: 'CRITICAL',
+    message: 'Cannot access ~/Desktop - protected folder',
+    modify: (params) => ({
+      file_path: join(TALON_DIR, 'GOVERNOR_BLOCKED_PROTECTED_FOLDER.txt')
+    }),
+  },
+
+  // === HIGH: Dangerous Bash Commands ===
+  {
+    name: 'block-curl-pipe-sh',
+    tool: 'Bash',
+    match: (tool, params) => {
+      const cmd = String(params.command || '');
+      return cmd.includes('curl') && (cmd.includes('| sh') || cmd.includes('| bash') || cmd.includes('|sh') || cmd.includes('|bash'));
+    },
+    action: 'BLOCK',
+    severity: 'HIGH',
+    message: 'Dangerous pattern: curl | sh - download and review scripts before executing',
+    modify: (params) => ({
+      command: `echo "[GOVERNOR BLOCKED] Dangerous pattern: curl | sh. Download and review scripts before executing."`
+    }),
+  },
+  {
+    name: 'block-rm-rf-critical',
+    tool: 'Bash',
+    match: (tool, params) => {
+      const cmd = String(params.command || '');
+      if (!cmd.includes('rm -rf') && !cmd.includes('rm -r')) return false;
+      const criticalPaths = ['.git', '/', '/*', '~', '$HOME', '/etc', '/usr', '/var'];
+      return criticalPaths.some(p => cmd.includes(p));
+    },
+    action: 'BLOCK',
+    severity: 'HIGH',
+    message: 'Destructive rm -rf on critical directory detected',
+    modify: (params) => {
+      const cmd = String(params.command || '');
+      return {
+        command: `echo "[GOVERNOR BLOCKED] Dangerous rm -rf operation. Verify path manually if needed."`
+      };
+    },
+  },
+  {
+    name: 'block-force-push-main',
+    tool: 'Bash',
+    match: (tool, params) => {
+      const cmd = String(params.command || '');
+      return cmd.includes('git push --force') && (cmd.includes('main') || cmd.includes('master'));
+    },
+    action: 'BLOCK',
+    severity: 'HIGH',
+    message: 'Force push to main/master is destructive',
+    modify: (params) => ({
+      command: `echo "[GOVERNOR BLOCKED] Force push to main/master. Use: git push --force-with-lease instead."`
+    }),
+  },
+  {
+    name: 'warn-git-reset-hard',
+    tool: 'Bash',
+    match: (tool, params) => {
+      const cmd = String(params.command || '');
+      return cmd.includes('git reset --hard') && cmd.includes('HEAD~');
+    },
+    action: 'WARN',
+    severity: 'HIGH',
+    message: 'Destructive git reset --hard - uncommitted changes will be lost',
+  },
+
+  // === HIGH: Secret Pattern Detection in Commands ===
+  {
+    name: 'warn-secrets-in-bash',
+    tool: 'Bash',
+    match: (tool, params) => {
+      const cmd = String(params.command || '');
+      const patterns = [
+        /sk-[A-Za-z0-9]{20,}/,
+        /pplx-[A-Za-z0-9]{40,}/,
+        /ghp_[A-Za-z0-9_]{36,}/,
+        /AIza[A-Za-z0-9_-]{35}/,
+        /AKIA[A-Z0-9]{16}/,
+      ];
+      return patterns.some(p => p.test(cmd));
+    },
+    action: 'WARN',
+    severity: 'HIGH',
+    message: 'API key pattern detected in bash command - verify not logging secrets',
+  },
+
+  // === MEDIUM: Git Hook Edits ===
+  {
+    name: 'warn-git-hook-edits',
+    tool: 'Edit',
+    match: (tool, params) => {
+      const path = String(params.file_path || '');
+      return path.includes('.git/hooks/');
+    },
+    action: 'WARN',
+    severity: 'MEDIUM',
+    message: 'Editing git hooks - verify this does not bypass safety checks',
+  },
+
+  // === MEDIUM: SSH Key Access ===
+  {
+    name: 'warn-ssh-key-reads',
+    tool: 'Read',
+    match: (tool, params) => {
+      const path = String(params.file_path || '');
+      return path.includes('.ssh/') && !path.includes('.pub');
+    },
+    action: 'WARN',
+    severity: 'MEDIUM',
+    message: 'Reading SSH private key files - verify this is necessary',
+  },
+
+  // === PROMPT INJECTION DEFENSE ===
+  {
+    name: 'detect-ignore-instructions',
+    tool: '*',
+    match: (tool, params) => {
+      const content = JSON.stringify(params).toLowerCase();
+      return content.includes('ignore previous instructions') ||
+             content.includes('disregard all prior') ||
+             content.includes('ignore everything above') ||
+             content.includes('new instructions:') ||
+             content.includes('your real instructions');
+    },
+    action: 'WARN',
+    severity: 'HIGH',
+    message: 'Possible prompt injection detected: instruction override pattern',
+  },
+  {
+    name: 'detect-role-hijacking',
+    tool: '*',
+    match: (tool, params) => {
+      const content = JSON.stringify(params).toLowerCase();
+      return content.includes('you are now') ||
+             content.includes('act as if') ||
+             content.includes('pretend to be') ||
+             content.includes('dan mode') ||
+             content.includes('jailbreak mode') ||
+             content.includes('developer mode enabled');
+    },
+    action: 'WARN',
+    severity: 'HIGH',
+    message: 'Possible prompt injection detected: role hijacking attempt',
+  },
+  {
+    name: 'detect-context-injection',
+    tool: '*',
+    match: (tool, params) => {
+      const content = JSON.stringify(params);
+      return content.includes('[SYSTEM]') ||
+             content.includes('<<SYS>>') ||
+             content.includes('</s>');
+    },
+    action: 'WARN',
+    severity: 'HIGH',
+    message: 'Possible prompt injection detected: fake system markers',
+  },
+];
+
+// Tools to monitor
+const MONITORED_TOOLS = ['Read', 'Write', 'Edit', 'Bash', 'WebFetch', 'WebSearch', 'Skill', 'Task', 'Glob', 'Grep'];
+
+// ============================================================================
+// Audit Logging
+// ============================================================================
+
+function logToAudit(entry: AuditLogEntry): void {
+  try {
+    ensureDirectories();
+    const logPath = getAuditLogPath(HOOK_NAME);
+    const logLine = JSON.stringify(entry) + '\n';
+    appendFileSync(logPath, logLine);
+  } catch (error) {
+    console.error(`[Governor] Failed to write audit log: ${error}`);
+  }
+}
+
+function sanitizeParameters(params: Record<string, any>): Record<string, any> {
+  const sanitized = { ...params };
+  const sensitiveKeys = ['api_key', 'password', 'token', 'secret', 'auth', 'credential'];
+
+  for (const key in sanitized) {
+    if (sensitiveKeys.some(sk => key.toLowerCase().includes(sk))) {
+      sanitized[key] = '[REDACTED]';
+    }
+    if (key === 'content' && typeof sanitized[key] === 'string' && sanitized[key].length > 500) {
+      sanitized[key] = sanitized[key].substring(0, 500) + `... [truncated]`;
+    }
+  }
+
+  return sanitized;
+}
+
+// ============================================================================
+// Policy Evaluation
+// ============================================================================
+
+function evaluatePolicies(tool: string, params: Record<string, any>): {
+  policy: Policy | null;
+  action: 'BLOCK' | 'WARN' | 'ALLOW';
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'NONE';
+  message: string;
+  modifiedInput: Record<string, any> | null;
+} {
+  const severityOrder: Array<'CRITICAL' | 'HIGH' | 'MEDIUM'> = ['CRITICAL', 'HIGH', 'MEDIUM'];
+
+  for (const severity of severityOrder) {
+    const matchingPolicies = POLICIES.filter(p => p.severity === severity);
+
+    for (const policy of matchingPolicies) {
+      if (policy.tool !== '*' && policy.tool !== tool) continue;
+
+      if (policy.match(tool, params)) {
+        let modifiedInput: Record<string, any> | null = null;
+        if (policy.modify && policy.action === 'BLOCK') {
+          modifiedInput = policy.modify(params);
+        }
+
+        return {
+          policy,
+          action: policy.action,
+          severity: policy.severity,
+          message: policy.message,
+          modifiedInput,
+        };
+      }
+    }
+  }
+
+  return {
+    policy: null,
+    action: 'ALLOW',
+    severity: 'NONE',
+    message: 'No policy violations detected',
+    modifiedInput: null,
+  };
+}
+
+// ============================================================================
+// Main Hook Logic
+// ============================================================================
+
+async function main() {
+  const circuit = checkCircuit(HOOK_NAME);
+  if (!circuit.shouldExecute) {
+    console.error(`⚡ [Governor] Circuit ${circuit.state}: ${circuit.reason}`);
+    process.exit(0);
+  }
+
+  const startTime = Date.now();
+
+  try {
+    const input = await Promise.race([
+      Bun.stdin.text(),
+      new Promise<string>((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout')), 400)
+      )
+    ]);
+
+    if (!input || input.trim() === '') {
+      process.exit(0);
+    }
+
+    const data: HookInput = JSON.parse(input);
+
+    if (!data.tool_name || !MONITORED_TOOLS.includes(data.tool_name)) {
+      process.exit(0);
+    }
+
+    const params = data.tool_input || {};
+    const result = evaluatePolicies(data.tool_name, params);
+    const evaluationTime = Date.now() - startTime;
+
+    const auditEntry: AuditLogEntry = {
+      timestamp: new Date().toISOString(),
+      tool: data.tool_name,
+      parameters: sanitizeParameters(params),
+      modified_input: result.modifiedInput ? sanitizeParameters(result.modifiedInput) : undefined,
+      policy_matched: result.policy?.name || null,
+      action: result.action,
+      severity: result.severity,
+      input_modified: result.modifiedInput !== null,
+      message: result.message,
+      evaluation_time_ms: evaluationTime,
+      session_id: data.session_id,
+    };
+    logToAudit(auditEntry);
+
+    if (result.severity === 'CRITICAL' || result.severity === 'HIGH') {
+      if (result.modifiedInput) {
+        console.error(`\n🛡️  [Governor L1] ${result.severity} violation INTERCEPTED`);
+        console.error(`    Policy: ${result.policy?.name}`);
+        console.error(`    Tool: ${data.tool_name}`);
+        console.error(`    Action: Input modified for safety`);
+        console.error(`    Message: ${result.message}`);
+        console.error('');
+      } else {
+        console.error(`\n⚠️  [Governor L1] ${result.severity} policy violation detected`);
+        console.error(`    Policy: ${result.policy?.name}`);
+        console.error(`    Tool: ${data.tool_name}`);
+        console.error(`    Message: ${result.message}`);
+        console.error('');
+      }
+    }
+
+    if (result.modifiedInput) {
+      const output: HookOutput = {
+        tool_input: result.modifiedInput
+      };
+      console.log(JSON.stringify(output));
+    }
+
+    recordSuccess(HOOK_NAME);
+    process.exit(0);
+
+  } catch (error) {
+    recordFailure(HOOK_NAME, String(error));
+    console.error(`[Governor L1] Error: ${error}`);
+    process.exit(0);
+  }
+}
+
+main();

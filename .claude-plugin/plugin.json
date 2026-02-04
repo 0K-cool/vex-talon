@@ -1,7 +1,7 @@
 {
   "name": "vex-talon",
   "version": "0.1.0",
-  "description": "20-layer defense-in-depth security for Claude Code - hooks, policies, and monitoring dashboard",
+  "description": "20-layer defense-in-depth security for Claude Code - hooks, policies, and security reports",
   "author": "Kelvin Lomboy",
   "repository": "https://github.com/0K-cool/vex-talon",
   "license": "MIT",
@@ -9,12 +9,14 @@
     "security",
     "defense-in-depth",
     "prompt-injection",
-    "owasp",
+    "owasp-llm",
+    "owasp-agentic",
     "mitre-atlas",
-    "claude-code"
+    "claude-code",
+    "ai-security"
   ],
   "hooks": {
-    "directory": "../hooks"
+    "directory": "../packages/core/src/hooks"
   },
   "skills": {
     "directory": "../skills"
@@ -23,25 +25,44 @@
     "directory": "../commands"
   },
   "configuration": {
-    "policyFile": {
-      "type": "string",
-      "default": "policies/governor-policies.yml",
-      "description": "Path to Governor policy file"
+    "enabledLayers": {
+      "type": "array",
+      "default": ["L0", "L4", "L5", "L9", "L14", "L17"],
+      "description": "Security layers to enable. Currently ported: L0, L4, L5, L9, L14, L17"
     },
     "auditLogDir": {
       "type": "string",
-      "default": ".claude/logs",
-      "description": "Directory for audit logs"
+      "default": "~/.vex-talon/logs",
+      "description": "Directory for security audit logs"
     },
-    "dashboardPort": {
-      "type": "number",
-      "default": 3333,
-      "description": "Port for security dashboard"
-    },
-    "enabledLayers": {
-      "type": "array",
-      "default": ["L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L10", "L12", "L14", "L15", "L16", "L17", "L19"],
-      "description": "Security layers to enable (L11, L13, L18 require optional dependencies)"
+    "stateDir": {
+      "type": "string",
+      "default": "~/.vex-talon/state",
+      "description": "Directory for hook state files"
     }
+  },
+  "frameworks": {
+    "owaspLlm2025": "9/10 coverage",
+    "owaspAgentic2026": "Full coverage",
+    "mitreAtlas": "16+ techniques"
+  },
+  "portedLayers": {
+    "L0": "Secure Code Enforcer (PreToolUse - BLOCK)",
+    "L1": "Governor Agent (PreToolUse - BLOCK + Input Modification)",
+    "L2": "Secure Code Linter (PostToolUse - ALERT)",
+    "L3": "Memory Validation (PreToolUse - ALERT)",
+    "L4": "Injection Scanner (PostToolUse - ALERT)",
+    "L5": "Output Sanitizer (PostToolUse - WARN)",
+    "L7": "Image Safety Scanner (PostToolUse - ALERT)",
+    "L9": "Egress Scanner (PreToolUse - BLOCK)",
+    "L12": "Least Privilege (SessionStart - LOG)",
+    "L14": "Supply Chain Scanner (PostToolUse - WARN)",
+    "L17": "Spend Alerting (PostToolUse - ALERT)",
+    "L19": "Skill Scanner (PreToolUse - BLOCK)"
+  },
+  "optionalLayers": {
+    "L11": "Leash Kernel Sandbox (requires Leash binary)",
+    "L13": "Strawberry Hallucination (requires MCP server)",
+    "L18": "MCP Audit (requires Proximity scanner)"
   }
 }

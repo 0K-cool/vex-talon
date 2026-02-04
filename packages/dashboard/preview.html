@@ -8,12 +8,12 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     /* ========== THEME: Default (0K) ========== */
-    :root, [data-theme="default"] {
+    :root, html[data-theme="default"] {
       /* Primary colors set by data-accent attribute */
       --zerok-primary: #c2703c;       /* Fallback */
       --zerok-primary-hover: #d4844a;
       --zerok-accent: #d4844a;
-      --zerok-bg: #2a2a2a;            /* Lighter charcoal to match 0din */
+      --zerok-bg: #2a2a2a;            /* Lighter charcoal */
       --zerok-bg-alt: #2d2d2d;
       --zerok-sidebar: #2a2a2a;
       --zerok-content-bg: #121212;    /* Dark backdrop behind widgets */
@@ -21,7 +21,7 @@
       --zerok-card-border: none;      /* No border on default theme */
       --zerok-card-hover: #222222;
       --zerok-sidebar-hover: #1a1a1a; /* Slightly darker on hover */
-      --zerok-sidebar-active: #1a1a1a; /* Neutral dark for selection (like 0din) */
+      --zerok-sidebar-active: #1a1a1a; /* Neutral dark for selection */
       --zerok-text: #ffffff;
       --zerok-text-muted: #a0a0a0;
       --zerok-text-dim: #666666;
@@ -39,49 +39,66 @@
     }
 
     /* ========== THEME: Minimal ========== */
-    [data-theme="minimal"] {
+    html[data-theme="minimal"] {
       /* Layout-only overrides - accent colors come from data-accent */
       --zerok-content-bg: #2a2a2a;    /* Same as sidebar - no dark backdrop */
-      --zerok-card: #151515;          /* Darker widgets to match 0din */
-      --zerok-card-border: 1.5px solid #444444;  /* Grey border like 0din */
+      --zerok-card: #151515;          /* Darker widgets */
+      --zerok-card-border: 1.5px solid #444444;  /* Grey border */
       --zerok-card-hover: #1a1a1a;
       --zerok-sidebar-hover: #252525; /* Darker hover */
-      --zerok-sidebar-active: #222222; /* Darker than sidebar #2a2a2a, like 0din */
+      --zerok-sidebar-active: #222222; /* Darker than sidebar #2a2a2a */
       --zerok-settings-bg: #222222;   /* Settings section matches selector */
       --zerok-show-topbar: none;      /* Hide top bar */
       --zerok-content-padding: 16px;  /* More padding without top bar */
     }
 
     /* ========== ACCENT COLORS ========== */
-    /* Note: sidebar-active is neutral gray in both themes (like 0din) */
-    [data-accent="orange"] {
+    /* Note: sidebar-active is neutral gray in both themes */
+    /* Use html[data-accent] for specificity 11 to match html[data-theme] selectors */
+    html[data-accent="orange"] {
       --zerok-primary: #c2703c;
       --zerok-primary-hover: #d4844a;
       --zerok-accent: #d4844a;
     }
 
-    [data-accent="red"] {
+    html[data-accent="red"] {
       --zerok-primary: #dc2626;
       --zerok-primary-hover: #ef4444;
       --zerok-accent: #ef4444;
     }
 
-    [data-accent="blue"] {
+    html[data-accent="blue"] {
       --zerok-primary: #3b82f6;
       --zerok-primary-hover: #60a5fa;
       --zerok-accent: #60a5fa;
     }
 
-    [data-accent="green"] {
+    html[data-accent="green"] {
       --zerok-primary: #22c55e;
       --zerok-primary-hover: #4ade80;
       --zerok-accent: #4ade80;
     }
 
-    [data-accent="purple"] {
+    html[data-accent="purple"] {
       --zerok-primary: #8b5cf6;
       --zerok-primary-hover: #a78bfa;
       --zerok-accent: #a78bfa;
+    }
+
+    html[data-accent="yellow"] {
+      --zerok-primary: #d4ed6e;
+      --zerok-primary-hover: #e2f392;
+      --zerok-accent: #e2f392;
+      --zerok-primary-text: #1a1a1a;  /* Dark text for yellow backgrounds */
+    }
+
+    /* Yellow accent needs dark text for contrast */
+    html[data-accent="yellow"] .theme-option.active,
+    html[data-accent="yellow"] .card-link,
+    html[data-accent="yellow"] .framework-tab.active,
+    html[data-accent="yellow"] .tactic-header,
+    html[data-accent="yellow"] .widget-action:hover {
+      color: #1a1a1a;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -961,10 +978,10 @@
     .theme-option {
       flex: 1;
       padding: 6px 8px;
-      border: 1px solid var(--zerok-border);
+      border: 1px solid var(--zerok-primary);
       border-radius: 4px;
       background: transparent;
-      color: var(--zerok-text-muted);
+      color: var(--zerok-primary);
       font-size: 11px;
       font-weight: 500;
       cursor: pointer;
@@ -973,24 +990,28 @@
     }
 
     .theme-option:hover {
-      border-color: var(--zerok-border-hover);
-      color: var(--zerok-text);
+      border-color: var(--zerok-primary-hover);
+      color: var(--zerok-primary-hover);
     }
 
     .theme-option.active {
       border-color: var(--zerok-primary);
-      background: var(--zerok-sidebar-active);
-      color: var(--zerok-primary);
+      background: var(--zerok-primary);
+      color: white;
     }
 
     .color-options {
       display: flex;
-      gap: 8px;
+      gap: 6px;
     }
 
     .color-option {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      min-height: 22px;
+      flex-shrink: 0;
+      aspect-ratio: 1;
       border-radius: 50%;
       border: 2px solid transparent;
       background: var(--swatch);
@@ -1147,9 +1168,10 @@
               <div class="color-options">
                 <button class="color-option active" data-color="orange" onclick="setAccent('orange')" style="--swatch: #c2703c;" title="0K Orange"></button>
                 <button class="color-option" data-color="red" onclick="setAccent('red')" style="--swatch: #dc2626;" title="ATHENA Red"></button>
-                <button class="color-option" data-color="blue" onclick="setAccent('blue')" style="--swatch: #3b82f6;" title="DetectionIQ Blue"></button>
+                <button class="color-option" data-color="blue" onclick="setAccent('blue')" style="--swatch: #3b82f6;" title="Blue"></button>
                 <button class="color-option" data-color="green" onclick="setAccent('green')" style="--swatch: #22c55e;" title="Green"></button>
                 <button class="color-option" data-color="purple" onclick="setAccent('purple')" style="--swatch: #8b5cf6;" title="Purple"></button>
+                <button class="color-option" data-color="yellow" onclick="setAccent('yellow')" style="--swatch: #d4ed6e;" title="Yellow"></button>
               </div>
             </div>
           </div>
@@ -1843,7 +1865,7 @@
       document.getElementById('settingsChevron').classList.toggle('expanded');
     }
 
-    // Theme Switcher (layout)
+    // Theme Switcher (layout + accent reset for Default)
     function setTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       document.querySelectorAll('.theme-option').forEach(btn => {
