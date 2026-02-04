@@ -100,9 +100,44 @@ Update the sidebar brand for your project:
 </span>
 ```
 
-## Architecture Decision
+## Architecture Decisions
+
+### ADR-001: Charcoal Base Only
 
 **DetectIQ** (and other blue-based products) should have their own separate template with blue backgrounds baked in. This template stays focused on the charcoal-based 0K visual identity.
+
+*Decision made: February 3, 2026*
+
+---
+
+### ADR-002: Fixed Layout (No Drag-and-Drop)
+
+**Decision:** This template uses a fixed CSS Grid layout. Widgets cannot be dragged, resized, or rearranged by end users.
+
+**Context:** Modern dashboards like Grafana and Datadog offer drag-and-drop widget customization using libraries like [React Grid Layout](https://github.com/react-grid-layout/react-grid-layout) or [Gridstack.js](https://gridstackjs.com/).
+
+**Rationale:**
+
+| Factor | Fixed Layout (Chosen) | Drag-and-Drop |
+|--------|----------------------|---------------|
+| Complexity | Low - pure CSS | High - JS state management |
+| Dependencies | None | Gridstack.js or React Grid Layout |
+| Mobile responsive | Easy | Harder to maintain |
+| State persistence | Not needed | localStorage/backend required |
+| Security dashboards | Better - consistent muscle memory | Users may hide critical alerts |
+| Target user | Developers customizing template | End users building custom views |
+
+**When to reconsider:**
+- End users explicitly request layout customization
+- Building a true analytics/BI platform where users have wildly different workflows
+- A specific product (Talon, ATHENA) has validated user demand
+
+**Alternatives considered:**
+1. **Gridstack.js** - Framework-agnostic, good for vanilla JS. Rejected: adds complexity without clear user demand.
+2. **React Grid Layout** - Best for React apps. Rejected: template is vanilla HTML/CSS.
+3. **Widget visibility toggle** - Simple show/hide without drag. Could add later as middle ground.
+
+**Migration path:** The current CSS Grid structure (`.widget-grid`, `.two-columns`) can be replaced with Gridstack.js later if needed. No structural changes required.
 
 *Decision made: February 3, 2026*
 
