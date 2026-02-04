@@ -17,8 +17,7 @@
  * @date 2026-02-04
  */
 
-import { appendFileSync } from 'fs';
-import { ensureTalonDirs, getAuditLogPath, getStateFilePath } from './lib/talon-paths';
+import { getStateFilePath } from './lib/talon-paths';
 import { atomicWriteFileSync, readJsonFileSync } from './lib/atomic-file';
 
 const HOOK_NAME = 'L17-spend-alerting';
@@ -90,18 +89,35 @@ async function main() {
     state.tool_calls++;
 
     // Check thresholds
-    const thresholds = ['WARNING', 'ALERT', 'CRITICAL'] as const;
-    const lastIdx = state.last_threshold === 'NONE' ? -1 : thresholds.indexOf(state.last_threshold);
+    const thresholdKeys = ['WARNING', 'ALERT', 'CRITICAL'] as const;
+    type ThresholdKey = typeof thresholdKeys[number];
+    const lastIdx = state.last_threshold === 'NONE' ? -1 : thresholdKeys.indexOf(state.last_threshold as ThresholdKey);
 
-    for (let i = lastIdx + 1; i < thresholds.length; i++) {
-      if (state.total_cost_usd >= THRESHOLDS[thresholds[i]]) {
-        state.last_threshold = thresholds[i];
-        displayAlert(thresholds[i], state.total_cost_usd);
+    let triggeredThreshold: string | null = null;
+    for (let i = lastIdx + 1; i < thresholdKeys.length; i++) {
+      const threshold = thresholdKeys[i];
+      if (threshold && state.total_cost_usd >= THRESHOLDS[threshold]) {
+        state.last_threshold = threshold;
+        triggeredThreshold = threshold;
+        displayAlert(threshold, state.total_cost_usd);
         break;
       }
     }
 
     saveState(state);
+
+    // Output JSON with additionalContext so Claude/Vex is aware of spend threshold
+    if (triggeredThreshold) {
+      console.log(JSON.stringify({
+        continue: true,
+        additionalContext: `💰 TALON L17 SPEND ${triggeredThreshold}: Session cost is $${state.total_cost_usd.toFixed(4)} (${state.tool_calls} tool calls). ` +
+          `Thresholds: WARNING=$${THRESHOLDS.WARNING}, ALERT=$${THRESHOLDS.ALERT}, CRITICAL=$${THRESHOLDS.CRITICAL}. ` +
+          `Consider more efficient approaches or inform user about costs.`,
+      }));
+    } else {
+      console.log(JSON.stringify({ continue: true }));
+    }
+
     process.exit(0);
   } catch {
     process.exit(0);

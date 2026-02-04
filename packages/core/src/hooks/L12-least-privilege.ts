@@ -14,11 +14,9 @@
  * Vex-Talon v0.1.0
  */
 
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { writeFileSync } from 'fs';
 import { join } from 'path';
-import { TALON_DIR, STATE_DIR, ensureDirectories } from './lib/talon-paths';
-
-const HOOK_NAME = 'L12-least-privilege';
+import { STATE_DIR, ensureDirectories } from './lib/talon-paths';
 
 // ============================================================================
 // Types
@@ -135,19 +133,6 @@ function getActiveProfilePath(): string {
   return join(STATE_DIR, 'active-profile.json');
 }
 
-function loadActiveProfile(): Profile | null {
-  try {
-    const profilePath = getActiveProfilePath();
-    if (existsSync(profilePath)) {
-      const content = readFileSync(profilePath, 'utf-8');
-      return JSON.parse(content) as Profile;
-    }
-  } catch {
-    // Fall through
-  }
-  return null;
-}
-
 function saveActiveProfile(profile: Profile): void {
   ensureDirectories();
   const profilePath = getActiveProfilePath();
@@ -175,7 +160,8 @@ async function main() {
       process.exit(0);
     }
 
-    const data: HookInput = JSON.parse(input);
+    // Parse input (session_id available if needed for logging)
+    JSON.parse(input) as HookInput;
 
     // Get requested profile from environment
     const requestedProfile = getProfileFromEnv();
@@ -186,7 +172,7 @@ async function main() {
       console.error(`\n⚠️  [Least Privilege L12] Unknown profile: ${requestedProfile}`);
       console.error(`    Available profiles: ${Object.keys(PROFILES).join(', ')}`);
       console.error(`    Defaulting to 'dev' profile.\n`);
-      saveActiveProfile(PROFILES.dev);
+      saveActiveProfile(PROFILES.dev!);
       process.exit(0);
     }
 

@@ -7,7 +7,7 @@
  * 20-LAYER SECURITY ARCHITECTURE
  * ═══════════════════════════════════════════════════════════════════════════
  *
- * PORTED LAYERS (12 hooks):
+ * PORTED LAYERS (13 hooks):
  * ─────────────────────────────────────────────────────────────────────────────
  * L0:  Secure Code Enforcer    PreToolUse     ✅ PORTED   Blocks CRITICAL vulnerabilities
  * L1:  Governor Agent          PreToolUse     ✅ PORTED   Policy enforcement + input modification
@@ -21,6 +21,7 @@
  * L14: Supply Chain Scanner    PostToolUse    ✅ PORTED   Malicious package detection
  * L17: Spend Alerting          PostToolUse    ✅ PORTED   Cost threshold alerts
  * L19: Skill Scanner           PreToolUse     ✅ PORTED   Skill security scanning
+ * STOP: Security Report        Stop           ✅ PORTED   Aggregates events to HTML report
  *
  * DOCUMENTATION LAYERS (5):
  * ─────────────────────────────────────────────────────────────────────────────
@@ -54,22 +55,27 @@ export const HOOK_VERSION = '0.1.0';
 export type HookStatus = 'PORTED' | 'DOCS' | 'EXTERNAL';
 
 /**
+ * Hook event types
+ */
+export type HookEventType = 'PreToolUse' | 'PostToolUse' | 'SessionStart' | 'Stop' | 'Git' | 'External' | 'Documentation';
+
+/**
  * Layer definitions with metadata
  */
 export interface LayerDefinition {
   id: string;
   name: string;
-  type: 'PreToolUse' | 'PostToolUse' | 'SessionStart' | 'Git' | 'External' | 'Documentation';
+  type: HookEventType;
   status: HookStatus;
   file?: string;
   description: string;
-  action: 'BLOCK' | 'ALERT' | 'WARN' | 'LOG';
+  action: 'BLOCK' | 'ALERT' | 'WARN' | 'LOG' | 'REPORT';
   owaspMapping?: string;
   atlasMapping?: string;
 }
 
 export const LAYERS: LayerDefinition[] = [
-  // === PORTED HOOKS (12) ===
+  // === PORTED HOOKS (13 total: 12 layers + STOP) ===
   {
     id: 'L0', name: 'Secure Code Enforcer', type: 'PreToolUse', status: 'PORTED',
     file: 'L0-secure-code-enforcer.ts', description: 'Blocks CRITICAL code vulnerabilities',
@@ -108,7 +114,7 @@ export const LAYERS: LayerDefinition[] = [
   {
     id: 'L9', name: 'Egress Scanner', type: 'PreToolUse', status: 'PORTED',
     file: 'L9-egress-scanner.ts', description: 'Data exfiltration prevention',
-    action: 'BLOCK', owaspMapping: 'LLM02', atlasMapping: 'AML.T0049'
+    action: 'BLOCK', owaspMapping: 'LLM02', atlasMapping: 'AML.T0035, AML.T0057'
   },
   {
     id: 'L12', name: 'Least Privilege', type: 'SessionStart', status: 'PORTED',
@@ -129,6 +135,13 @@ export const LAYERS: LayerDefinition[] = [
     id: 'L19', name: 'Skill Scanner', type: 'PreToolUse', status: 'PORTED',
     file: 'L19-skill-scanner.ts', description: 'Skill security scanning',
     action: 'BLOCK', owaspMapping: 'LLM01', atlasMapping: 'Agentic ASI04'
+  },
+
+  // === STOP HOOK (Session End Report) ===
+  {
+    id: 'STOP', name: 'Security Report', type: 'Stop', status: 'PORTED',
+    file: 'stop-security-report.ts', description: 'Aggregates security events into HTML report',
+    action: 'REPORT'
   },
 
   // === DOCUMENTATION LAYERS (5) ===
@@ -205,6 +218,13 @@ export function getSessionStartHooks(): LayerDefinition[] {
 }
 
 /**
+ * Get Stop hooks (session end)
+ */
+export function getStopHooks(): LayerDefinition[] {
+  return LAYERS.filter(l => l.type === 'Stop' && l.status === 'PORTED');
+}
+
+/**
  * Generate settings.json hook configuration for Vex-Talon
  */
 export function generateHooksConfig(basePath: string = './packages/core/src/hooks'): object {
@@ -226,11 +246,18 @@ export function generateHooksConfig(basePath: string = './packages/core/src/hook
     timeout: 5000,
   }));
 
+  const stopHooks = getStopHooks().map(l => ({
+    type: 'command',
+    command: `bun run ${basePath}/${l.file}`,
+    timeout: 30000, // Reports need more time to generate
+  }));
+
   return {
     hooks: {
       PreToolUse: preToolUseHooks.length > 0 ? [{ hooks: preToolUseHooks }] : [],
       PostToolUse: postToolUseHooks.length > 0 ? [{ hooks: postToolUseHooks }] : [],
       SessionStart: sessionStartHooks.length > 0 ? [{ hooks: sessionStartHooks }] : [],
+      Stop: stopHooks.length > 0 ? [{ hooks: stopHooks }] : [],
     },
   };
 }
@@ -246,6 +273,7 @@ export function getCoverageStats(): {
   preToolUse: number;
   postToolUse: number;
   sessionStart: number;
+  stop: number;
 } {
   return {
     ported: LAYERS.filter(l => l.status === 'PORTED').length,
@@ -255,6 +283,7 @@ export function getCoverageStats(): {
     preToolUse: getPreToolUseHooks().length,
     postToolUse: getPostToolUseHooks().length,
     sessionStart: getSessionStartHooks().length,
+    stop: getStopHooks().length,
   };
 }
 
@@ -271,6 +300,7 @@ export function printArchitectureSummary(): void {
 ║  PreToolUse:   ${String(stats.preToolUse).padEnd(2)} (can BLOCK)                                  ║
 ║  PostToolUse:  ${String(stats.postToolUse).padEnd(2)} (ALERT only)                                ║
 ║  SessionStart: ${String(stats.sessionStart).padEnd(2)}                                            ║
+║  Stop:         ${String(stats.stop).padEnd(2)} (Security Report)                             ║
 ╠═══════════════════════════════════════════════════════════════════╣
 ║  OWASP LLM 2025:    9/10 coverage                                 ║
 ║  OWASP Agentic:     Full coverage                                 ║

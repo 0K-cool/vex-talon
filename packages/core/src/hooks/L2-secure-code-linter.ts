@@ -14,9 +14,9 @@
  * Vex-Talon v0.1.0
  */
 
-import { appendFileSync, existsSync, readFileSync } from 'fs';
-import { join, extname, basename } from 'path';
-import { TALON_DIR, getAuditLogPath, ensureDirectories } from './lib/talon-paths';
+import { appendFileSync } from 'fs';
+import { extname, basename } from 'path';
+import { getAuditLogPath, ensureDirectories } from './lib/talon-paths';
 import { checkCircuit, recordSuccess, recordFailure } from './lib/circuit-breaker';
 
 const HOOK_NAME = 'L2-secure-code-linter';
@@ -232,6 +232,7 @@ function analyzeCode(content: string, filePath: string): SecurityFinding[] {
     // Check each line for matches
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
+      if (!line) continue;
 
       // Skip comments
       if (line.trim().startsWith('//') || line.trim().startsWith('#') || line.trim().startsWith('*')) {

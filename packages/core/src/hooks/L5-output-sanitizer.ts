@@ -104,6 +104,19 @@ async function main() {
     });
 
     displayWarning(findings, filePath);
+
+    // Output JSON with additionalContext so Claude/Vex is aware of XSS patterns
+    const criticalFindings = findings.filter(f => f.severity === 'CRITICAL');
+    const patternNames = findings.slice(0, 3).map(f => f.name).join(', ');
+
+    console.log(JSON.stringify({
+      continue: true,
+      additionalContext: `⚠️ TALON L5: Unsafe DOM patterns detected in "${filePath}": ${patternNames}. ` +
+        `${criticalFindings.length > 0 ? 'CRITICAL XSS risk! ' : ''}` +
+        `Use textContent instead of innerHTML, or sanitize with DOMPurify. ` +
+        `Do NOT use dangerouslySetInnerHTML or document.write with user input.`,
+    }));
+
     process.exit(0);
   } catch {
     process.exit(0);

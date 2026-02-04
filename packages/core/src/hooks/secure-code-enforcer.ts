@@ -14,7 +14,8 @@
 
 import { appendFileSync, mkdirSync, existsSync } from 'fs';
 import { join, extname, dirname } from 'path';
-import { loadCodeEnforcerConfig, compilePattern } from '../lib/config-loader';
+// Note: config-loader available but using bundled defaults for reliability
+// import { loadCodeEnforcerConfig, compilePattern } from '../lib/config-loader';
 
 // ============================================================================
 // Types
@@ -211,7 +212,7 @@ function normalizeContent(content: string): string {
 // Code Classification
 // ============================================================================
 
-function classifyCode(content: string, language: string): ClassificationResult {
+function classifyCode(content: string, _language: string): ClassificationResult {
   const normalizedContent = normalizeContent(content);
   const triggers: string[] = [];
 

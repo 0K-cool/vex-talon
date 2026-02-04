@@ -16,10 +16,16 @@
  * Vex-Talon v0.1.0
  */
 
-import { appendFileSync, mkdirSync, existsSync } from 'fs';
-import { join, basename } from 'path';
-import { TALON_DIR, LOGS_DIR, getAuditLogPath, ensureDirectories } from './lib/talon-paths';
+import { appendFileSync } from 'fs';
+import { join } from 'path';
+import { TALON_DIR, getAuditLogPath, ensureDirectories } from './lib/talon-paths';
 import { checkCircuit, recordSuccess, recordFailure } from './lib/circuit-breaker';
+import {
+  loadActiveProfile,
+  isToolAllowed,
+  isPathAllowed,
+  isBashCommandAllowed,
+} from './lib/profile-loader';
 
 const HOOK_NAME = 'L1-governor-agent';
 
@@ -73,7 +79,7 @@ const POLICIES: Policy[] = [
   {
     name: 'block-sandbox-disable',
     tool: '*',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const str = JSON.stringify(params).toLowerCase();
       return str.includes(SANDBOX_BYPASS_PATTERN.toLowerCase());
     },
@@ -86,28 +92,28 @@ const POLICIES: Policy[] = [
   {
     name: 'block-env-reads',
     tool: 'Read',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const path = String(params.file_path || '');
       return path.endsWith('.env') && !path.includes('.env.example');
     },
     action: 'BLOCK',
     severity: 'CRITICAL',
     message: 'Cannot read .env files (contains secrets)',
-    modify: (params) => ({
+    modify: (_params) => ({
       file_path: join(TALON_DIR, 'GOVERNOR_BLOCKED_ENV_READ.txt')
     }),
   },
   {
     name: 'block-env-writes',
     tool: 'Write',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const path = String(params.file_path || '');
       return path.endsWith('.env') && !path.includes('.env.example');
     },
     action: 'BLOCK',
     severity: 'CRITICAL',
     message: 'Cannot write production .env files via Write tool',
-    modify: (params) => ({
+    modify: (_params) => ({
       file_path: join(TALON_DIR, 'GOVERNOR_BLOCKED_ENV_WRITE.txt'),
       content: `[GOVERNOR BLOCKED]\n\nAttempted write to .env file was blocked.\nReason: .env files contain secrets and should be edited manually.`
     }),
@@ -115,14 +121,14 @@ const POLICIES: Policy[] = [
   {
     name: 'block-env-edits',
     tool: 'Edit',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const path = String(params.file_path || '');
       return path.endsWith('.env') && !path.includes('.env.example');
     },
     action: 'BLOCK',
     severity: 'CRITICAL',
     message: 'Cannot edit .env files via Edit tool',
-    modify: (params) => ({
+    modify: (_params) => ({
       file_path: join(TALON_DIR, 'GOVERNOR_BLOCKED_ENV_EDIT.txt'),
       old_string: '',
       new_string: `[GOVERNOR BLOCKED]\n\nReason: .env files should be edited manually.`
@@ -133,14 +139,14 @@ const POLICIES: Policy[] = [
   {
     name: 'block-private-key-commits',
     tool: 'Bash',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const cmd = String(params.command || '');
       return cmd.includes('git commit') && cmd.includes('BEGIN PRIVATE KEY');
     },
     action: 'BLOCK',
     severity: 'CRITICAL',
     message: 'Private key detected in staged changes',
-    modify: (params) => ({
+    modify: (_params) => ({
       command: `echo "[GOVERNOR BLOCKED] Private key detected in staged changes. Remove before committing."`
     }),
   },
@@ -149,28 +155,28 @@ const POLICIES: Policy[] = [
   {
     name: 'block-documents-access',
     tool: 'Read',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const path = String(params.file_path || '');
       return path.includes('/Documents/');
     },
     action: 'BLOCK',
     severity: 'CRITICAL',
     message: 'Cannot access ~/Documents - protected folder',
-    modify: (params) => ({
+    modify: (_params) => ({
       file_path: join(TALON_DIR, 'GOVERNOR_BLOCKED_PROTECTED_FOLDER.txt')
     }),
   },
   {
     name: 'block-desktop-access',
     tool: 'Read',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const path = String(params.file_path || '');
       return path.includes('/Desktop/');
     },
     action: 'BLOCK',
     severity: 'CRITICAL',
     message: 'Cannot access ~/Desktop - protected folder',
-    modify: (params) => ({
+    modify: (_params) => ({
       file_path: join(TALON_DIR, 'GOVERNOR_BLOCKED_PROTECTED_FOLDER.txt')
     }),
   },
@@ -179,21 +185,21 @@ const POLICIES: Policy[] = [
   {
     name: 'block-curl-pipe-sh',
     tool: 'Bash',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const cmd = String(params.command || '');
       return cmd.includes('curl') && (cmd.includes('| sh') || cmd.includes('| bash') || cmd.includes('|sh') || cmd.includes('|bash'));
     },
     action: 'BLOCK',
     severity: 'HIGH',
     message: 'Dangerous pattern: curl | sh - download and review scripts before executing',
-    modify: (params) => ({
+    modify: (_params) => ({
       command: `echo "[GOVERNOR BLOCKED] Dangerous pattern: curl | sh. Download and review scripts before executing."`
     }),
   },
   {
     name: 'block-rm-rf-critical',
     tool: 'Bash',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const cmd = String(params.command || '');
       if (!cmd.includes('rm -rf') && !cmd.includes('rm -r')) return false;
       const criticalPaths = ['.git', '/', '/*', '~', '$HOME', '/etc', '/usr', '/var'];
@@ -202,31 +208,28 @@ const POLICIES: Policy[] = [
     action: 'BLOCK',
     severity: 'HIGH',
     message: 'Destructive rm -rf on critical directory detected',
-    modify: (params) => {
-      const cmd = String(params.command || '');
-      return {
-        command: `echo "[GOVERNOR BLOCKED] Dangerous rm -rf operation. Verify path manually if needed."`
-      };
-    },
+    modify: (_params) => ({
+      command: `echo "[GOVERNOR BLOCKED] Dangerous rm -rf operation. Verify path manually if needed."`
+    }),
   },
   {
     name: 'block-force-push-main',
     tool: 'Bash',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const cmd = String(params.command || '');
       return cmd.includes('git push --force') && (cmd.includes('main') || cmd.includes('master'));
     },
     action: 'BLOCK',
     severity: 'HIGH',
     message: 'Force push to main/master is destructive',
-    modify: (params) => ({
+    modify: (_params) => ({
       command: `echo "[GOVERNOR BLOCKED] Force push to main/master. Use: git push --force-with-lease instead."`
     }),
   },
   {
     name: 'warn-git-reset-hard',
     tool: 'Bash',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const cmd = String(params.command || '');
       return cmd.includes('git reset --hard') && cmd.includes('HEAD~');
     },
@@ -239,7 +242,7 @@ const POLICIES: Policy[] = [
   {
     name: 'warn-secrets-in-bash',
     tool: 'Bash',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const cmd = String(params.command || '');
       const patterns = [
         /sk-[A-Za-z0-9]{20,}/,
@@ -259,7 +262,7 @@ const POLICIES: Policy[] = [
   {
     name: 'warn-git-hook-edits',
     tool: 'Edit',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const path = String(params.file_path || '');
       return path.includes('.git/hooks/');
     },
@@ -272,7 +275,7 @@ const POLICIES: Policy[] = [
   {
     name: 'warn-ssh-key-reads',
     tool: 'Read',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const path = String(params.file_path || '');
       return path.includes('.ssh/') && !path.includes('.pub');
     },
@@ -285,7 +288,7 @@ const POLICIES: Policy[] = [
   {
     name: 'detect-ignore-instructions',
     tool: '*',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const content = JSON.stringify(params).toLowerCase();
       return content.includes('ignore previous instructions') ||
              content.includes('disregard all prior') ||
@@ -300,7 +303,7 @@ const POLICIES: Policy[] = [
   {
     name: 'detect-role-hijacking',
     tool: '*',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const content = JSON.stringify(params).toLowerCase();
       return content.includes('you are now') ||
              content.includes('act as if') ||
@@ -316,7 +319,7 @@ const POLICIES: Policy[] = [
   {
     name: 'detect-context-injection',
     tool: '*',
-    match: (tool, params) => {
+    match: (_tool, params) => {
       const content = JSON.stringify(params);
       return content.includes('[SYSTEM]') ||
              content.includes('<<SYS>>') ||
@@ -330,6 +333,48 @@ const POLICIES: Policy[] = [
 
 // Tools to monitor
 const MONITORED_TOOLS = ['Read', 'Write', 'Edit', 'Bash', 'WebFetch', 'WebSearch', 'Skill', 'Task', 'Glob', 'Grep'];
+
+// ============================================================================
+// Unicode Normalization (Homoglyph Bypass Prevention)
+// ============================================================================
+
+const HOMOGLYPHS: Record<string, string> = {
+  // Cyrillic confusables
+  '\u0430': 'a', '\u0435': 'e', '\u043e': 'o', '\u0440': 'p',
+  '\u0441': 'c', '\u0445': 'x', '\u0443': 'y', '\u0456': 'i',
+  '\u0410': 'A', '\u0412': 'B', '\u0415': 'E', '\u041A': 'K',
+  '\u041C': 'M', '\u041D': 'H', '\u041E': 'O', '\u0420': 'P',
+  '\u0421': 'C', '\u0422': 'T', '\u0423': 'Y', '\u0425': 'X',
+  // Greek confusables
+  '\u03B1': 'a', '\u03B5': 'e', '\u03B9': 'i', '\u03BF': 'o',
+  '\u0391': 'A', '\u0395': 'E', '\u0399': 'I', '\u039F': 'O',
+  // Zero-width characters (remove)
+  '\u200b': '', '\u200c': '', '\u200d': '', '\ufeff': '', '\u00ad': '',
+  // Whitespace normalization
+  '\u00a0': ' ', '\u2000': ' ', '\u2001': ' ', '\u2002': ' ', '\u2003': ' ',
+};
+
+function normalizeUnicode(text: string): string {
+  let normalized = text.normalize('NFKC');
+  for (const [homoglyph, replacement] of Object.entries(HOMOGLYPHS)) {
+    normalized = normalized.split(homoglyph).join(replacement);
+  }
+  return normalized;
+}
+
+function normalizeParams(params: Record<string, any>): Record<string, any> {
+  const normalized: Record<string, any> = {};
+  for (const [key, value] of Object.entries(params)) {
+    if (typeof value === 'string') {
+      normalized[key] = normalizeUnicode(value);
+    } else if (typeof value === 'object' && value !== null) {
+      normalized[key] = normalizeParams(value);
+    } else {
+      normalized[key] = value;
+    }
+  }
+  return normalized;
+}
 
 // ============================================================================
 // Audit Logging
@@ -414,7 +459,7 @@ function evaluatePolicies(tool: string, params: Record<string, any>): {
 async function main() {
   const circuit = checkCircuit(HOOK_NAME);
   if (!circuit.shouldExecute) {
-    console.error(`⚡ [Governor] Circuit ${circuit.state}: ${circuit.reason}`);
+    console.error(`⚡ [Governor] Circuit ${circuit.state}: Skipping execution`);
     process.exit(0);
   }
 
@@ -439,7 +484,108 @@ async function main() {
     }
 
     const params = data.tool_input || {};
-    const result = evaluatePolicies(data.tool_name, params);
+    // Normalize Unicode to prevent homoglyph bypass attacks
+    const normalizedParams = normalizeParams(params);
+
+    // ========== L12 PROFILE ENFORCEMENT ==========
+    // Load active profile set by L12 SessionStart hook
+    const activeProfile = loadActiveProfile();
+    if (activeProfile && activeProfile.name !== 'dev') {
+      // Check if tool is allowed by profile
+      const toolCheck = isToolAllowed(data.tool_name, activeProfile);
+      if (!toolCheck.allowed) {
+        console.error(`\n🔒 [Governor L1] BLOCKED by '${activeProfile.name}' profile`);
+        console.error(`    Tool: ${data.tool_name}`);
+        console.error(`    Reason: ${toolCheck.reason}`);
+        console.error(`    Change profile: VEX_TALON_PROFILE=dev claude\n`);
+
+        // Log the profile violation
+        logToAudit({
+          timestamp: new Date().toISOString(),
+          tool: data.tool_name,
+          parameters: sanitizeParameters(params),
+          policy_matched: `profile:${activeProfile.name}:tool-block`,
+          action: 'BLOCK',
+          severity: 'HIGH',
+          input_modified: false,
+          message: toolCheck.reason,
+          evaluation_time_ms: Date.now() - startTime,
+          session_id: data.session_id,
+        });
+
+        // Output block decision
+        console.log(JSON.stringify({
+          decision: 'block',
+          reason: `🔒 L12 Profile Violation: ${toolCheck.reason}`,
+        }));
+        process.exit(2);
+      }
+
+      // Check path restrictions for Read/Write/Edit tools
+      if (['Read', 'Write', 'Edit'].includes(data.tool_name)) {
+        const filePath = String(normalizedParams.file_path || '');
+        const operation = data.tool_name === 'Read' ? 'read' : 'write';
+        const pathCheck = isPathAllowed(filePath, operation, activeProfile);
+        if (!pathCheck.allowed) {
+          console.error(`\n🔒 [Governor L1] PATH BLOCKED by '${activeProfile.name}' profile`);
+          console.error(`    Path: ${filePath}`);
+          console.error(`    Operation: ${operation}`);
+          console.error(`    Reason: ${pathCheck.reason}\n`);
+
+          logToAudit({
+            timestamp: new Date().toISOString(),
+            tool: data.tool_name,
+            parameters: sanitizeParameters(params),
+            policy_matched: `profile:${activeProfile.name}:path-block`,
+            action: 'BLOCK',
+            severity: 'HIGH',
+            input_modified: false,
+            message: pathCheck.reason,
+            evaluation_time_ms: Date.now() - startTime,
+            session_id: data.session_id,
+          });
+
+          console.log(JSON.stringify({
+            decision: 'block',
+            reason: `🔒 L12 Profile Violation: ${pathCheck.reason}`,
+          }));
+          process.exit(2);
+        }
+      }
+
+      // Check bash command restrictions
+      if (data.tool_name === 'Bash') {
+        const command = String(normalizedParams.command || '');
+        const bashCheck = isBashCommandAllowed(command, activeProfile);
+        if (!bashCheck.allowed) {
+          console.error(`\n🔒 [Governor L1] BASH BLOCKED by '${activeProfile.name}' profile`);
+          console.error(`    Command: ${command.substring(0, 80)}...`);
+          console.error(`    Reason: ${bashCheck.reason}\n`);
+
+          logToAudit({
+            timestamp: new Date().toISOString(),
+            tool: data.tool_name,
+            parameters: sanitizeParameters(params),
+            policy_matched: `profile:${activeProfile.name}:bash-block`,
+            action: 'BLOCK',
+            severity: 'HIGH',
+            input_modified: false,
+            message: bashCheck.reason,
+            evaluation_time_ms: Date.now() - startTime,
+            session_id: data.session_id,
+          });
+
+          console.log(JSON.stringify({
+            decision: 'block',
+            reason: `🔒 L12 Profile Violation: ${bashCheck.reason}`,
+          }));
+          process.exit(2);
+        }
+      }
+    }
+    // ========== END L12 PROFILE ENFORCEMENT ==========
+
+    const result = evaluatePolicies(data.tool_name, normalizedParams);
     const evaluationTime = Date.now() - startTime;
 
     const auditEntry: AuditLogEntry = {

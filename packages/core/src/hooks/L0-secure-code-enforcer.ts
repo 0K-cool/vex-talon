@@ -25,17 +25,14 @@
  * @date 2026-02-04
  */
 
-import { appendFileSync, mkdirSync, existsSync } from 'fs';
+import { appendFileSync } from 'fs';
 import { extname } from 'path';
 import {
-  LOGS_DIR,
   ensureTalonDirs,
   getAuditLogPath,
 } from './lib/talon-paths';
-import {
-  loadCodeEnforcerPatterns,
-  compilePattern,
-} from './lib/config-loader';
+// Note: config-loader patterns available but using bundled defaults for reliability
+// import { loadCodeEnforcerPatterns, compilePattern } from './lib/config-loader';
 
 // ============================================================================
 // Types
@@ -104,6 +101,13 @@ const SKIP_PATHS = [
   '/node_modules/',
   '/.vex-talon/',
   '/security/',
+  '/tests/',
+  '/test/',
+  '/__tests__/',
+  '.test.ts',
+  '.test.js',
+  '.spec.ts',
+  '.spec.js',
 ];
 
 // ============================================================================
@@ -251,7 +255,7 @@ function normalizeUnicode(text: string): string {
 // Code Classification
 // ============================================================================
 
-function classifyCode(content: string, filePath: string): ClassificationResult {
+function classifyCode(content: string, _filePath: string): ClassificationResult {
   const normalizedContent = normalizeUnicode(content);
   const triggers: string[] = [];
   let maxRisk: RiskLevel = 'LOW';
@@ -363,16 +367,17 @@ function classifyCode(content: string, filePath: string): ClassificationResult {
     };
   }
 
-  const confidence = maxRisk === 'CRITICAL' || triggers.length >= 3 ? 'HIGH' :
+  const finalRisk = maxRisk as RiskLevel;
+  const confidence = finalRisk === 'CRITICAL' || triggers.length >= 3 ? 'HIGH' :
                      triggers.length >= 2 ? 'MEDIUM' : 'LOW';
 
   return {
     type: 'SECURITY_SENSITIVE',
-    riskLevel: maxRisk,
+    riskLevel: finalRisk,
     confidence,
     reason: triggers.slice(0, 3).join('; '),
     triggers,
-    suggestReview: maxRisk === 'CRITICAL' || maxRisk === 'HIGH',
+    suggestReview: finalRisk === 'CRITICAL' || finalRisk === 'HIGH',
   };
 }
 

@@ -49,7 +49,7 @@ function detectPackageManager(cmd: string): 'npm' | 'pypi' | null {
   return null;
 }
 
-function extractPackages(cmd: string, ecosystem: string): string[] {
+function extractPackages(cmd: string, _ecosystem: string): string[] {
   const packages: string[] = [];
   // Extract package names (simplified)
   const parts = cmd.split(/\s+/);
@@ -122,6 +122,17 @@ async function main() {
 
     if (malicious.length > 0) {
       displayWarning(malicious);
+
+      // Output JSON with additionalContext so Claude/Vex is aware of malicious packages
+      const pkgList = malicious.map(m => `${m.pkg} (${m.reason})`).join('; ');
+      console.log(JSON.stringify({
+        continue: true,
+        additionalContext: `🚨 TALON L14: MALICIOUS PACKAGES DETECTED! ${pkgList}. ` +
+          `These packages are KNOWN COMPROMISED. Remove them immediately with '${ecosystem} remove ${malicious.map(m => m.pkg).join(' ')}'. ` +
+          `Do NOT continue using these packages.`,
+      }));
+    } else {
+      console.log(JSON.stringify({ continue: true }));
     }
 
     process.exit(0);

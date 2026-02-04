@@ -23,13 +23,14 @@
  *
  * Maps to:
  * - OWASP LLM02 (Sensitive Information Disclosure)
- * - MITRE ATLAS AML.T0053 (Exfiltration via Cyber Means)
+ * - MITRE ATLAS AML.T0035 (Exfiltration via ML Inference API)
+ * - MITRE ATLAS AML.T0057 (LLM Data Leakage)
  *
  * @version 0.1.0 (vex-talon)
  * @date 2026-02-04
  */
 
-import { appendFileSync, existsSync, readFileSync } from 'fs';
+import { appendFileSync } from 'fs';
 import {
   ensureTalonDirs,
   getAuditLogPath,
@@ -98,6 +99,10 @@ const SECRET_PATTERNS = [
   { name: 'GitHub Token', pattern: /gh[pousr]_[A-Za-z0-9_]{36,255}/, severity: 'CRITICAL' as const },
   { name: 'OpenAI Key', pattern: /sk-[a-zA-Z0-9]{20,}/, severity: 'CRITICAL' as const },
   { name: 'Anthropic Key', pattern: /sk-ant-[a-zA-Z0-9-_]{40,}/, severity: 'CRITICAL' as const },
+  { name: 'Stripe Live Key', pattern: /sk_live_[a-zA-Z0-9]{24,}/, severity: 'CRITICAL' as const },
+  { name: 'Stripe Test Key', pattern: /sk_test_[a-zA-Z0-9]{24,}/, severity: 'HIGH' as const },
+  { name: 'Slack Bot Token', pattern: /xoxb-[0-9]{10,13}-[0-9]{10,13}-[a-zA-Z0-9]{24}/, severity: 'CRITICAL' as const },
+  { name: 'Slack User Token', pattern: /xoxp-[0-9]{10,13}-[0-9]{10,13}-[a-zA-Z0-9]{24}/, severity: 'CRITICAL' as const },
   { name: 'Private Key', pattern: /-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----/, severity: 'CRITICAL' as const },
   { name: 'Generic API Key', pattern: /api[_-]?key["']?\s*[:=]\s*["'][^"']{20,}/, severity: 'HIGH' as const },
   { name: 'JWT Token', pattern: /eyJ[A-Za-z0-9-_]+\.eyJ[A-Za-z0-9-_]+\.[A-Za-z0-9-_.+\/=]*/, severity: 'HIGH' as const },

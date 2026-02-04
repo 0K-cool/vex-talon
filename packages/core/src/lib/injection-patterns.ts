@@ -14,7 +14,7 @@
  * @date 2026-02-03
  */
 
-import { loadInjectionConfig, type InjectionConfig } from './config-loader';
+import { loadInjectionConfig, type InjectionPattern as ConfigPattern } from './config-loader';
 
 // ============================================================================
 // Types
@@ -254,12 +254,12 @@ let _activePatterns: InjectionPattern[] | null = null;
 
 function loadExternalPatterns(): InjectionPattern[] {
   try {
-    const config: InjectionConfig = loadInjectionConfig();
+    const config = loadInjectionConfig();
     if (!config.patterns || config.patterns.length === 0) {
       return INJECTION_PATTERNS;
     }
 
-    const externalPatterns: InjectionPattern[] = config.patterns.map(p => ({
+    const externalPatterns: InjectionPattern[] = config.patterns.map((p: ConfigPattern) => ({
       id: p.id,
       category: p.category as InjectionCategory,
       severity: p.severity as InjectionSeverity,

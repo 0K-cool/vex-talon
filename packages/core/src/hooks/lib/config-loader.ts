@@ -10,7 +10,7 @@
 
 import { existsSync, readFileSync, statSync } from 'fs';
 import { join, dirname } from 'path';
-import { CONFIG_DIR, TALON_DIR } from './talon-paths';
+import { CONFIG_DIR } from './talon-paths';
 
 // ============================================================================
 // Types
