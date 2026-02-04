@@ -211,6 +211,32 @@
       transform: rotate(180deg);
     }
 
+    /* Collapsed sidebar header - stack 0K vertically with chevron to the right */
+    .sidebar.collapsed .sidebar-header {
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 8px;
+      gap: 4px;
+    }
+
+    .sidebar.collapsed .sidebar-brand {
+      justify-content: center;
+    }
+
+    .sidebar.collapsed .sidebar-title {
+      justify-content: center;
+    }
+
+    /* Stack 0 and K vertically when collapsed */
+    .sidebar.collapsed .brand-0k {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.1;
+      font-size: 14px;
+    }
+
     .sidebar-nav {
       flex: 1;
       padding: 12px 8px;
