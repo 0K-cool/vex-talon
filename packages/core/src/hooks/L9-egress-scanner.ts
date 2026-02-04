@@ -36,7 +36,7 @@ import {
   getAuditLogPath,
   getStateFilePath,
 } from './lib/talon-paths';
-import { atomicWriteFileSync, atomicUpdateJsonFile, readJsonFileSync } from './lib/atomic-file';
+import { atomicUpdateJsonFile, readJsonFileSync } from './lib/atomic-file';
 import { checkCircuit, recordSuccess, recordFailure } from './lib/circuit-breaker';
 
 const HOOK_NAME = 'L9-egress-scanner';
@@ -453,7 +453,8 @@ async function main() {
     process.exit(0);
   } catch (error) {
     recordFailure(HOOK_NAME, error instanceof Error ? error.message : 'Unknown error');
-    process.exit(0);
+    // Fail-closed: block operation if hook crashes (security-first)
+    process.exit(2);
   }
 }
 

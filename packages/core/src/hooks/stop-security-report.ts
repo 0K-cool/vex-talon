@@ -471,7 +471,7 @@ function generateHTML(events: SecurityEvent[], sessionId?: string): string {
       <div class="logo">🦖⚡</div>
       <div>
         <h1>Vex-Talon Security Report</h1>
-        <div class="meta">Session: ${sessionId || 'All sessions'}</div>
+        <div class="meta">Session: ${escapeHtml(sessionId || 'All sessions')}</div>
       </div>
       <div class="meta">${new Date().toLocaleString()}</div>
     </header>
@@ -539,7 +539,7 @@ function generateHTML(events: SecurityEvent[], sessionId?: string): string {
             ${e.filePath ? `<div class="detail-row"><span class="detail-label">File</span><span class="detail-value">${escapeHtml(e.filePath)}</span></div>` : ''}
             ${e.command ? `<div class="detail-row"><span class="detail-label">Command</span><span class="detail-value">${escapeHtml(e.command)}</span></div>` : ''}
             ${e.decision ? `<div class="detail-row"><span class="detail-label">Decision</span><span class="detail-value">${escapeHtml(e.decision)}</span></div>` : ''}
-            <div class="detail-row"><span class="detail-label">Timestamp</span><span class="detail-value">${e.timestamp}</span></div>
+            <div class="detail-row"><span class="detail-label">Timestamp</span><span class="detail-value">${escapeHtml(e.timestamp)}</span></div>
             <pre>${escapeHtml(JSON.stringify(e.details, null, 2))}</pre>
           </div>
         </div>

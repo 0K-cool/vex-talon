@@ -647,7 +647,8 @@ async function main() {
   } catch (error) {
     recordFailure(HOOK_NAME, String(error));
     console.error(`[Governor L1] Error: ${error}`);
-    process.exit(0);
+    // Fail-closed: block operation if hook crashes (security-first)
+    process.exit(2);
   }
 }
 

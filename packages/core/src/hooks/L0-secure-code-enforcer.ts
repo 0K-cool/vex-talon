@@ -538,7 +538,8 @@ async function main() {
 
     process.exit(0);
   } catch {
-    process.exit(0);
+    // Fail-closed: block operation if hook crashes (security-first)
+    process.exit(2);
   }
 }
 

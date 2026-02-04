@@ -8,8 +8,9 @@
  * @date 2026-02-04
  */
 
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { getStateFilePath, ensureDirectories } from './talon-paths';
+import { atomicWriteFileSync } from './atomic-file';
 
 // ============================================================================
 // Types
@@ -75,7 +76,7 @@ function saveState(hookName: string, state: CircuitState): void {
   try {
     ensureDirectories();
     const statePath = getStateFilePath(hookName, 'circuit.json');
-    writeFileSync(statePath, JSON.stringify(state, null, 2));
+    atomicWriteFileSync(statePath, JSON.stringify(state, null, 2));
   } catch {
     // Silent fail
   }
