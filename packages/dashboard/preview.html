@@ -43,10 +43,11 @@
       /* Layout-only overrides - accent colors come from data-accent */
       --zerok-content-bg: #2a2a2a;    /* Same as sidebar - no dark backdrop */
       --zerok-card: #151515;          /* Darker widgets to match 0din */
-      --zerok-card-border: 1px solid #333333;  /* Subtle border */
+      --zerok-card-border: 2px solid #444444;  /* Thicker grey border like 0din */
       --zerok-card-hover: #1a1a1a;
-      --zerok-sidebar-hover: #333333; /* Lighter hover to match 0din */
-      --zerok-sidebar-active: #383838; /* Solid lighter gray for selection */
+      --zerok-sidebar-hover: #252525; /* Darker hover */
+      --zerok-sidebar-active: #222222; /* Darker than sidebar #2a2a2a, like 0din */
+      --zerok-settings-bg: #222222;   /* Settings section matches selector */
       --zerok-show-topbar: none;      /* Hide top bar */
       --zerok-content-padding: 16px;  /* More padding without top bar */
     }
@@ -756,6 +757,11 @@
       margin: 4px 0;
       background: var(--zerok-card);
       border-radius: 6px;
+    }
+
+    /* Minimal theme: settings background matches selector color */
+    [data-theme="minimal"] .settings-group {
+      background: var(--zerok-settings-bg, #222222);
     }
 
     .settings-label {
