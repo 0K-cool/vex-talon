@@ -13,7 +13,6 @@
       --zerok-primary: #c2703c;       /* Fallback */
       --zerok-primary-hover: #d4844a;
       --zerok-accent: #d4844a;
-      --zerok-sidebar-active: rgba(194, 112, 60, 0.15);
       --zerok-bg: #2a2a2a;            /* Lighter charcoal to match 0din */
       --zerok-bg-alt: #2d2d2d;
       --zerok-sidebar: #2a2a2a;
@@ -21,8 +20,8 @@
       --zerok-card: #2a2a2a;
       --zerok-card-border: none;      /* No border on default theme */
       --zerok-card-hover: #222222;
-      --zerok-sidebar-hover: #222222;
-      --zerok-sidebar-active: rgba(194, 112, 60, 0.15);
+      --zerok-sidebar-hover: #1a1a1a; /* Slightly darker on hover */
+      --zerok-sidebar-active: #1a1a1a; /* Neutral dark for selection (like 0din) */
       --zerok-text: #ffffff;
       --zerok-text-muted: #a0a0a0;
       --zerok-text-dim: #666666;
@@ -53,45 +52,35 @@
     }
 
     /* ========== ACCENT COLORS ========== */
+    /* Note: sidebar-active is neutral gray in both themes (like 0din) */
     [data-accent="orange"] {
       --zerok-primary: #c2703c;
       --zerok-primary-hover: #d4844a;
       --zerok-accent: #d4844a;
-      --zerok-sidebar-active: rgba(194, 112, 60, 0.15);
     }
 
     [data-accent="red"] {
       --zerok-primary: #dc2626;
       --zerok-primary-hover: #ef4444;
       --zerok-accent: #ef4444;
-      --zerok-sidebar-active: rgba(220, 38, 38, 0.15);
     }
 
     [data-accent="blue"] {
       --zerok-primary: #3b82f6;
       --zerok-primary-hover: #60a5fa;
       --zerok-accent: #60a5fa;
-      --zerok-sidebar-active: rgba(59, 130, 246, 0.15);
     }
 
     [data-accent="green"] {
       --zerok-primary: #22c55e;
       --zerok-primary-hover: #4ade80;
       --zerok-accent: #4ade80;
-      --zerok-sidebar-active: rgba(34, 197, 94, 0.15);
     }
 
     [data-accent="purple"] {
       --zerok-primary: #8b5cf6;
       --zerok-primary-hover: #a78bfa;
       --zerok-accent: #a78bfa;
-      --zerok-sidebar-active: rgba(139, 92, 246, 0.15);
-    }
-
-    /* Minimal theme sidebar overrides (higher specificity to beat accent colors) */
-    [data-theme="minimal"][data-accent] {
-      --zerok-sidebar-active: #383838;
-      --zerok-sidebar-hover: #333333;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
