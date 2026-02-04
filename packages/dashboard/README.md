@@ -61,6 +61,34 @@ Preferences persist automatically:
 - `zerok-theme` - Layout theme (default/minimal)
 - `zerok-accent` - Accent color (orange/red/blue/green/purple)
 
+## Adding New Widgets
+
+**Spacing Convention (IMPORTANT):**
+
+All widget container rows MUST use consistent spacing:
+- `gap: 6px` - between widgets horizontally
+- `margin-bottom: 6px` - between rows vertically
+
+```css
+/* 3-column row */
+.widget-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+/* 2-column row */
+.two-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+```
+
+When adding new widget rows, always include both `gap` and `margin-bottom` properties.
+
 ## Customizing Branding
 
 Update the sidebar brand for your project:
@@ -103,6 +131,11 @@ Open `preview.html` in a browser. Use Settings > Theme and Accent to preview com
 - Stat cards, widget grid, event lists
 - Theme/accent persistence via localStorage
 - CSS variables with `--zerok-*` prefix
+- **Chart.js integration** with dynamic accent colors:
+  - Area chart with gradient shading
+  - Radar/spider chart
+  - Donut chart with center overlay
+- Documented spacing convention for widget rows
 
 ## Roadmap (Future)
 

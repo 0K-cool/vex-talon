@@ -499,7 +499,16 @@
       height: 24px;
     }
 
-    /* Widget Grid */
+    /* ==========================================================================
+       WIDGET LAYOUTS - Spacing Convention
+       ==========================================================================
+       All widget container rows MUST use:
+       - gap: 6px (between widgets horizontally)
+       - margin-bottom: 6px (between rows vertically)
+       This ensures consistent spacing throughout the dashboard.
+       ========================================================================== */
+
+    /* Widget Grid - 3 columns */
     .widget-grid {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
@@ -671,7 +680,7 @@
       font-family: var(--zerok-font-mono);
     }
 
-    /* Two column layout */
+    /* Two column layout - follows spacing convention (see WIDGET LAYOUTS above) */
     .two-columns {
       display: grid;
       grid-template-columns: 1fr 1fr;
