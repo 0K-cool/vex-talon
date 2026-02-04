@@ -43,9 +43,11 @@
     [data-theme="minimal"] {
       /* Layout-only overrides - accent colors come from data-accent */
       --zerok-content-bg: #2a2a2a;    /* Same as sidebar - no dark backdrop */
-      --zerok-card: #1e1e1e;          /* Darker widgets */
-      --zerok-card-border: 2px solid #3a3a3a;  /* Thin grey border */
-      --zerok-card-hover: #252525;
+      --zerok-card: #151515;          /* Darker widgets to match 0din */
+      --zerok-card-border: 1px solid #333333;  /* Subtle border */
+      --zerok-card-hover: #1a1a1a;
+      --zerok-sidebar-hover: #333333; /* Lighter hover to match 0din */
+      --zerok-sidebar-active: #383838; /* Solid lighter gray for selection */
       --zerok-show-topbar: none;      /* Hide top bar */
       --zerok-content-padding: 16px;  /* More padding without top bar */
     }
@@ -84,6 +86,12 @@
       --zerok-primary-hover: #a78bfa;
       --zerok-accent: #a78bfa;
       --zerok-sidebar-active: rgba(139, 92, 246, 0.15);
+    }
+
+    /* Minimal theme sidebar overrides (higher specificity to beat accent colors) */
+    [data-theme="minimal"][data-accent] {
+      --zerok-sidebar-active: #383838;
+      --zerok-sidebar-hover: #333333;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -230,7 +238,7 @@
     }
 
     .nav-item.active {
-      background: #1a1a1a;  /* Slightly darker than sidebar #222222 */
+      background: var(--zerok-sidebar-active);
       color: var(--zerok-text);
     }
 
