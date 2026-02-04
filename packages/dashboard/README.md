@@ -139,16 +139,18 @@ The matrix supports optional connector lines (DetectIQ style) that visually link
 - Persists via localStorage (`zerok-connectors`)
 
 ```css
-/* Connector line styling */
+/* Connector line styling - unified grey color */
 [data-connectors="true"] .tactic-column::before {
-  /* Vertical line - accent color */
-  background: var(--zerok-primary);
-  opacity: 0.6;
+  /* Vertical line */
+  background: var(--zerok-text-muted);
+  width: 2px;
+  opacity: 0.5;
 }
 
 [data-connectors="true"] .technique-cell::before {
-  /* Horizontal connector - light grey */
+  /* Horizontal connector */
   background: var(--zerok-text-muted);
+  width: 2px;
   opacity: 0.5;
 }
 ```
@@ -241,8 +243,9 @@ Open `preview.html` in a browser. Use Settings > Theme and Accent to preview com
   - Square corners for matrix aesthetic
   - Switchable framework tabs
   - **Optional connector lines** (DetectIQ style):
-    - Vertical accent-colored line on left of each column
-    - Horizontal grey lines connecting to technique cells
+    - Unified grey color for both vertical and horizontal lines
+    - Vertical line on left connects all techniques in column
+    - Horizontal lines branch from vertical to each technique cell
     - Toggle via "Lines" button with localStorage persistence
 
 ## Roadmap (Future)

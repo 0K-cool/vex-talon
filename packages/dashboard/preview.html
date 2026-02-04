@@ -825,12 +825,12 @@
     [data-connectors="true"] .tactic-column::before {
       content: '';
       position: absolute;
-      top: 32px;           /* Start below the header */
+      top: 48px;           /* Start at first technique cell center */
       left: 3px;           /* Left edge of column */
-      width: 3px;          /* Visible width */
-      height: calc(100% - 36px);
-      background: var(--zerok-primary);
-      opacity: 0.6;        /* More visible */
+      width: 2px;          /* Same width as horizontal lines */
+      height: calc(100% - 66px);  /* End at last technique center */
+      background: var(--zerok-text-muted);  /* Same grey as horizontal lines */
+      opacity: 0.5;        /* Same opacity as horizontal lines */
       z-index: 0;
     }
 
