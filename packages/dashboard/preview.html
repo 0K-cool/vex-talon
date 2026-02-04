@@ -757,42 +757,6 @@
     .framework-stat-dot.partial { background: color-mix(in srgb, var(--zerok-primary) 50%, var(--zerok-border)); }
     .framework-stat-dot.none { background: var(--zerok-border); }
 
-    /* Connector toggle button */
-    .connector-toggle {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 8px;
-      border: 1px solid var(--zerok-border);
-      border-radius: 4px;
-      background: transparent;
-      color: var(--zerok-text-muted);
-      font-size: 10px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .connector-toggle:hover {
-      border-color: var(--zerok-primary);
-      color: var(--zerok-text);
-    }
-
-    .connector-toggle.active {
-      border-color: var(--zerok-primary);
-      background: color-mix(in srgb, var(--zerok-primary) 15%, transparent);
-      color: var(--zerok-primary);
-    }
-
-    .connector-toggle-icon {
-      width: 14px;
-      height: 14px;
-      opacity: 0.7;
-    }
-
-    .connector-toggle.active .connector-toggle-icon {
-      opacity: 1;
-    }
-
     /* ATT&CK Navigator Style Matrix */
     .matrix-container {
       display: none;
@@ -817,44 +781,6 @@
       gap: 2px;
       min-width: 140px;
       flex: 1;
-      position: relative;
-    }
-
-    /* Optional connector lines (enabled via data-connectors="true") */
-    /* Bracket-style connectors - no tails, connects cell to cell */
-
-    [data-connectors="true"] .technique-cell {
-      position: relative;
-      z-index: 1;
-      margin-left: 14px;   /* Space for connector line on left */
-    }
-
-    /* Horizontal connector from each cell to vertical line */
-    [data-connectors="true"] .technique-cell::before {
-      content: '';
-      position: absolute;
-      top: 50%;            /* Center vertically on the cell */
-      left: -10px;         /* Start at vertical line position */
-      width: 10px;         /* Connect to cell edge */
-      height: 2px;
-      background: var(--zerok-text-muted);
-      opacity: 0.5;
-    }
-
-    /* Vertical segment connecting to cell above (skip first cell) */
-    [data-connectors="true"] .technique-cell + .technique-cell::after {
-      content: '';
-      position: absolute;
-      top: calc(-50% - 2px);   /* Reach previous cell's center (up through gap) */
-      bottom: 50%;             /* End at this cell's center */
-      left: -10px;             /* Same X position as horizontal line */
-      width: 2px;              /* Same thickness as horizontal line */
-      background: var(--zerok-text-muted);  /* Same color as horizontal line */
-      opacity: 0.5;            /* Same opacity as horizontal line */
-    }
-
-    [data-connectors="true"] .tactic-header {
-      margin-left: 14px;   /* Align header with cells */
     }
 
     /* Tactic Header */
@@ -1607,15 +1533,6 @@
                   <button class="framework-tab" onclick="switchFramework('owasp-llm')">OWASP LLM</button>
                   <button class="framework-tab" onclick="switchFramework('owasp-agentic')">OWASP Agentic</button>
                 </div>
-                <button class="connector-toggle" id="connectorToggle" onclick="toggleConnectors()" title="Toggle connector lines">
-                  <svg class="connector-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="12" y1="3" x2="12" y2="21"/>
-                    <circle cx="12" cy="6" r="2"/>
-                    <circle cx="12" cy="12" r="2"/>
-                    <circle cx="12" cy="18" r="2"/>
-                  </svg>
-                  <span>Lines</span>
-                </button>
               </div>
               <div class="framework-stats">
                 <div class="framework-stat">
@@ -1634,7 +1551,7 @@
             </div>
 
             <!-- MITRE ATLAS Matrix - Navigator Style -->
-            <div id="matrix-atlas" class="matrix-container active" data-connectors="false">
+            <div id="matrix-atlas" class="matrix-container active" >
               <div class="matrix-table">
                 <!-- Reconnaissance -->
                 <div class="tactic-column">
@@ -1759,7 +1676,7 @@
             </div>
 
             <!-- OWASP LLM Top 10 Matrix - Navigator Style -->
-            <div id="matrix-owasp-llm" class="matrix-container" data-connectors="false">
+            <div id="matrix-owasp-llm" class="matrix-container" >
               <div class="matrix-table">
                 <div class="tactic-column">
                   <div class="tactic-header">Injection</div>
@@ -1835,7 +1752,7 @@
             </div>
 
             <!-- OWASP Agentic Top 10 Matrix - Navigator Style -->
-            <div id="matrix-owasp-agentic" class="matrix-container" data-connectors="false">
+            <div id="matrix-owasp-agentic" class="matrix-container" >
               <div class="matrix-table">
                 <div class="tactic-column">
                   <div class="tactic-header">Identity</div>
@@ -1965,40 +1882,12 @@
       document.getElementById('matrix-' + framework).classList.add('active');
     }
 
-    // Connector Lines Toggle
-    function toggleConnectors() {
-      const matrices = document.querySelectorAll('.matrix-container');
-      const toggle = document.getElementById('connectorToggle');
-      const currentState = matrices[0].getAttribute('data-connectors') === 'true';
-      const newState = !currentState;
-
-      // Update all matrices
-      matrices.forEach(matrix => {
-        matrix.setAttribute('data-connectors', newState);
-      });
-
-      // Update toggle button state
-      toggle.classList.toggle('active', newState);
-
-      // Save preference
-      localStorage.setItem('zerok-connectors', newState);
-    }
-
     // Load saved preferences on page load
     (function() {
       const savedTheme = localStorage.getItem('zerok-theme') || 'default';
       const savedAccent = localStorage.getItem('zerok-accent') || 'orange';
-      const savedConnectors = localStorage.getItem('zerok-connectors') === 'true';
       setTheme(savedTheme);
       setAccent(savedAccent);
-
-      // Apply connector preference
-      if (savedConnectors) {
-        document.querySelectorAll('.matrix-container').forEach(matrix => {
-          matrix.setAttribute('data-connectors', 'true');
-        });
-        document.getElementById('connectorToggle').classList.add('active');
-      }
     })();
 
     // ========== CHART.JS INITIALIZATION ==========

@@ -130,31 +130,6 @@ The dashboard includes an ATT&CK Navigator-style matrix for security framework c
 
 **Note:** The matrix uses placeholder data. In production, populate with actual detection rule coverage from your backend.
 
-**Optional Connector Lines:**
-
-The matrix supports optional connector lines (DetectIQ style) that visually link techniques in each column:
-- **Vertical line** (accent color) runs down the left side of each tactic column
-- **Horizontal lines** (light grey) branch from the vertical line to each technique cell
-- Toggle via the "Lines" button in the widget header
-- Persists via localStorage (`zerok-connectors`)
-
-```css
-/* Connector line styling - unified grey color */
-[data-connectors="true"] .tactic-column::before {
-  /* Vertical line */
-  background: var(--zerok-text-muted);
-  width: 2px;
-  opacity: 0.5;
-}
-
-[data-connectors="true"] .technique-cell::before {
-  /* Horizontal connector */
-  background: var(--zerok-text-muted);
-  width: 2px;
-  opacity: 0.5;
-}
-```
-
 ## Customizing Branding
 
 Update the sidebar brand for your project:
@@ -242,11 +217,6 @@ Open `preview.html` in a browser. Use Settings > Theme and Accent to preview com
   - Accent-based coverage colors (adapts to theme)
   - Square corners for matrix aesthetic
   - Switchable framework tabs
-  - **Optional connector lines** (DetectIQ style):
-    - Unified grey color for both vertical and horizontal lines
-    - Vertical line on left connects all techniques in column
-    - Horizontal lines branch from vertical to each technique cell
-    - Toggle via "Lines" button with localStorage persistence
 
 ## Roadmap (Future)
 
