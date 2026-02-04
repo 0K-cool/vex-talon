@@ -27,8 +27,8 @@
   "configuration": {
     "enabledLayers": {
       "type": "array",
-      "default": ["L0", "L4", "L5", "L9", "L14", "L17"],
-      "description": "Security layers to enable. Currently ported: L0, L4, L5, L9, L14, L17"
+      "default": ["L0", "L1", "L2", "L3", "L4", "L5", "L7", "L9", "L12", "L14", "L17", "L19"],
+      "description": "Security layers to enable. All 12 ported layers enabled by default."
     },
     "auditLogDir": {
       "type": "string",
@@ -58,7 +58,8 @@
     "L12": "Least Privilege (SessionStart - LOG)",
     "L14": "Supply Chain Scanner (PostToolUse - WARN)",
     "L17": "Spend Alerting (PostToolUse - ALERT)",
-    "L19": "Skill Scanner (PreToolUse - BLOCK)"
+    "L19": "Skill Scanner (PreToolUse - BLOCK)",
+    "STOP": "Security Report (Stop - REPORT)"
   },
   "optionalLayers": {
     "L11": "Leash Kernel Sandbox (requires Leash binary)",

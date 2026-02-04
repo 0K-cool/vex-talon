@@ -52,7 +52,7 @@ Generate a comprehensive security assessment report for the current project.
 
 **MITRE ATLAS:**
 - AML.T0048 Prompt Injection: ✅ 8 rules
-- AML.T0049 Jailbreak: ✅ 2 rules
+- AML.T0051 LLM Prompt Injection: ✅ 2 rules
 - AML.T0051 Data Leakage: ✅ 4 rules
 - ...
 
