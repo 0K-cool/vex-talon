@@ -89,6 +89,70 @@ All widget container rows MUST use consistent spacing:
 
 When adding new widget rows, always include both `gap` and `margin-bottom` properties.
 
+## Framework Coverage Matrix
+
+The dashboard includes an ATT&CK Navigator-style matrix for security framework coverage visualization.
+
+**Supported Frameworks:**
+- MITRE ATLAS (AI/ML attack techniques)
+- OWASP LLM Top 10 (2025)
+- OWASP Agentic Top 10 (2026)
+
+**Design Conventions:**
+
+| Element | Style | Rationale |
+|---------|-------|-----------|
+| Container | Square corners (`border-radius: 0`) | Matches matrix/grid aesthetic |
+| Tactic headers | Square corners, accent color background | Clear column identification |
+| Technique cells | Square corners, left border accent | MITRE Navigator style |
+| Coverage colors | Accent-based (not green/yellow) | Consistent with theme system |
+
+**Coverage Color Mapping:**
+```css
+/* Covered - full accent color */
+.technique-cell.covered {
+  background: color-mix(in srgb, var(--zerok-primary) 35%, var(--zerok-card));
+  border-left: 3px solid var(--zerok-primary);
+}
+
+/* Partial - lighter accent */
+.technique-cell.partial {
+  background: color-mix(in srgb, var(--zerok-primary) 15%, var(--zerok-card));
+  border-left: 3px solid color-mix(in srgb, var(--zerok-primary) 50%, var(--zerok-border));
+}
+
+/* No coverage - neutral */
+.technique-cell.none {
+  background: var(--zerok-bg-alt);
+  border-left: 3px solid var(--zerok-border);
+}
+```
+
+**Note:** The matrix uses placeholder data. In production, populate with actual detection rule coverage from your backend.
+
+**Optional Connector Lines:**
+
+The matrix supports optional connector lines (DetectIQ style) that visually link techniques in each column:
+- **Vertical line** (accent color) runs down the left side of each tactic column
+- **Horizontal lines** (light grey) branch from the vertical line to each technique cell
+- Toggle via the "Lines" button in the widget header
+- Persists via localStorage (`zerok-connectors`)
+
+```css
+/* Connector line styling */
+[data-connectors="true"] .tactic-column::before {
+  /* Vertical line - accent color */
+  background: var(--zerok-primary);
+  opacity: 0.6;
+}
+
+[data-connectors="true"] .technique-cell::before {
+  /* Horizontal connector - light grey */
+  background: var(--zerok-text-muted);
+  opacity: 0.5;
+}
+```
+
 ## Customizing Branding
 
 Update the sidebar brand for your project:
@@ -171,6 +235,15 @@ Open `preview.html` in a browser. Use Settings > Theme and Accent to preview com
   - Radar/spider chart
   - Donut chart with center overlay
 - Documented spacing convention for widget rows
+- **Framework Coverage Matrix** (ATT&CK Navigator style):
+  - MITRE ATLAS, OWASP LLM, OWASP Agentic frameworks
+  - Accent-based coverage colors (adapts to theme)
+  - Square corners for matrix aesthetic
+  - Switchable framework tabs
+  - **Optional connector lines** (DetectIQ style):
+    - Vertical accent-colored line on left of each column
+    - Horizontal grey lines connecting to technique cells
+    - Toggle via "Lines" button with localStorage persistence
 
 ## Roadmap (Future)
 

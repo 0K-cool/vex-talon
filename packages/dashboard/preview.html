@@ -686,6 +686,258 @@
       margin-bottom: 6px;
     }
 
+    /* Full width layout - for large widgets */
+    .full-width {
+      margin-bottom: 6px;
+    }
+
+    /* Framework Coverage Matrix Widget */
+    .framework-matrix {
+      background: var(--zerok-card);
+      border: var(--zerok-card-border);
+      border-radius: 0;  /* Square corners to match matrix style */
+      padding: 16px;
+    }
+
+    .framework-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .framework-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--zerok-bg-alt);
+      padding: 3px;
+      border-radius: 6px;
+    }
+
+    .framework-tab {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--zerok-text-muted);
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .framework-tab:hover {
+      color: var(--zerok-text);
+    }
+
+    .framework-tab.active {
+      background: var(--zerok-primary);
+      color: white;
+    }
+
+    .framework-stats {
+      display: flex;
+      gap: 16px;
+      font-size: 11px;
+    }
+
+    .framework-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .framework-stat-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+    }
+
+    .framework-stat-dot.covered { background: var(--zerok-primary); }
+    .framework-stat-dot.partial { background: color-mix(in srgb, var(--zerok-primary) 50%, var(--zerok-border)); }
+    .framework-stat-dot.none { background: var(--zerok-border); }
+
+    /* Connector toggle button */
+    .connector-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border: 1px solid var(--zerok-border);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--zerok-text-muted);
+      font-size: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .connector-toggle:hover {
+      border-color: var(--zerok-primary);
+      color: var(--zerok-text);
+    }
+
+    .connector-toggle.active {
+      border-color: var(--zerok-primary);
+      background: color-mix(in srgb, var(--zerok-primary) 15%, transparent);
+      color: var(--zerok-primary);
+    }
+
+    .connector-toggle-icon {
+      width: 14px;
+      height: 14px;
+      opacity: 0.7;
+    }
+
+    .connector-toggle.active .connector-toggle-icon {
+      opacity: 1;
+    }
+
+    /* ATT&CK Navigator Style Matrix */
+    .matrix-container {
+      display: none;
+      overflow-x: auto;
+    }
+
+    .matrix-container.active {
+      display: block;
+    }
+
+    /* Navigator-style table layout */
+    .matrix-table {
+      display: flex;
+      gap: 2px;
+      min-width: max-content;
+    }
+
+    /* Tactic Column */
+    .tactic-column {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 140px;
+      flex: 1;
+      position: relative;
+    }
+
+    /* Optional connector lines (enabled via data-connectors="true") */
+    /* Positioned to the LEFT of technique boxes, like DetectIQ mockup */
+    [data-connectors="true"] .tactic-column::before {
+      content: '';
+      position: absolute;
+      top: 32px;           /* Start below the header */
+      left: 3px;           /* Left edge of column */
+      width: 3px;          /* Visible width */
+      height: calc(100% - 36px);
+      background: var(--zerok-primary);
+      opacity: 0.6;        /* More visible */
+      z-index: 0;
+    }
+
+    [data-connectors="true"] .technique-cell {
+      position: relative;
+      z-index: 1;
+      margin-left: 14px;   /* Space for connector line on left */
+    }
+
+    /* Horizontal connector lines from vertical line to technique boxes */
+    [data-connectors="true"] .technique-cell::before {
+      content: '';
+      position: absolute;
+      top: 50%;            /* Center vertically on the cell */
+      left: -11px;         /* Start from the vertical line */
+      width: 8px;          /* Length of horizontal connector */
+      height: 2px;
+      background: var(--zerok-text-muted);  /* Light grey like framework labels */
+      opacity: 0.5;
+    }
+
+    [data-connectors="true"] .tactic-header {
+      margin-left: 14px;   /* Align header with cells */
+    }
+
+    /* Tactic Header */
+    .tactic-header {
+      background: var(--zerok-primary);
+      color: white;
+      padding: 8px 6px;
+      font-size: 10px;
+      font-weight: 600;
+      text-align: center;
+      border-radius: 0;  /* Square corners */
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Technique Cell */
+    .technique-cell {
+      padding: 6px 5px;
+      font-size: 9px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border-radius: 0;  /* Square corners */
+      min-height: 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .technique-cell:hover {
+      filter: brightness(1.15);
+    }
+
+    /* Coverage colors - Accent-based theme */
+    .technique-cell.covered {
+      background: color-mix(in srgb, var(--zerok-primary) 35%, var(--zerok-card));
+      border-left: 3px solid var(--zerok-primary);
+    }
+
+    .technique-cell.partial {
+      background: color-mix(in srgb, var(--zerok-primary) 15%, var(--zerok-card));
+      border-left: 3px solid color-mix(in srgb, var(--zerok-primary) 50%, var(--zerok-border));
+    }
+
+    .technique-cell.none {
+      background: var(--zerok-bg-alt);
+      border-left: 3px solid var(--zerok-border);
+      opacity: 0.5;
+    }
+
+    .technique-id {
+      font-weight: 600;
+      color: var(--zerok-text);
+      font-size: 9px;
+    }
+
+    .technique-name {
+      color: var(--zerok-text-muted);
+      font-size: 8px;
+      line-height: 1.2;
+      margin-top: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .technique-count {
+      font-size: 8px;
+      font-weight: 600;
+      color: var(--zerok-primary);
+      margin-top: 2px;
+    }
+
+    /* Covered technique shows accent color on count */
+    .technique-cell.covered .technique-count {
+      color: var(--zerok-primary);
+    }
+
+    .technique-cell.partial .technique-count {
+      color: var(--zerok-text-muted);
+    }
+
     /* Bar chart mock */
     .bar-chart {
       display: flex;
@@ -1342,6 +1594,318 @@
             </div>
           </div>
         </div>
+
+        <!-- Framework Coverage Matrix -->
+        <div class="full-width">
+          <div class="framework-matrix">
+            <div class="framework-header">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="widget-title">Framework Coverage</span>
+                <div class="framework-tabs">
+                  <button class="framework-tab active" onclick="switchFramework('atlas')">MITRE ATLAS</button>
+                  <button class="framework-tab" onclick="switchFramework('owasp-llm')">OWASP LLM</button>
+                  <button class="framework-tab" onclick="switchFramework('owasp-agentic')">OWASP Agentic</button>
+                </div>
+                <button class="connector-toggle" id="connectorToggle" onclick="toggleConnectors()" title="Toggle connector lines">
+                  <svg class="connector-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="3" x2="12" y2="21"/>
+                    <circle cx="12" cy="6" r="2"/>
+                    <circle cx="12" cy="12" r="2"/>
+                    <circle cx="12" cy="18" r="2"/>
+                  </svg>
+                  <span>Lines</span>
+                </button>
+              </div>
+              <div class="framework-stats">
+                <div class="framework-stat">
+                  <span class="framework-stat-dot covered"></span>
+                  <span style="color: var(--zerok-text-muted);">Covered</span>
+                </div>
+                <div class="framework-stat">
+                  <span class="framework-stat-dot partial"></span>
+                  <span style="color: var(--zerok-text-muted);">Partial</span>
+                </div>
+                <div class="framework-stat">
+                  <span class="framework-stat-dot none"></span>
+                  <span style="color: var(--zerok-text-muted);">No Coverage</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- MITRE ATLAS Matrix - Navigator Style -->
+            <div id="matrix-atlas" class="matrix-container active" data-connectors="false">
+              <div class="matrix-table">
+                <!-- Reconnaissance -->
+                <div class="tactic-column">
+                  <div class="tactic-header">Reconnaissance</div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">AML.T0000</span>
+                    <span class="technique-name">Search for Victim's ML</span>
+                    <span class="technique-count">3 rules</span>
+                  </div>
+                  <div class="technique-cell partial">
+                    <span class="technique-id">AML.T0001</span>
+                    <span class="technique-name">Acquire Public ML Data</span>
+                    <span class="technique-count">1 rule</span>
+                  </div>
+                </div>
+                <!-- ML Attack Staging -->
+                <div class="tactic-column">
+                  <div class="tactic-header">ML Attack Staging</div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">AML.T0002</span>
+                    <span class="technique-name">Train Proxy Model</span>
+                    <span class="technique-count">4 rules</span>
+                  </div>
+                  <div class="technique-cell none">
+                    <span class="technique-id">AML.T0003</span>
+                    <span class="technique-name">Craft Adversarial Data</span>
+                  </div>
+                  <div class="technique-cell partial">
+                    <span class="technique-id">AML.T0004</span>
+                    <span class="technique-name">Poison Training Data</span>
+                    <span class="technique-count">2 rules</span>
+                  </div>
+                </div>
+                <!-- Initial Access -->
+                <div class="tactic-column">
+                  <div class="tactic-header">Initial Access</div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">AML.T0010</span>
+                    <span class="technique-name">ML Supply Chain</span>
+                    <span class="technique-count">5 rules</span>
+                  </div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">AML.T0011</span>
+                    <span class="technique-name">Spearphishing</span>
+                    <span class="technique-count">3 rules</span>
+                  </div>
+                </div>
+                <!-- ML Model Access -->
+                <div class="tactic-column">
+                  <div class="tactic-header">ML Model Access</div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">AML.T0020</span>
+                    <span class="technique-name">API Access to Model</span>
+                    <span class="technique-count">6 rules</span>
+                  </div>
+                  <div class="technique-cell partial">
+                    <span class="technique-id">AML.T0021</span>
+                    <span class="technique-name">Physical Access</span>
+                    <span class="technique-count">1 rule</span>
+                  </div>
+                </div>
+                <!-- Execution -->
+                <div class="tactic-column">
+                  <div class="tactic-header">Execution</div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">AML.T0048</span>
+                    <span class="technique-name">Prompt Injection</span>
+                    <span class="technique-count">8 rules</span>
+                  </div>
+                  <div class="technique-cell partial">
+                    <span class="technique-id">AML.T0049</span>
+                    <span class="technique-name">LLM Jailbreak</span>
+                    <span class="technique-count">2 rules</span>
+                  </div>
+                  <div class="technique-cell none">
+                    <span class="technique-id">AML.T0050</span>
+                    <span class="technique-name">Unsafe Code Gen</span>
+                  </div>
+                </div>
+                <!-- Evasion -->
+                <div class="tactic-column">
+                  <div class="tactic-header">Evasion</div>
+                  <div class="technique-cell partial">
+                    <span class="technique-id">AML.T0030</span>
+                    <span class="technique-name">Adversarial Example</span>
+                    <span class="technique-count">2 rules</span>
+                  </div>
+                  <div class="technique-cell none">
+                    <span class="technique-id">AML.T0031</span>
+                    <span class="technique-name">Model Evasion</span>
+                  </div>
+                </div>
+                <!-- Exfiltration -->
+                <div class="tactic-column">
+                  <div class="tactic-header">Exfiltration</div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">AML.T0051</span>
+                    <span class="technique-name">LLM Data Leakage</span>
+                    <span class="technique-count">4 rules</span>
+                  </div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">AML.T0052</span>
+                    <span class="technique-name">Model Extraction</span>
+                    <span class="technique-count">3 rules</span>
+                  </div>
+                </div>
+                <!-- Impact -->
+                <div class="tactic-column">
+                  <div class="tactic-header">Impact</div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">AML.T0053</span>
+                    <span class="technique-name">Denial of ML Service</span>
+                    <span class="technique-count">2 rules</span>
+                  </div>
+                  <div class="technique-cell partial">
+                    <span class="technique-id">AML.T0054</span>
+                    <span class="technique-name">Reputational Harm</span>
+                    <span class="technique-count">1 rule</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- OWASP LLM Top 10 Matrix - Navigator Style -->
+            <div id="matrix-owasp-llm" class="matrix-container" data-connectors="false">
+              <div class="matrix-table">
+                <div class="tactic-column">
+                  <div class="tactic-header">Injection</div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">LLM01</span>
+                    <span class="technique-name">Prompt Injection</span>
+                    <span class="technique-count">8 rules</span>
+                  </div>
+                </div>
+                <div class="tactic-column">
+                  <div class="tactic-header">Disclosure</div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">LLM02</span>
+                    <span class="technique-name">Sensitive Info</span>
+                    <span class="technique-count">4 rules</span>
+                  </div>
+                  <div class="technique-cell none">
+                    <span class="technique-id">LLM07</span>
+                    <span class="technique-name">System Prompt Leak</span>
+                  </div>
+                </div>
+                <div class="tactic-column">
+                  <div class="tactic-header">Supply Chain</div>
+                  <div class="technique-cell partial">
+                    <span class="technique-id">LLM03</span>
+                    <span class="technique-name">Supply Chain</span>
+                    <span class="technique-count">2 rules</span>
+                  </div>
+                </div>
+                <div class="tactic-column">
+                  <div class="tactic-header">Data Integrity</div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">LLM04</span>
+                    <span class="technique-name">Data Poisoning</span>
+                    <span class="technique-count">3 rules</span>
+                  </div>
+                  <div class="technique-cell partial">
+                    <span class="technique-id">LLM08</span>
+                    <span class="technique-name">Vector Weakness</span>
+                    <span class="technique-count">2 rules</span>
+                  </div>
+                </div>
+                <div class="tactic-column">
+                  <div class="tactic-header">Output</div>
+                  <div class="technique-cell partial">
+                    <span class="technique-id">LLM05</span>
+                    <span class="technique-name">Improper Output</span>
+                    <span class="technique-count">1 rule</span>
+                  </div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">LLM09</span>
+                    <span class="technique-name">Misinformation</span>
+                    <span class="technique-count">3 rules</span>
+                  </div>
+                </div>
+                <div class="tactic-column">
+                  <div class="tactic-header">Agency</div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">LLM06</span>
+                    <span class="technique-name">Excessive Agency</span>
+                    <span class="technique-count">5 rules</span>
+                  </div>
+                </div>
+                <div class="tactic-column">
+                  <div class="tactic-header">Resources</div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">LLM10</span>
+                    <span class="technique-name">Unbounded Consume</span>
+                    <span class="technique-count">4 rules</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- OWASP Agentic Top 10 Matrix - Navigator Style -->
+            <div id="matrix-owasp-agentic" class="matrix-container" data-connectors="false">
+              <div class="matrix-table">
+                <div class="tactic-column">
+                  <div class="tactic-header">Identity</div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">ASI01</span>
+                    <span class="technique-name">Agent Spoofing</span>
+                    <span class="technique-count">6 rules</span>
+                  </div>
+                  <div class="technique-cell none">
+                    <span class="technique-id">ASI09</span>
+                    <span class="technique-name">Human Impersonation</span>
+                  </div>
+                </div>
+                <div class="tactic-column">
+                  <div class="tactic-header">Tool Security</div>
+                  <div class="technique-cell partial">
+                    <span class="technique-id">ASI02</span>
+                    <span class="technique-name">Tool Misuse</span>
+                    <span class="technique-count">2 rules</span>
+                  </div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">ASI03</span>
+                    <span class="technique-name">Privilege Escalation</span>
+                    <span class="technique-count">4 rules</span>
+                  </div>
+                </div>
+                <div class="tactic-column">
+                  <div class="tactic-header">Dependencies</div>
+                  <div class="technique-cell partial">
+                    <span class="technique-id">ASI04</span>
+                    <span class="technique-name">Dependency Chain</span>
+                    <span class="technique-count">1 rule</span>
+                  </div>
+                </div>
+                <div class="tactic-column">
+                  <div class="tactic-header">Multi-Agent</div>
+                  <div class="technique-cell none">
+                    <span class="technique-id">ASI05</span>
+                    <span class="technique-name">Agent Collusion</span>
+                  </div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">ASI08</span>
+                    <span class="technique-name">Agent Comms</span>
+                    <span class="technique-count">3 rules</span>
+                  </div>
+                </div>
+                <div class="tactic-column">
+                  <div class="tactic-header">Memory</div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">ASI06</span>
+                    <span class="technique-name">Memory Poisoning</span>
+                    <span class="technique-count">5 rules</span>
+                  </div>
+                </div>
+                <div class="tactic-column">
+                  <div class="tactic-header">Intent</div>
+                  <div class="technique-cell partial">
+                    <span class="technique-id">ASI07</span>
+                    <span class="technique-name">Intent Subversion</span>
+                    <span class="technique-count">2 rules</span>
+                  </div>
+                  <div class="technique-cell covered">
+                    <span class="technique-id">ASI10</span>
+                    <span class="technique-name">Goal Drift</span>
+                    <span class="technique-count">4 rules</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   </div>
@@ -1385,12 +1949,55 @@
       localStorage.setItem('zerok-accent', color);
     }
 
+    // Framework Matrix Switcher
+    function switchFramework(framework) {
+      // Update tabs
+      document.querySelectorAll('.framework-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // Update matrix visibility
+      document.querySelectorAll('.matrix-container').forEach(matrix => {
+        matrix.classList.remove('active');
+      });
+      document.getElementById('matrix-' + framework).classList.add('active');
+    }
+
+    // Connector Lines Toggle
+    function toggleConnectors() {
+      const matrices = document.querySelectorAll('.matrix-container');
+      const toggle = document.getElementById('connectorToggle');
+      const currentState = matrices[0].getAttribute('data-connectors') === 'true';
+      const newState = !currentState;
+
+      // Update all matrices
+      matrices.forEach(matrix => {
+        matrix.setAttribute('data-connectors', newState);
+      });
+
+      // Update toggle button state
+      toggle.classList.toggle('active', newState);
+
+      // Save preference
+      localStorage.setItem('zerok-connectors', newState);
+    }
+
     // Load saved preferences on page load
     (function() {
       const savedTheme = localStorage.getItem('zerok-theme') || 'default';
       const savedAccent = localStorage.getItem('zerok-accent') || 'orange';
+      const savedConnectors = localStorage.getItem('zerok-connectors') === 'true';
       setTheme(savedTheme);
       setAccent(savedAccent);
+
+      // Apply connector preference
+      if (savedConnectors) {
+        document.querySelectorAll('.matrix-container').forEach(matrix => {
+          matrix.setAttribute('data-connectors', 'true');
+        });
+        document.getElementById('connectorToggle').classList.add('active');
+      }
     })();
 
     // ========== CHART.JS INITIALIZATION ==========
