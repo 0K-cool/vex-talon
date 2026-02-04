@@ -211,16 +211,17 @@
       transform: rotate(180deg);
     }
 
-    /* Collapsed sidebar header - stack 0K vertically with chevron to the right */
+    /* Collapsed sidebar header - center everything */
     .sidebar.collapsed .sidebar-header {
-      flex-direction: row;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 12px 8px;
-      gap: 4px;
+      padding: 12px 0;
+      gap: 6px;
     }
 
     .sidebar.collapsed .sidebar-brand {
+      width: 100%;
       justify-content: center;
     }
 
@@ -228,13 +229,17 @@
       justify-content: center;
     }
 
-    /* Stack 0 and K vertically when collapsed */
+    /* Stack 0 and K vertically when collapsed - keep original font size */
     .sidebar.collapsed .brand-0k {
       display: flex;
       flex-direction: column;
       align-items: center;
       line-height: 1.1;
-      font-size: 14px;
+    }
+
+    /* Center collapse button below the logo */
+    .sidebar.collapsed .collapse-btn {
+      margin: 0 auto;
     }
 
     .sidebar-nav {
