@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>0K Dashboard - SaaS Template</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Mono:wght@400;700&family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Mono:wght@400;700&family=Share+Tech+Mono&family=Orbitron:wght@400;700&family=Audiowide&family=Michroma&family=Oxanium:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     /* ========== THEME: Default (0K) ========== */
@@ -143,6 +143,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      margin-top: -2px; /* Lift text to align with chevron center */
     }
 
     .sidebar-title {
@@ -155,8 +156,9 @@
 
     .brand-0k {
       color: var(--zerok-text);
-      font-family: var(--zerok-font-mono);
-      font-weight: 600;
+      font-family: 'Orbitron', var(--zerok-font-mono);
+      font-weight: 700;
+      font-size: 18px;
     }
 
     .slashed-zero {
@@ -211,35 +213,48 @@
       transform: rotate(180deg);
     }
 
-    /* Collapsed sidebar header - center everything */
+    /* Collapsed sidebar header - center 0K + chevron together */
+    /* Collapsed sidebar header - 0K centered, chevron positioned beside */
     .sidebar.collapsed .sidebar-header {
-      flex-direction: column;
+      width: 100%;
+      display: flex;
       align-items: center;
       justify-content: center;
       padding: 12px 0;
-      gap: 6px;
+      position: relative;
     }
 
-    .sidebar.collapsed .sidebar-brand {
-      width: 100%;
-      justify-content: center;
-    }
-
+    .sidebar.collapsed .sidebar-brand,
     .sidebar.collapsed .sidebar-title {
-      justify-content: center;
+      display: contents;
     }
 
-    /* Stack 0 and K vertically when collapsed - keep original font size */
+    /* Keep 0K horizontal when collapsed - centered like icons below */
     .sidebar.collapsed .brand-0k {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      line-height: 1.1;
+      display: inline;
+      white-space: nowrap;
+      color: var(--zerok-primary); /* Accent color when collapsed */
+      font-size: 18px; /* Same size as expanded */
     }
 
-    /* Center collapse button below the logo */
+    .sidebar.collapsed .slashed-zero::after {
+      background: var(--zerok-primary); /* Match the accent color */
+    }
+
+    /* Chevron positioned absolutely to not affect 0K centering */
     .sidebar.collapsed .collapse-btn {
-      margin: 0 auto;
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%) rotate(180deg);
+      width: 14px;
+      height: 14px;
+      opacity: 0.4;
+      padding: 0;
+    }
+
+    .sidebar.collapsed .collapse-btn:hover {
+      opacity: 1;
     }
 
     .sidebar-nav {
