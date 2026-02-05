@@ -15,15 +15,7 @@
     "claude-code",
     "ai-security"
   ],
-  "hooks": {
-    "directory": "../packages/core/src/hooks"
-  },
-  "skills": {
-    "directory": "../skills"
-  },
-  "commands": {
-    "directory": "../commands"
-  },
+  "homepage": "https://github.com/0K-cool/vex-talon",
   "configuration": {
     "enabledLayers": {
       "type": "array",
