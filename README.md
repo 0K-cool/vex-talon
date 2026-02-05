@@ -226,30 +226,32 @@ Covers ASI01 (Agent Prompt Injection), ASI04 (Dependency Chain Attacks), ASI06 (
 
 ## Architecture
 
-```
-                         USER REQUEST
-                              |
-                    +---------+---------+
-                    |                   |
-               PreToolUse          PostToolUse
-               (PREVENT)            (DETECT)
-                    |                   |
-          +--------+-------+    +------+--------+
-          |   |   |   |    |    |   |   |   |   |
-         L0  L1  L3  L9  L14   L2  L4  L5  L7 L14
-         L19              pre   L17              post
-          |   |   |   |    |    |   |   |   |   |
-          v   v   v   v    v    v   v   v   v   v
-        BLOCK              BLOCK ALERT          WARN
-                    |                   |
-                    +---------+---------+
-                              |
-                         SESSION END
-                              |
-                     STOP: Security Report
-                              |
-                    HTML report with all events
-```
+<div align="center">
+<pre>
+                     USER REQUEST
+                          |
+                +---------+---------+
+                |                   |
+           PreToolUse          PostToolUse
+           (PREVENT)            (DETECT)
+                |                   |
+      +--------+-------+    +------+--------+
+      |   |   |   |    |    |   |   |   |   |
+     L0  L1  L3  L9  L14   L2  L4  L5  L7 L14
+     L19              pre   L17              post
+      |   |   |   |    |    |   |   |   |   |
+      v   v   v   v    v    v   v   v   v   v
+    BLOCK              BLOCK ALERT          WARN
+                |                   |
+                +---------+---------+
+                          |
+                     SESSION END
+                          |
+                 STOP: Security Report
+                          |
+                HTML report with all events
+</pre>
+</div>
 
 **Design principles:**
 
