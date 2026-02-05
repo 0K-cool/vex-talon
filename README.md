@@ -438,4 +438,6 @@ Built by [Kelvin Lomboy](https://github.com/0K-cool).
 
 Frameworks: [OWASP LLM Top 10 2025](https://owasp.org/www-project-top-10-for-large-language-model-applications/), [OWASP Agentic Top 10 2026](https://owasp.org/www-project-agentic-security/), [MITRE ATLAS](https://atlas.mitre.org/).
 
+Vulnerability research: [0din.ai](https://0din.ai) (AI vulnerability disclosure).
+
 Threat intelligence: [OpenSourceMalware.com](https://opensourcemalware.com/), [NOVA Framework](https://github.com/anthropics/nova).
