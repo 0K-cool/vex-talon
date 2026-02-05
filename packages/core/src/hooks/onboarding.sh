@@ -8,6 +8,10 @@
 #   Subsequent   → One-line compact status
 #   Upgrade      → Brief upgrade notice + one-line status
 #   Bun missing  → Error with install instructions
+#
+# Output strategy:
+#   stdout → plain text context for Claude (SessionStart stdout is added to context)
+#   stderr → user-visible banner (only visible in verbose mode / exit 2)
 
 set -euo pipefail
 
@@ -19,15 +23,7 @@ HOOK_DIR="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/../../../.." && pwd)}"
 HOOKS_JSON="$HOOK_DIR/hooks/hooks.json"
 PROFILE="${VEX_TALON_PROFILE:-dev}"
 
-# --- Helper: output additionalContext JSON to stdout (injected into Claude's context) ---
-output_context() {
-  # Claude Code hooks require {"additionalContext": "..."} format on stdout
-  local escaped
-  escaped=$(echo "$1" | sed 's/\\/\\\\/g; s/"/\\"/g')
-  echo "{\"additionalContext\": \"${escaped}\"}"
-}
-
-# --- Helper: output to stderr (visible to user in terminal) ---
+# --- Helper: output to stderr (visible to user in verbose mode) ---
 user_msg() {
   echo "$1" >&2
 }
@@ -43,7 +39,8 @@ if ! command -v bun &>/dev/null; then
   user_msg "  Then restart Claude Code."
   user_msg "================================================"
   user_msg ""
-  output_context '{"vex_talon_active": false, "error": "bun_not_found"}'
+  # Plain text context for Claude
+  echo "Vex-Talon plugin is NOT active: Bun runtime not found. Hooks will not run."
   exit 0
 fi
 
@@ -81,7 +78,7 @@ fi
 # --- Step 5: Output based on scenario ---
 
 if [ "$FIRST_RUN" = true ]; then
-  # Full welcome banner
+  # Full welcome banner (stderr for user)
   user_msg ""
   user_msg "==================================================="
   user_msg "  VEX-TALON v${TALON_VERSION} - Security Hooks for Claude Code"
@@ -102,22 +99,25 @@ if [ "$FIRST_RUN" = true ]; then
   user_msg "==================================================="
   user_msg ""
 
-  output_context "{\"vex_talon_active\": true, \"version\": \"${TALON_VERSION}\", \"first_run\": true, \"hooks_count\": ${HOOKS_COUNT}, \"profile\": \"${PROFILE}\"}"
+  # Context for Claude (plain text stdout)
+  echo "Vex-Talon v${TALON_VERSION} security plugin is ACTIVE. First run detected. ${HOOKS_COUNT} security hooks loaded (6 PreToolUse, 6 PostToolUse, 3 SessionStart, 1 SessionEnd). Profile: ${PROFILE}. Coverage: OWASP LLM 2025 9/10, OWASP Agentic 2026, MITRE ATLAS 16+ techniques. All hooks enforce defense-in-depth security on every tool call."
 
 elif [ "$UPGRADED" = true ]; then
-  # Upgrade notice + compact status
+  # Upgrade notice (stderr for user)
   user_msg ""
   user_msg "  TALON upgraded: v${UPGRADED_FROM} -> v${TALON_VERSION}"
   user_msg "  TALON v${TALON_VERSION} | ${HOOKS_COUNT} hooks | ${PROFILE} | ready"
   user_msg ""
 
-  output_context "{\"vex_talon_active\": true, \"version\": \"${TALON_VERSION}\", \"hooks_count\": ${HOOKS_COUNT}, \"profile\": \"${PROFILE}\", \"upgraded_from\": \"${UPGRADED_FROM}\"}"
+  # Context for Claude
+  echo "Vex-Talon v${TALON_VERSION} security plugin is ACTIVE. Upgraded from v${UPGRADED_FROM}. ${HOOKS_COUNT} security hooks loaded. Profile: ${PROFILE}."
 
 else
-  # Compact one-liner
+  # Compact one-liner (stderr for user)
   user_msg "  TALON v${TALON_VERSION} | ${HOOKS_COUNT} hooks | ${PROFILE} | ready"
 
-  output_context "{\"vex_talon_active\": true, \"version\": \"${TALON_VERSION}\", \"hooks_count\": ${HOOKS_COUNT}, \"profile\": \"${PROFILE}\"}"
+  # Context for Claude
+  echo "Vex-Talon v${TALON_VERSION} security plugin is ACTIVE. ${HOOKS_COUNT} security hooks loaded. Profile: ${PROFILE}."
 fi
 
 # --- Step 6: Write/update state file ---
