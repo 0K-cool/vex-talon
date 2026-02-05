@@ -80,6 +80,11 @@
             "type": "command",
             "command": "bun run ${CLAUDE_PLUGIN_ROOT}/packages/core/src/hooks/L12-least-privilege.ts",
             "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "bun run ${CLAUDE_PLUGIN_ROOT}/packages/core/src/hooks/L3-auto-memory-guardian.ts",
+            "timeout": 5000
           }
         ]
       }

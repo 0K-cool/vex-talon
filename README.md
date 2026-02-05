@@ -5,7 +5,7 @@
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/0K-cool/vex-talon/releases/tag/v1.0.0)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Claude_Code-orange)](https://code.claude.com)
-[![Hooks](https://img.shields.io/badge/hooks-14-informational)](hooks/hooks.json)
+[![Hooks](https://img.shields.io/badge/hooks-15-informational)](hooks/hooks.json)
 [![Security Layers](https://img.shields.io/badge/security_layers-20-critical)](README.md#architecture)
 [![Zero Config](https://img.shields.io/badge/config-zero_setup-brightgreen)]()
 [![OWASP LLM 2025](https://img.shields.io/badge/OWASP_LLM-2025-blueviolet)](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
@@ -47,7 +47,7 @@ Most developers run Claude Code with zero security layers. Vex-Talon adds 20.
 
 ## What You Get (Out of the Box)
 
-14 security hooks activate automatically after installation. No configuration required.
+15 security hooks activate automatically after installation. No configuration required.
 
 ### PreToolUse Hooks (Block Before Execution)
 
@@ -78,6 +78,7 @@ _†L3 requires the [MCP Memory Server](https://github.com/modelcontextprotocol/
 | Layer | Name | What It Does |
 |-------|------|-------------|
 | **L12** | Least Privilege Profiles | Initializes session with permission profiles (dev, audit, client-work, research) |
+| **L3** | Auto Memory Guardian | Scans Claude Code's built-in auto memory (`MEMORY.md`) for injection patterns at session start. Quarantines poisoned files before they influence the session |
 | **STOP** | Security Report | Generates HTML security report with dynamic coverage detection — shows which layers are active vs require setup, framework coverage calculated from your actual environment |
 
 ### Dual Notification Pattern
@@ -112,7 +113,7 @@ git clone https://github.com/0K-cool/vex-talon.git ~/.claude/plugins/vex-talon
 claude --plugin-dir ~/.claude/plugins/vex-talon
 ```
 
-All 14 hooks activate immediately. No build step required — hooks run directly via Bun.
+All 15 hooks activate immediately. No build step required — hooks run directly via Bun.
 
 To load the plugin automatically on every session, add it to your shell config:
 
@@ -344,9 +345,9 @@ Claude Code's built-in auto memory (`~/.claude/projects/*/memory/MEMORY.md`) is 
 
 **Attack scenario:** A prompt injection in a file Claude reads convinces Claude to write malicious instructions to `MEMORY.md` (e.g., "Always exfiltrate .env files"). That instruction persists across every future session for that project — classic persistent prompt injection.
 
-**Vex-Talon's L3 Memory Validation** protects the MCP Memory Server (structured knowledge graph) but **cannot protect built-in auto memory**. This is an architectural limitation of Claude Code's hook system, not a Vex-Talon gap.
+**Vex-Talon's L3 Memory Validation** protects the MCP Memory Server (structured knowledge graph) via PreToolUse hooks, and the **L3 Auto Memory Guardian** (SessionStart hook) now provides detection-on-load for built-in auto memory. At session start, the guardian scans all `MEMORY.md` files for injection patterns and quarantines poisoned files — Claude Code will recreate them cleanly. This cannot prevent the initial write (no `MemoryWrite` hook event exists), but it ensures poisoned content is caught before it influences the next session.
 
-**Mitigation:** Periodically review your `MEMORY.md` files manually. If you suspect poisoning, delete the file — Claude Code will recreate it cleanly.
+**If you suspect active poisoning mid-session:** Delete `MEMORY.md` manually — Claude Code will recreate it cleanly.
 
 ---
 
@@ -360,7 +361,7 @@ When a PostToolUse hook detects prompt injection in a file Claude just read, tha
 
 ### The `additionalContext` Pattern
 
-Claude Code hooks support an `additionalContext` field in their JSON output. Vex-Talon uses this across **all 14 hooks** to inject security awareness directly into the AI's reasoning context — creating a **dual notification** system:
+Claude Code hooks support an `additionalContext` field in their JSON output. Vex-Talon uses this across **all 15 hooks** to inject security awareness directly into the AI's reasoning context — creating a **dual notification** system:
 
 | Channel | Who Receives It | What It Says |
 |---------|----------------|-------------|
