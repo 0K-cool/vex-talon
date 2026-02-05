@@ -7,7 +7,7 @@
  * 20-LAYER SECURITY ARCHITECTURE
  * ═══════════════════════════════════════════════════════════════════════════
  *
- * PORTED LAYERS (13 hooks):
+ * PORTED LAYERS (14 hooks):
  * ─────────────────────────────────────────────────────────────────────────────
  * L0:  Secure Code Enforcer    PreToolUse     ✅ PORTED   Blocks CRITICAL vulnerabilities
  * L1:  Governor Agent          PreToolUse     ✅ PORTED   Policy enforcement + input modification
@@ -18,7 +18,8 @@
  * L7:  Image Safety Scanner    PostToolUse    ✅ PORTED   Steganography detection
  * L9:  Egress Scanner          PreToolUse     ✅ PORTED   Data exfiltration prevention
  * L12: Least Privilege         SessionStart   ✅ PORTED   Permission profiles
- * L14: Supply Chain Scanner    PostToolUse    ✅ PORTED   Malicious package detection
+ * L14: Supply Chain Pre-Install PreToolUse     ✅ PORTED   Blocks malicious packages (OSM API + blocklist)
+ * L14: Supply Chain Scanner    PostToolUse    ✅ PORTED   Post-install audit (npm audit / pip-audit)
  * L17: Spend Alerting          PostToolUse    ✅ PORTED   Cost threshold alerts
  * L19: Skill Scanner           PreToolUse     ✅ PORTED   Skill security scanning
  * STOP: Security Report        Stop           ✅ PORTED   Aggregates events to HTML report
@@ -122,8 +123,13 @@ export const LAYERS: LayerDefinition[] = [
     action: 'LOG', owaspMapping: 'LLM02'
   },
   {
+    id: 'L14-pre', name: 'Supply Chain Pre-Install', type: 'PreToolUse', status: 'PORTED',
+    file: 'L14-supply-chain-pre-install.ts', description: 'Blocks malicious packages before install (OSM API + blocklist)',
+    action: 'BLOCK', owaspMapping: 'LLM03', atlasMapping: 'AML.T0047'
+  },
+  {
     id: 'L14', name: 'Supply Chain Scanner', type: 'PostToolUse', status: 'PORTED',
-    file: 'L14-supply-chain-scanner.ts', description: 'Malicious package detection',
+    file: 'L14-supply-chain-scanner.ts', description: 'Post-install audit (npm audit / pip-audit)',
     action: 'WARN', owaspMapping: 'LLM03', atlasMapping: 'AML.T0047'
   },
   {

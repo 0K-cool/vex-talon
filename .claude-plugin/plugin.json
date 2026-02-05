@@ -27,8 +27,8 @@
   "configuration": {
     "enabledLayers": {
       "type": "array",
-      "default": ["L0", "L1", "L2", "L3", "L4", "L5", "L7", "L9", "L12", "L14", "L17", "L19"],
-      "description": "Security layers to enable. All 12 ported layers enabled by default."
+      "default": ["L0", "L1", "L2", "L3", "L4", "L5", "L7", "L9", "L12", "L14-pre", "L14", "L17", "L19"],
+      "description": "Security layers to enable. All 13 ported layers enabled by default."
     },
     "auditLogDir": {
       "type": "string",
@@ -56,7 +56,8 @@
     "L7": "Image Safety Scanner (PostToolUse - ALERT)",
     "L9": "Egress Scanner (PreToolUse - BLOCK)",
     "L12": "Least Privilege (SessionStart - LOG)",
-    "L14": "Supply Chain Scanner (PostToolUse - WARN)",
+    "L14-pre": "Supply Chain Pre-Install (PreToolUse - BLOCK, OSM API + blocklist)",
+    "L14": "Supply Chain Post-Install (PostToolUse - WARN, npm audit / pip-audit)",
     "L17": "Spend Alerting (PostToolUse - ALERT)",
     "L19": "Skill Scanner (PreToolUse - BLOCK)",
     "STOP": "Security Report (Stop - REPORT)"
