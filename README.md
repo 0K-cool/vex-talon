@@ -101,11 +101,20 @@ This ensures both the user AND the AI are independently aware of detected threat
 ### Requirements
 
 - [Claude Code](https://claude.com/claude-code) (CLI)
-- [Bun](https://bun.sh) runtime (hooks are TypeScript)
+- [Bun](https://bun.sh) v1.0+ runtime — **required**, all hooks are TypeScript executed via Bun
+
+> **Note:** Claude Code is built with Bun internally, but does **not** install `bun` on your system PATH. You must install Bun separately:
+>
+> ```bash
+> curl -fsSL https://bun.sh/install | bash
+> ```
 
 ### Option 1: From GitHub (Current)
 
 ```bash
+# Install Bun if you don't have it
+curl -fsSL https://bun.sh/install | bash
+
 # Clone the plugin
 git clone https://github.com/0K-cool/vex-talon.git ~/.claude/plugins/vex-talon
 
