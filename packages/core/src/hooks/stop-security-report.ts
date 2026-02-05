@@ -582,6 +582,22 @@ function generateHTML(events: SecurityEvent[], sessionId?: string): string {
             event.style.display = event.dataset.severity === filter ? '' : 'none';
           }
         });
+
+        // Update section counts to reflect filtered results
+        document.querySelectorAll('.section').forEach(section => {
+          const countEl = section.querySelector('.section-count');
+          if (countEl) {
+            const total = section.querySelectorAll('.event').length;
+            const visible = section.querySelectorAll('.event:not([style*="display: none"])').length;
+            countEl.textContent = filter === 'all' ? String(total) : visible + '/' + total;
+          }
+          // Hide sections with no visible events when filtered
+          const content = section.querySelector('.section-content');
+          if (content) {
+            const visible = section.querySelectorAll('.event:not([style*="display: none"])').length;
+            section.style.display = filter !== 'all' && visible === 0 ? 'none' : '';
+          }
+        });
       });
     });
   </script>
