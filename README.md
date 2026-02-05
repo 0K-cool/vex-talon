@@ -260,11 +260,31 @@ Covers ASI01 (Agent Prompt Injection), ASI04 (Dependency Chain Attacks), ASI06 (
 - **Defense-in-depth** - multiple overlapping layers catch what one might miss
 - **Zero trust** - validate everything, trust nothing
 
+### Claude Code Hook Limitations (Documented)
+
+Anthropic's [official hooks documentation](https://code.claude.com/docs/en/hooks) defines clear exit code behavior per hook event:
+
+| Hook Event | Can Block? | Exit Code 2 Behavior |
+|-----------|-----------|---------------------|
+| PreToolUse | **Yes** | Blocks the tool call |
+| PostToolUse | No | Shows stderr to Claude (tool already ran) |
+| PermissionRequest | **Yes** | Denies the permission |
+| SessionStart | No | Shows stderr to user only |
+
+PreToolUse hooks **should** block tool calls via `exit 2` or `permissionDecision: "deny"` — including [MCP tools](https://code.claude.com/docs/en/hooks#match-mcp-tools), which are documented as matchable via `mcp__<server>__<tool>` patterns.
+
+**In practice**, blocking does not work reliably for MCP tool calls. This is tracked in open GitHub issues:
+
+- [#3514](https://github.com/anthropics/claude-code/issues/3514) — PreToolUse hooks with `exit 2` do not block MCP tool execution (confirmed by users, Jan 2026)
+- [#4669](https://github.com/anthropics/claude-code/issues/4669) — `permissionDecision: "deny"` also ignored for MCP tools (auto-closed by bot, not fixed)
+
+This gap between documented behavior and actual behavior is why Vex-Talon developed the **behavioral anchoring** pattern described below. When the blocking mechanism doesn't work, anchoring via `additionalContext` (an [officially documented](https://code.claude.com/docs/en/hooks#pretooluse-decision-control) output field) provides the next-best defense.
+
 ---
 
 ## Defense Philosophy: When You Can't Block, Anchor
 
-Most AI security tools stop at detection: scan content, flag threats, hope the AI listens. Vex-Talon goes further with a technique we call **behavioral anchoring** — a defense pattern designed for a fundamental reality of AI agent security:
+Most AI security tools stop at detection: scan content, flag threats, hope the AI listens. Vex-Talon goes further with a technique we call **behavioral anchoring** — a defense pattern born from the [documented hook limitations](#claude-code-hook-limitations-documented) above and a fundamental reality of AI agent security:
 
 > **You cannot prevent an AI from seeing malicious content once a tool has executed.**
 
