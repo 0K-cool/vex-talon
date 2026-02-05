@@ -44,7 +44,7 @@ Most developers run Claude Code with zero security layers. Vex-Talon adds 20.
 | **L14** | Supply Chain Pre-Install | Blocks 60+ known malicious packages before installation. Optional real-time API via OpenSourceMalware.com |
 | **L19** | Skill Scanner | Scans skills for injection patterns, dangerous commands, credential exposure, and external URLs before invocation |
 
-_†L3 requires the [Anthropic MCP Memory Server](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) to be configured. Without a memory server, L3 is installed but dormant (no memory operations to monitor). Due to Claude Code bugs [#3514](https://github.com/anthropics/claude-code/issues/3514) and [#4669](https://github.com/anthropics/claude-code/issues/4669), L3 provides detection and alerting only — it cannot block MCP tool calls._
+_†L3 requires the [MCP Memory Server](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) to be configured. Without a memory server, L3 is installed but dormant (no memory operations to monitor). Due to Claude Code bugs [#3514](https://github.com/anthropics/claude-code/issues/3514) and [#4669](https://github.com/anthropics/claude-code/issues/4669), L3 provides detection and alerting only — it cannot block MCP tool calls._
 
 ### PostToolUse Hooks (Detect After Execution)
 
@@ -388,7 +388,7 @@ Yes. Configure `enabledLayers` in the plugin settings.
 macOS and Linux are fully supported. Windows is untested.
 
 **Do I need an MCP Memory Server for L3?**
-L3 Memory Validation only activates if you have the [Anthropic MCP Memory Server](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) configured. Without one, L3 is installed but dormant — it won't slow anything down or produce false alerts. If you do use a memory server, L3 protects against memory poisoning attacks (instruction injection, fake facts, context manipulation).
+L3 Memory Validation only activates if you have the [MCP Memory Server](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) configured. Without one, L3 is installed but dormant — it won't slow anything down or produce false alerts. If you do use a memory server, L3 protects against memory poisoning attacks (instruction injection, fake facts, context manipulation).
 
 **Is my data sent anywhere?**
 No. Everything runs 100% locally. The only optional network call is to OpenSourceMalware.com for supply chain scanning (opt-in via `OSM_API_TOKEN`).
