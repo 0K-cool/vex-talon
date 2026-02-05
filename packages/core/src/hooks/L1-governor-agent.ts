@@ -629,10 +629,17 @@ async function main() {
     }
 
     if (result.modifiedInput) {
-      const output: HookOutput = {
-        tool_input: result.modifiedInput
+      const output: HookOutput & { additionalContext?: string } = {
+        tool_input: result.modifiedInput,
+        additionalContext: `🛡️ TALON GOVERNOR (L1) ${result.severity}: Policy "${result.policy?.name}" violated by ${data.tool_name}. ` +
+          `${result.message}. Input was modified to safe alternative.`,
       };
       console.log(JSON.stringify(output));
+    } else if (result.policy && result.action === 'WARN') {
+      console.log(JSON.stringify({
+        additionalContext: `🛡️ TALON GOVERNOR (L1) ${result.severity}: Policy "${result.policy.name}" flagged for ${data.tool_name}. ` +
+          `${result.message}. Proceeding with caution.`,
+      }));
     }
 
     recordSuccess(HOOK_NAME);

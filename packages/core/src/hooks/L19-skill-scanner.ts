@@ -167,6 +167,12 @@ function outputWarn(findings: Finding[], skillName: string): void {
     console.error(`   ${emoji} [${f.category}] ${f.detail}`);
   }
   console.error('   Review skill content before proceeding\n');
+
+  const topFindings = findings.slice(0, 3).map(f => `[${f.severity}] ${f.detail}`).join('; ');
+  console.log(JSON.stringify({
+    additionalContext: `⚠️ TALON SKILL SCANNER (L19) ${findings[0]?.severity || 'HIGH'}: Skill "${skillName}" has ${findings.length} finding(s). ` +
+      `${topFindings}. Review skill content before proceeding.`,
+  }));
 }
 
 async function main() {

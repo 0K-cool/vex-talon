@@ -192,6 +192,19 @@ async function main() {
       }
 
       console.error(`    Change profile: VEX_TALON_PROFILE=dev claude\n`);
+
+      const restrictions: string[] = [];
+      if (profile.tools.mode === 'allowlist' && profile.tools.allowed) {
+        restrictions.push(`Allowed tools: ${profile.tools.allowed.join(', ')}`);
+      }
+      if (profile.tools.blocked && profile.tools.blocked.length > 0) {
+        restrictions.push(`Blocked tools: ${profile.tools.blocked.join(', ')}`);
+      }
+      console.log(JSON.stringify({
+        additionalContext: `🔒 TALON LEAST PRIVILEGE (L12): Session profile "${profile.name}" active. ` +
+          `${profile.description}. ${restrictions.join('. ')}. ` +
+          `L1 Governor will enforce these restrictions on all tool calls.`,
+      }));
     }
 
     process.exit(0);
