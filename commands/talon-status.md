@@ -56,6 +56,12 @@ RECENT ACTIVITY (Last 24h)
 🟡 MEDIUM:   8
 🟢 LOW:      12
 
+QUICK ACTIONS
+───────────────────────────────────────────────────────────────
+/talon-status          Refresh this status dashboard
+/security-intel-update Update threat patterns and frameworks
+/talon-report          Generate detailed security report
+
 ═══════════════════════════════════════════════════════════════
 ```
 
