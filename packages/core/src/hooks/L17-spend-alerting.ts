@@ -57,12 +57,26 @@ function loadState(sessionId: string): SessionState {
   return all[sessionId] || { session_id: sessionId, total_cost_usd: 0, tool_calls: 0, last_threshold: 'NONE' };
 }
 
+const MAX_SESSIONS = 50;
+
 function saveState(state: SessionState): void {
   const path = getStateFilePath(HOOK_NAME, 'session.json');
   // Use atomicUpdateJsonFile to prevent TOCTOU race conditions
   atomicUpdateJsonFile<Record<string, SessionState>>(
     path,
-    (current) => { current[state.session_id] = state; return current; },
+    (current) => {
+      current[state.session_id] = state;
+      // Evict oldest sessions if over limit to prevent unbounded growth
+      const keys = Object.keys(current);
+      if (keys.length > MAX_SESSIONS) {
+        // Sort by total_cost_usd ascending (cheapest/oldest first) as proxy for age
+        const sorted = keys.sort((a, b) => (current[a]?.total_cost_usd || 0) - (current[b]?.total_cost_usd || 0));
+        for (const key of sorted.slice(0, keys.length - MAX_SESSIONS)) {
+          delete current[key];
+        }
+      }
+      return current;
+    },
     { [state.session_id]: state }
   );
 }

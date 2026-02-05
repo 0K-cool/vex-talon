@@ -327,6 +327,9 @@ export function scanForInjections(
   for (const pattern of activePatterns) {
     if (matches.length >= maxMatches) break;
 
+    // Reset lastIndex for safety. Currently a no-op since patterns lack 'g' flag,
+    // but guards against future modifications that add global flag or pattern reuse.
+    // If 'g' patterns are added, clone RegExp per-call to avoid stale lastIndex.
     pattern.pattern.lastIndex = 0;
     const match = pattern.pattern.exec(normalizedContent);
 

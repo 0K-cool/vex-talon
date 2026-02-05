@@ -4,7 +4,7 @@
  * Ingest security events from JSONL audit logs into the database.
  */
 
-import { existsSync, readFileSync, statSync, watchFile, unwatchFile } from 'fs';
+import { existsSync, readFileSync, openSync, readSync, closeSync, statSync, watchFile, unwatchFile } from 'fs';
 import { join } from 'path';
 import { insertEvent, updateLayerStats, upsertSession, type SecurityEvent } from './queries';
 
@@ -208,7 +208,55 @@ export function ingestLogsDirectory(logsDir: string): IngestResult {
 const watchedFiles = new Set<string>();
 
 /**
- * Watch a log file for changes and ingest new entries
+ * Ingest only new bytes from a log file (incremental read).
+ * Reads from offset to current size, avoiding full re-parse on each append.
+ */
+function ingestNewBytes(filePath: string, offset: number): { result: IngestResult; newOffset: number } {
+  const result: IngestResult = { processed: 0, inserted: 0, errors: 0 };
+  const logName = filePath.split('/').pop() || '';
+
+  try {
+    const stat = statSync(filePath);
+    if (stat.size <= offset) return { result, newOffset: offset };
+
+    const bytesToRead = stat.size - offset;
+    const buffer = Buffer.alloc(bytesToRead);
+    const fd = openSync(filePath, 'r');
+    try {
+      readSync(fd, buffer, 0, bytesToRead, offset);
+    } finally {
+      closeSync(fd);
+    }
+
+    const content = buffer.toString('utf-8');
+    const lines = content.trim().split('\n').filter(line => line.trim());
+
+    for (const line of lines) {
+      result.processed++;
+      try {
+        const entry = JSON.parse(line) as AuditLogEntry;
+        const event = parseLogEntry(entry, logName);
+        if (event) {
+          insertEvent(event);
+          result.inserted++;
+          const layer = LOG_TO_LAYER[logName];
+          if (layer) {
+            updateLayerStats(layer, 1, event.action === 'block' ? 1 : 0,
+              event.action === 'warn' || event.action === 'alert' ? 1 : 0);
+          }
+        }
+      } catch { result.errors++; }
+    }
+
+    return { result, newOffset: stat.size };
+  } catch {
+    return { result, newOffset: offset };
+  }
+}
+
+/**
+ * Watch a log file for changes and ingest only new entries (incremental).
+ * Avoids re-reading the entire file on each append.
  */
 export function watchLogFile(filePath: string, onIngest?: (result: IngestResult) => void): void {
   if (watchedFiles.has(filePath)) return;
@@ -220,8 +268,8 @@ export function watchLogFile(filePath: string, onIngest?: (result: IngestResult)
 
   watchFile(filePath, { interval: 1000 }, (curr, _prev) => {
     if (curr.size > lastSize) {
-      const result = ingestLogFile(filePath);
-      lastSize = curr.size;
+      const { result, newOffset } = ingestNewBytes(filePath, lastSize);
+      lastSize = newOffset;
       if (onIngest) onIngest(result);
     }
   });

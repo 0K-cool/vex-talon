@@ -278,6 +278,8 @@ async function main() {
 
     process.exit(0);
   } catch {
+    // PostToolUse: content already in context, blocking serves no purpose.
+    // Fail-open is correct here (unlike PreToolUse hooks which fail-closed).
     process.exit(0);
   }
 }

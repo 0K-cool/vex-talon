@@ -671,7 +671,7 @@ async function main(): Promise<void> {
       try {
         // macOS: open, Linux: xdg-open, Windows: start
         // Use execFileSync with arg list to prevent command injection via file path
-        const { execFileSync } = require('child_process');
+        const { execFileSync } = await import('child_process');
         const platform = process.platform;
         const openCmd = platform === 'darwin' ? 'open' : platform === 'win32' ? 'start' : 'xdg-open';
         execFileSync(openCmd, [reportPath], { stdio: 'ignore' });

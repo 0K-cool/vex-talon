@@ -148,12 +148,27 @@ function loadSessionState(sessionId: string): SessionState {
   };
 }
 
+const MAX_SESSIONS = 50;
+
 function saveSessionState(state: SessionState): void {
   const statePath = getStateFilePath(HOOK_NAME, 'session.json');
   // Use atomicUpdateJsonFile to prevent TOCTOU race conditions
   atomicUpdateJsonFile<Record<string, SessionState>>(
     statePath,
-    (current) => { current[state.session_id] = state; return current; },
+    (current) => {
+      current[state.session_id] = state;
+      // Evict oldest sessions if over limit to prevent unbounded growth
+      const keys = Object.keys(current);
+      if (keys.length > MAX_SESSIONS) {
+        const sorted = keys.sort((a, b) =>
+          (current[a]?.last_updated || '').localeCompare(current[b]?.last_updated || '')
+        );
+        for (const key of sorted.slice(0, keys.length - MAX_SESSIONS)) {
+          delete current[key];
+        }
+      }
+      return current;
+    },
     { [state.session_id]: state }
   );
 }
@@ -420,7 +435,7 @@ async function main() {
     // Update session state
     sessionState.total_egress_bytes += bytes;
     sessionState.request_count++;
-    if (destination && !sessionState.destinations.includes(destination)) {
+    if (destination && !sessionState.destinations.includes(destination) && sessionState.destinations.length < 100) {
       sessionState.destinations.push(destination);
     }
     sessionState.last_updated = new Date().toISOString();

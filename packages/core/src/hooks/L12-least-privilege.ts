@@ -120,7 +120,7 @@ const PROFILES: Record<string, Profile> = {
       read_only: ['*'],
     },
     bash: {
-      blocked_patterns: ['*'], // No bash commands
+      blocked_patterns: ['*'], // Redundant with Bash not in allowed tools (defense-in-depth)
     },
   },
 };

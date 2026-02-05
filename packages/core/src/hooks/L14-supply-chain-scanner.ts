@@ -18,6 +18,7 @@
 
 import { appendFileSync } from 'fs';
 import { ensureTalonDirs, getAuditLogPath } from './lib/talon-paths';
+import { loadSupplyChainConfig } from './lib/config-loader';
 
 const HOOK_NAME = 'L14-supply-chain-scanner';
 
@@ -27,8 +28,8 @@ interface HookInput {
   tool_input?: Record<string, any>;
 }
 
-// Known compromised packages (ecosystem:name)
-const MALICIOUS_PACKAGES: Record<string, string> = {
+// Known compromised packages - hardcoded baseline merged with external config
+const HARDCODED_PACKAGES: Record<string, string> = {
   'npm:colors': 'Protestware - infinite loop',
   'npm:faker': 'Protestware - deleted code',
   'npm:event-stream': 'Cryptominer injection',
@@ -40,6 +41,24 @@ const MALICIOUS_PACKAGES: Record<string, string> = {
   'npm:mongose': 'Typosquat of mongoose',
   'pypi:colourama': 'Typosquat of colorama',
 };
+
+// Merge hardcoded + external config for expanded coverage
+function getMaliciousPackages(): Record<string, string> {
+  const merged = { ...HARDCODED_PACKAGES };
+  try {
+    const config = loadSupplyChainConfig();
+    if (config.maliciousPackages) {
+      for (const pkg of config.maliciousPackages) {
+        merged[`${pkg.ecosystem}:${pkg.name}`] = pkg.reason;
+      }
+    }
+  } catch {
+    // Config load failed, use hardcoded only
+  }
+  return merged;
+}
+
+const MALICIOUS_PACKAGES = getMaliciousPackages();
 
 function detectPackageManager(cmd: string): 'npm' | 'pypi' | null {
   if (/npm\s+(install|i|add)/i.test(cmd)) return 'npm';

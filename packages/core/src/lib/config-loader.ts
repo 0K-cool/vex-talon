@@ -5,7 +5,7 @@
  */
 
 import { existsSync, readFileSync, statSync } from 'fs';
-import { join, dirname } from 'path';
+import { join, dirname, resolve } from 'path';
 
 export interface ConfigMetadata {
   version: string;
@@ -72,7 +72,18 @@ const configCache = new Map<string, { config: unknown; loadedAt: number; fileMti
 const CACHE_TTL_MS = 60000;
 
 function getConfigBasePath(): string {
-  if (process.env.VEX_TALON_CONFIG_PATH) return process.env.VEX_TALON_CONFIG_PATH;
+  const customPath = process.env.VEX_TALON_CONFIG_PATH;
+  if (customPath) {
+    // Validate: must be absolute, no traversal, under HOME or CWD
+    const resolved = resolve(customPath);
+    const home = process.env.HOME || '';
+    const cwd = process.cwd();
+    if (resolved.includes('..') || (!resolved.startsWith(home) && !resolved.startsWith(cwd))) {
+      console.error(`[ConfigLoader] VEX_TALON_CONFIG_PATH rejected: must be under HOME or CWD. Using default.`);
+    } else {
+      return resolved;
+    }
+  }
   const projectPath = join(process.cwd(), '.vex-talon', 'configs');
   if (existsSync(projectPath)) return projectPath;
   return join(dirname(__dirname), 'configs');
@@ -101,6 +112,31 @@ export function loadConfig<T>(configPath: string, defaultConfig: T): T {
 }
 
 export function clearConfigCache(): void { configCache.clear(); }
+
+const VALID_SEVERITIES = new Set(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']);
+
+/**
+ * Validate loaded config patterns at runtime.
+ * Checks: non-empty pattern string, valid severity, regex compilation, ReDoS heuristic.
+ * Returns filtered array with invalid entries removed, or empty if all invalid.
+ */
+export function validatePatterns<T extends { pattern: string; severity?: string }>(
+  patterns: T[],
+  configName: string
+): T[] {
+  if (!Array.isArray(patterns)) return [];
+  return patterns.filter((p, i) => {
+    if (!p.pattern || typeof p.pattern !== 'string') return false;
+    if (p.severity && !VALID_SEVERITIES.has(p.severity)) return false;
+    try { new RegExp(p.pattern, 'gi'); } catch { return false; }
+    // ReDoS heuristic: reject patterns with nested quantifiers
+    if (/(\+|\*|\{)\)(\+|\*|\{)/.test(p.pattern)) {
+      console.error(`[ConfigLoader] ${configName}[${i}]: potential ReDoS pattern, skipping`);
+      return false;
+    }
+    return true;
+  });
+}
 
 export function compilePattern(pattern: string, flags = 'gi'): RegExp {
   return new RegExp(pattern, flags);
