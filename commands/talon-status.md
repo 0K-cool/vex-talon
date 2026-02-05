@@ -58,9 +58,10 @@ RECENT ACTIVITY (Last 24h)
 
 QUICK ACTIONS
 ───────────────────────────────────────────────────────────────
-/talon-status          Refresh this status dashboard
-/talon-intel-update    Update threat patterns and frameworks
-/talon-report          Generate detailed security report
+/talon-status                    Refresh this status dashboard
+/vex-talon:talon-intel-update    Update threat patterns and frameworks
+/vex-talon:talon-report          Generate detailed security report
+/vex-talon:talon                 Run security scan
 
 ═══════════════════════════════════════════════════════════════
 ```
