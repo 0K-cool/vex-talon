@@ -175,16 +175,33 @@ severity: CRITICAL
 
 **Website:** https://0din.ai/disclosures
 
-Use Playwright MCP for JavaScript-rendered content:
+**⚠️ Playwright MCP Required:** 0din.ai is a JavaScript-rendered SPA. You MUST check if Playwright MCP tools are available before attempting to scrape it.
+
+**Check availability:**
+```
+Try calling mcp__playwright__browser_navigate — if the tool doesn't exist, Playwright is NOT available.
+```
+
+**If Playwright IS available (preferred):**
 ```
 1. mcp__playwright__browser_navigate({ url: "https://0din.ai/disclosures" })
 2. mcp__playwright__browser_snapshot()
 3. Extract disclosure list, severity, taxonomies
 ```
 
-**Extract:**
+**If Playwright is NOT available (fallback):**
+```
+1. WebSearch: "0din.ai disclosure" site:0din.ai 2026
+2. WebSearch: "0din.ai LLM vulnerability" new disclosure 2026
+3. WebFetch: https://0din.ai — extract any server-rendered content
+4. Note in report: "0din.ai data from WebSearch (Playwright unavailable — results may be incomplete)"
+```
+
+**⚠️ Fallback limitation:** WebSearch/WebFetch cannot access JavaScript-rendered disclosure details (severity scores, taxonomy breakdowns, test parameters). The fallback provides disclosure titles and summaries only. For full extraction, ensure Playwright MCP is configured.
+
+**Extract (from either method):**
 - Disclosure ID, title, severity
-- Test scores (model, temperature)
+- Test scores (model, temperature) — *Playwright only*
 - Attack taxonomies → convert to regex patterns
 
 **Convert and APPEND to `~/.vex-talon/config/injection/patterns.json`**

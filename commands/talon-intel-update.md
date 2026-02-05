@@ -68,7 +68,8 @@ Display status:
 **If scope includes "attacks":**
 
 1. **NOVA Framework** — WebFetch GitHub, extract rules, convert to config-loader JSON format
-2. **0din.ai** — Playwright scrape, extract disclosures, convert to patterns
+2. **0din.ai** — Playwright scrape if available, otherwise WebSearch fallback (see skill for details)
+   - ⚠️ 0din.ai requires Playwright MCP for full data. If unavailable, fall back to WebSearch (partial data).
 3. **Write to `~/.vex-talon/config/injection/patterns.json`** (merge, deduplicate by ID)
 
 **If scope includes "frameworks":**
