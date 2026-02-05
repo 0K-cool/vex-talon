@@ -21,6 +21,8 @@
 
 *Vex (velociraptor) + Talon (claw) — sharp, fast, always watching. Defense-in-depth security that strikes before threats land.*
 
+> **This plugin is not for the faint of heart.** Vex-Talon runs 15 security hooks on every tool call — 6 before execution, 6 after, plus session lifecycle hooks. It was built for security professionals and developers who want serious protection for their AI coding agent. If you want a lightweight linter, this isn't it. If you want defense-in-depth that maps to OWASP and MITRE frameworks, keep reading.
+
 Zero cloud dependencies. OWASP LLM 2025 + MITRE ATLAS coverage. Works out of the box.
 
 ```bash
