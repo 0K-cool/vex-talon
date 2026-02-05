@@ -1,5 +1,5 @@
 ---
-name: talon-report
+name: report
 description: Generate comprehensive security report for the current project
 arguments:
   - name: format
@@ -81,7 +81,7 @@ Prioritized list of security improvements:
 
 ## Execution
 
-When user runs `/talon-report`:
+When user runs `/vex-talon:report`:
 
 1. **Collect Data**
    - Read event logs from `.vex-talon/logs/`
@@ -102,15 +102,15 @@ When user runs `/talon-report`:
 
 **Generate markdown report:**
 ```
-/talon-report
+/vex-talon:report
 ```
 
 **Generate JSON for CI/CD integration:**
 ```
-/talon-report json ./security-report.json
+/vex-talon:report json ./security-report.json
 ```
 
 **Generate HTML for stakeholder review:**
 ```
-/talon-report html ./reports/security-assessment.html
+/vex-talon:report html ./reports/security-assessment.html
 ```

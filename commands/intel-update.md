@@ -1,5 +1,5 @@
 ---
-name: talon-intel-update
+name: intel-update
 description: Update Vex-Talon security intelligence - sync attack patterns and framework compliance to runtime config files
 arguments:
   - name: scope
@@ -27,7 +27,7 @@ Keep security layers current with latest attack patterns and framework complianc
 
 ## Execution
 
-When the user runs `/talon-intel-update`, execute the security-intel-update skill.
+When the user runs `/vex-talon:intel-update`, execute the security-intel-update skill.
 
 **CRITICAL:** The skill MUST write findings to `~/.vex-talon/config/` JSON files that hooks consume at runtime. Do NOT write to memory/*.md — those are documentation, not runtime configs.
 
@@ -135,11 +135,11 @@ Sources:
 ## Examples
 
 ```
-/talon-intel-update              # Full update (all sources → config files)
-/talon-intel-update attacks      # NOVA + 0din → injection/patterns.json
-/talon-intel-update frameworks   # ATLAS + OWASP → framework/mappings.json
-/talon-intel-update memory       # Research → memory/config.json
-/talon-intel-update --check      # Preview without writing
+/vex-talon:intel-update              # Full update (all sources → config files)
+/vex-talon:intel-update attacks      # NOVA + 0din → injection/patterns.json
+/vex-talon:intel-update frameworks   # ATLAS + OWASP → framework/mappings.json
+/vex-talon:intel-update memory       # Research → memory/config.json
+/vex-talon:intel-update --check      # Preview without writing
 ```
 
 ## Update Frequency

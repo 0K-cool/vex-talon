@@ -1,5 +1,5 @@
 ---
-name: talon
+name: scan
 description: Run Vex-Talon security scan on files, directories, or staged changes
 arguments:
   - name: target
@@ -55,7 +55,7 @@ Run the 20-layer defense-in-depth security scan manually.
 
 ## Execution
 
-When the user runs `/talon`, execute the following:
+When the user runs `/vex-talon:scan`, execute the following:
 
 ### 1. Parse Arguments
 
@@ -157,22 +157,22 @@ MITRE ATLAS:       {{ atlas_techniques }} techniques
 
 **Scan current directory:**
 ```
-/talon
+/vex-talon:scan
 ```
 
 **Scan staged changes before commit:**
 ```
-/talon staged
+/vex-talon:scan staged
 ```
 
 **Scan specific file with only injection detection:**
 ```
-/talon src/api/handler.ts L4
+/vex-talon:scan src/api/handler.ts L4
 ```
 
 **Scan with high severity threshold:**
 ```
-/talon . all HIGH
+/vex-talon:scan . all HIGH
 ```
 
 ## Integration

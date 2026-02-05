@@ -100,7 +100,7 @@ if [ "$FIRST_RUN" = true ]; then
   user_msg ""
 
   # Context for Claude (plain text stdout — injected into model context)
-  echo "Vex-Talon v${TALON_VERSION} security plugin is ACTIVE. First run detected. ${HOOKS_COUNT} security hooks loaded (6 PreToolUse, 6 PostToolUse, 3 SessionStart, 1 SessionEnd). Profile: ${PROFILE}. Coverage: OWASP LLM 2025 9/10, OWASP Agentic 2026, MITRE ATLAS 16+ techniques. All hooks enforce defense-in-depth security on every tool call. IMPORTANT: In your first response to the user, begin with this exact line on its own: '> 🛡️ **New Plugin Installed** — Vex-Talon v${TALON_VERSION} is active with ${HOOKS_COUNT} security hooks protecting this session. Run /talon-status for a detailed security dashboard.' Then continue with your normal response."
+  echo "Vex-Talon v${TALON_VERSION} security plugin is ACTIVE. First run detected. ${HOOKS_COUNT} security hooks loaded (6 PreToolUse, 6 PostToolUse, 3 SessionStart, 1 SessionEnd). Profile: ${PROFILE}. Coverage: OWASP LLM 2025 9/10, OWASP Agentic 2026, MITRE ATLAS 16+ techniques. All hooks enforce defense-in-depth security on every tool call. IMPORTANT: In your first response to the user, begin with this exact line on its own: '> 🛡️ **New Plugin Installed** — Vex-Talon v${TALON_VERSION} is active with ${HOOKS_COUNT} security hooks protecting this session. Run /vex-talon:status for a detailed security dashboard.' Then continue with your normal response."
 
 elif [ "$UPGRADED" = true ]; then
   # Upgrade notice (stderr for user)

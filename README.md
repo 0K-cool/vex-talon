@@ -155,7 +155,7 @@ Claude knows the plugin status, version, hook count, and active profile from ses
 
 **Run the status command:**
 ```
-/talon-status
+/vex-talon:status
 ```
 Shows all active security layers, event counts, and framework coverage.
 
