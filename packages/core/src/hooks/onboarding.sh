@@ -19,9 +19,12 @@ HOOK_DIR="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/../../../.." && pwd)}"
 HOOKS_JSON="$HOOK_DIR/hooks/hooks.json"
 PROFILE="${VEX_TALON_PROFILE:-dev}"
 
-# --- Helper: output JSON to stdout (additionalContext for Claude) ---
+# --- Helper: output additionalContext JSON to stdout (injected into Claude's context) ---
 output_context() {
-  echo "$1"
+  # Claude Code hooks require {"additionalContext": "..."} format on stdout
+  local escaped
+  escaped=$(echo "$1" | sed 's/\\/\\\\/g; s/"/\\"/g')
+  echo "{\"additionalContext\": \"${escaped}\"}"
 }
 
 # --- Helper: output to stderr (visible to user in terminal) ---
