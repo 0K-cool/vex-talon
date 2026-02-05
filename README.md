@@ -272,6 +272,34 @@ Vex-Talon provides the hook-based security layers. The full 20-layer architectur
 | **L15** RAG Security Scanner | Anti-poisoning for RAG knowledge bases: injection detection, Unicode normalization, provenance tracking | [vex-rag](https://github.com/0K-cool/vex-rag) plugin |
 | **L18** MCP Audit | Pre-deployment security scanning for MCP servers using NOVA injection rules | [Proximity](https://github.com/fr0gger/proximity) scanner |
 
+### Static Analysis Tools (Extend L2 & L6)
+
+Vex-Talon's L2 Secure Code Linter and L6 Git Pre-commit hooks can be enhanced with dedicated static analysis tools:
+
+| Tool | Language | Purpose | Integration |
+|------|----------|---------|-------------|
+| [Semgrep](https://semgrep.dev/) | Multi-language | SAST rules for OWASP patterns, custom rules | Add to L6 pre-commit or L2 PostToolUse |
+| [Bandit](https://bandit.readthedocs.io/) | Python | Python-specific security issues (B101-B703) | `pip install bandit` → add to pre-commit |
+| [ShellCheck](https://www.shellcheck.net/) | Bash/Shell | Shell script security and quality | `brew install shellcheck` → add to pre-commit |
+| [gitleaks](https://github.com/gitleaks/gitleaks) | Any | Secret detection in git history | Complements L6 pre-commit secrets scanning |
+| [trufflehog](https://github.com/trufflesecurity/trufflehog) | Any | Deep secret scanning with entropy analysis | Alternative to gitleaks for L6 |
+
+**Example: Adding Semgrep to your workflow**
+
+```bash
+# Install Semgrep
+pip install semgrep
+
+# Run with OWASP rules
+semgrep --config=p/owasp-top-ten .
+
+# Add to .git/hooks/pre-commit
+#!/bin/bash
+semgrep --config=p/security-audit --error $(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(py|js|ts|go)$')
+```
+
+These tools complement Vex-Talon's pattern-based detection with deeper static analysis. L2's built-in linting catches common issues fast; external SAST tools catch subtle vulnerabilities that pattern matching misses.
+
 ---
 
 ## Framework Coverage
