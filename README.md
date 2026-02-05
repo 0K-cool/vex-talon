@@ -301,7 +301,7 @@ macOS and Linux are fully supported. Windows is untested.
 No. Everything runs 100% locally. The only optional network call is to OpenSourceMalware.com for supply chain scanning (opt-in via `OSM_API_TOKEN`).
 
 **How does this compare to other AI security tools?**
-Most tools operate at 1-2 layers (typically just prompt injection scanning). Vex-Talon provides 20 layers covering the full OWASP LLM Top 10, from code security to exfiltration prevention to spend control. See our [competitive landscape analysis](https://github.com/0K-cool/vex/blob/main/output/research/vex-talon-competitive-landscape-2026.md) for details.
+Most tools operate at 1-2 layers (typically just prompt injection scanning). Vex-Talon provides 20 layers covering the full OWASP LLM Top 10, from code security to exfiltration prevention to spend control.
 
 ---
 
