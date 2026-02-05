@@ -1,5 +1,7 @@
 # Vex-Talon
 
+![Vex-Talon Banner](vex-talon-banner.jpg)
+
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/0K-cool/vex-talon/releases/tag/v1.0.0)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Claude_Code-orange)](https://code.claude.com)
@@ -10,8 +12,6 @@
 [![MITRE ATLAS](https://img.shields.io/badge/MITRE-ATLAS-blueviolet)](https://atlas.mitre.org/)
 [![OWASP Agentic 2026](https://img.shields.io/badge/OWASP_Agentic-2026-blueviolet)](https://owasp.org/www-project-agentic-ai/)
 [![AI Secured](https://img.shields.io/badge/AI_Secured-Defense_in_Depth-8A2BE2)](README.md#architecture)
-
-![Vex-Talon Banner](vex-talon-banner.jpg)
 
 **20-layer defense-in-depth security plugin for Claude Code.**
 
