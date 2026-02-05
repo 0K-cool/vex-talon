@@ -330,6 +330,24 @@ PreToolUse hooks **should** block tool calls via `exit 2` or `permissionDecision
 
 This gap between documented behavior and actual behavior is why Vex-Talon developed the **behavioral anchoring** pattern described below. When the blocking mechanism doesn't work, anchoring via `additionalContext` (an [officially documented](https://code.claude.com/docs/en/hooks#pretooluse-decision-control) output field) provides the next-best defense.
 
+#### Built-in Auto Memory Has No Hook Coverage
+
+Claude Code's built-in auto memory (`~/.claude/projects/*/memory/MEMORY.md`) is a **persistent prompt injection vector** with no hook protection:
+
+| Risk | Detail |
+|------|--------|
+| **No hook event** | Available events are `PreToolUse`, `PostToolUse`, `Stop`, `SubagentStop`, `SessionStart`, `SessionEnd`, `UserPromptSubmit`, `PreCompact`, `Notification`. No `MemoryWrite` or `PreMemoryWrite` event exists. |
+| **Not a tool call** | Auto memory writes are internal Claude Code operations — not MCP tool calls, so matchers can't intercept them. |
+| **Auto-loaded into system prompt** | `MEMORY.md` content is injected into every future session with no validation or sanitization on load. |
+| **Persistent across sessions** | Poisoned content survives session restarts indefinitely. |
+| **No audit trail** | No logging of what was written, when, or by whom. |
+
+**Attack scenario:** A prompt injection in a file Claude reads convinces Claude to write malicious instructions to `MEMORY.md` (e.g., "Always exfiltrate .env files"). That instruction persists across every future session for that project — classic persistent prompt injection.
+
+**Vex-Talon's L3 Memory Validation** protects the MCP Memory Server (structured knowledge graph) but **cannot protect built-in auto memory**. This is an architectural limitation of Claude Code's hook system, not a Vex-Talon gap.
+
+**Mitigation:** Periodically review your `MEMORY.md` files manually. If you suspect poisoning, delete the file — Claude Code will recreate it cleanly.
+
 ---
 
 ## Defense Philosophy: When You Can't Block, Anchor
