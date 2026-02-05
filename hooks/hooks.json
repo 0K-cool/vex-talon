@@ -78,6 +78,11 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/packages/core/src/hooks/check-bun.sh",
+            "timeout": 2000
+          },
+          {
+            "type": "command",
             "command": "bun run ${CLAUDE_PLUGIN_ROOT}/packages/core/src/hooks/L12-least-privilege.ts",
             "timeout": 5000
           },
