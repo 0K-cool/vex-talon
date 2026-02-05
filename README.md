@@ -434,7 +434,7 @@ MIT
 
 ## Credits
 
-Built by [Kelvin Lomboy](https://github.com/0K-cool).
+Built by [Kelvin Lomboy](https://www.linkedin.com/in/kelvinlomboy).
 
 Frameworks: [OWASP LLM Top 10 2025](https://owasp.org/www-project-top-10-for-large-language-model-applications/), [OWASP Agentic Top 10 2026](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/), [MITRE ATLAS](https://atlas.mitre.org/).
 
