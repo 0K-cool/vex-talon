@@ -164,6 +164,61 @@ export function clearConfigCache(): void {
 }
 
 // ============================================================================
+// Runtime Validation
+// ============================================================================
+
+const VALID_SEVERITIES = new Set(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']);
+
+/**
+ * Validate a loaded config has expected structure.
+ * Returns sanitized config or null if invalid.
+ *
+ * Checks:
+ * - patterns array/object exists and has expected shape
+ * - severity values are from known enum
+ * - regex patterns compile without error and aren't ReDoS-prone
+ */
+export function validatePatterns<T extends { pattern: string; severity?: string }>(
+  patterns: T[],
+  configName: string
+): T[] {
+  if (!Array.isArray(patterns)) {
+    console.error(`[ConfigLoader] ${configName}: patterns is not an array, using defaults`);
+    return [];
+  }
+
+  return patterns.filter((p, i) => {
+    // Verify pattern field exists and is a non-empty string
+    if (!p.pattern || typeof p.pattern !== 'string') {
+      console.error(`[ConfigLoader] ${configName}[${i}]: missing or invalid pattern field, skipping`);
+      return false;
+    }
+
+    // Verify severity is valid if present
+    if (p.severity && !VALID_SEVERITIES.has(p.severity)) {
+      console.error(`[ConfigLoader] ${configName}[${i}]: invalid severity "${p.severity}", skipping`);
+      return false;
+    }
+
+    // Test regex compiles and isn't suspiciously complex (ReDoS heuristic)
+    try {
+      new RegExp(p.pattern, 'gi');
+    } catch {
+      console.error(`[ConfigLoader] ${configName}[${i}]: invalid regex "${p.pattern}", skipping`);
+      return false;
+    }
+
+    // ReDoS heuristic: reject patterns with nested quantifiers like (a+)+ or (a*)*
+    if (/(\+|\*|\{)\)(\+|\*|\{)/.test(p.pattern) || /(\+|\*)\{/.test(p.pattern)) {
+      console.error(`[ConfigLoader] ${configName}[${i}]: potential ReDoS pattern detected, skipping`);
+      return false;
+    }
+
+    return true;
+  });
+}
+
+// ============================================================================
 // Pattern Converters
 // ============================================================================
 
@@ -324,7 +379,9 @@ export function loadInjectionPatterns(): InjectionPattern[] {
     'injection/patterns.json',
     { patterns: DEFAULT_INJECTION_PATTERNS }
   );
-  return config.patterns || DEFAULT_INJECTION_PATTERNS;
+  const raw = config.patterns || DEFAULT_INJECTION_PATTERNS;
+  const validated = validatePatterns(raw, 'injection/patterns.json');
+  return validated.length > 0 ? validated : DEFAULT_INJECTION_PATTERNS;
 }
 
 export function loadCodeEnforcerPatterns(): typeof DEFAULT_CODE_PATTERNS {
@@ -332,7 +389,20 @@ export function loadCodeEnforcerPatterns(): typeof DEFAULT_CODE_PATTERNS {
     'code-enforcer/patterns.json',
     { patterns: DEFAULT_CODE_PATTERNS }
   );
-  return config.patterns || DEFAULT_CODE_PATTERNS;
+  const raw = config.patterns || DEFAULT_CODE_PATTERNS;
+  // Validate each category's patterns
+  for (const key of Object.keys(raw) as (keyof typeof raw)[]) {
+    const patterns = raw[key];
+    if (Array.isArray(patterns)) {
+      const validated = validatePatterns(patterns as { pattern: string; severity?: string }[], `code-enforcer/${key}`);
+      if (validated.length === 0 && DEFAULT_CODE_PATTERNS[key]) {
+        (raw as any)[key] = DEFAULT_CODE_PATTERNS[key];
+      } else {
+        (raw as any)[key] = validated;
+      }
+    }
+  }
+  return raw;
 }
 
 export function loadEgressConfig(): {

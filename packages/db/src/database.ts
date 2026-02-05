@@ -14,7 +14,17 @@ let db: Database.Database | null = null;
 
 export function getDbPath(): string {
   const customPath = process.env.VEX_TALON_DB_PATH;
-  if (customPath) return customPath;
+  if (customPath) {
+    // Validate custom path: must be absolute, no traversal, under HOME or CWD
+    const resolved = require('path').resolve(customPath);
+    const home = process.env.HOME || '';
+    const cwd = process.cwd();
+    if (resolved.includes('..') || (!resolved.startsWith(home) && !resolved.startsWith(cwd))) {
+      console.error(`[vex-talon/db] VEX_TALON_DB_PATH rejected: must be under HOME or CWD. Using default.`);
+    } else {
+      return resolved;
+    }
+  }
   const dataDir = join(process.cwd(), '.vex-talon', 'data');
   if (!existsSync(dataDir)) mkdirSync(dataDir, { recursive: true });
   return join(dataDir, 'security.db');

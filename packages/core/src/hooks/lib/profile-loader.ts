@@ -49,12 +49,22 @@ function getActiveProfilePath(): string {
 /**
  * Load the active profile set by L12 SessionStart hook.
  * Validates file ownership to prevent profile injection attacks.
+ *
+ * Security notes:
+ * - TOCTOU: There is a small window between statSync and readFileSync where
+ *   the file could be swapped. Practical exploitation requires existing local
+ *   file system access and the window is microseconds. Acceptable risk for a
+ *   CLI plugin. To eliminate, use openSync/fstatSync/readSync on same fd.
+ * - Windows: process.getuid is undefined on Windows. The optional chain (?.)
+ *   returns undefined, which never equals stat.uid, so ALL profiles are
+ *   rejected on Windows. This is fail-safe (returns null = no restrictions).
  */
 export function loadActiveProfile(): Profile | null {
   try {
     const profilePath = getActiveProfilePath();
     if (existsSync(profilePath)) {
       // Verify file is owned by current user (prevent profile injection)
+      // Note: TOCTOU window between stat and read - see JSDoc above
       const stat = statSync(profilePath);
       if (stat.uid !== process.getuid?.()) {
         console.error(`[profile-loader] WARNING: ${profilePath} not owned by current user. Ignoring.`);

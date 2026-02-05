@@ -28,6 +28,7 @@
 import { appendFileSync } from 'fs';
 import { ensureTalonDirs, getAuditLogPath } from './lib/talon-paths';
 import { checkCircuit, recordSuccess, recordFailure } from './lib/circuit-breaker';
+import { normalizeUnicode } from './lib/unicode-normalize';
 
 // ============================================================================
 // Types
@@ -310,23 +311,7 @@ function detectSuspiciousHeuristics(content: string): HeuristicResult {
   };
 }
 
-// ============================================================================
-// Unicode Normalization
-// ============================================================================
-
-const HOMOGLYPHS: Record<string, string> = {
-  '\u0430': 'a', '\u0435': 'e', '\u043e': 'o', '\u0440': 'p',
-  '\u0441': 'c', '\u0445': 'x', '\u0443': 'y', '\u0456': 'i',
-  '\u200b': '', '\u200c': '', '\u200d': '', '\ufeff': '', '\u00ad': '',
-};
-
-function normalizeUnicode(text: string): string {
-  let normalized = text.normalize('NFKC');
-  for (const [homoglyph, replacement] of Object.entries(HOMOGLYPHS)) {
-    normalized = normalized.split(homoglyph).join(replacement);
-  }
-  return normalized;
-}
+// Unicode normalization imported from shared module: ./lib/unicode-normalize
 
 // ============================================================================
 // Scanning Logic

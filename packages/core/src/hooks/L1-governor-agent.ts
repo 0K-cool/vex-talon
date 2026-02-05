@@ -20,6 +20,7 @@ import { appendFileSync } from 'fs';
 import { join } from 'path';
 import { TALON_DIR, getAuditLogPath, ensureDirectories } from './lib/talon-paths';
 import { checkCircuit, recordSuccess, recordFailure } from './lib/circuit-breaker';
+import { normalizeUnicode } from './lib/unicode-normalize';
 import {
   loadActiveProfile,
   isToolAllowed,
@@ -196,18 +197,37 @@ const POLICIES: Policy[] = [
   },
 
   // === HIGH: Dangerous Bash Commands ===
+  // Download-and-execute detection. Covers curl/wget piped to shell interpreters,
+  // process substitution, and download-then-execute patterns.
+  //
+  // Known bypass vectors (inherent regex limitation - document for transparency):
+  // - Shell quoting tricks: cu''rl, cu\rl, ${cmd}url (variable expansion)
+  // - Aliases: alias c=curl; c url | sh
+  // - Indirect: python -c "import os; os.system('curl url | sh')"
+  // - Encoded: base64 -d <<< "Y3VybCB..." | sh
+  // These require an attacker who already has shell access, which is outside
+  // our threat model (we protect against LLM-generated commands, not adversarial shells).
   {
     name: 'block-curl-pipe-sh',
     tool: 'Bash',
     match: (_tool, params) => {
       const cmd = String(params.command || '');
-      return cmd.includes('curl') && (cmd.includes('| sh') || cmd.includes('| bash') || cmd.includes('|sh') || cmd.includes('|bash'));
+      // Pattern 1: curl/wget piped to shell (with or without spaces around |)
+      const hasFetcher = cmd.includes('curl') || cmd.includes('wget');
+      const hasPipeShell = /\|\s*(sh|bash|zsh|dash)\b/.test(cmd);
+      // Pattern 2: Process substitution: bash <(curl ...) or sh <(wget ...)
+      const hasProcessSub = /\b(sh|bash|zsh|dash)\s+<\(/.test(cmd) && hasFetcher;
+      // Pattern 3: Download then execute: curl -o /tmp/x && sh /tmp/x
+      const hasDownloadExec = hasFetcher && /(-o|--output)\s+\S+.*&&\s*(sh|bash|chmod\s+\+x)/.test(cmd);
+      // Pattern 4: wget -O- piped to shell
+      const hasWgetPipe = cmd.includes('wget') && /-O\s*-/.test(cmd) && hasPipeShell;
+      return (hasFetcher && hasPipeShell) || hasProcessSub || hasDownloadExec || hasWgetPipe;
     },
     action: 'BLOCK',
     severity: 'HIGH',
-    message: 'Dangerous pattern: curl | sh - download and review scripts before executing',
+    message: 'Dangerous pattern: download-and-execute detected - download and review scripts before executing',
     modify: (_params) => ({
-      command: `echo "[GOVERNOR BLOCKED] Dangerous pattern: curl | sh. Download and review scripts before executing."`
+      command: `echo "[GOVERNOR BLOCKED] Dangerous pattern: download-and-execute. Download and review scripts before executing."`
     }),
   },
   {
@@ -348,33 +368,7 @@ const POLICIES: Policy[] = [
 // Tools to monitor
 const MONITORED_TOOLS = ['Read', 'Write', 'Edit', 'Bash', 'WebFetch', 'WebSearch', 'Skill', 'Task', 'Glob', 'Grep'];
 
-// ============================================================================
-// Unicode Normalization (Homoglyph Bypass Prevention)
-// ============================================================================
-
-const HOMOGLYPHS: Record<string, string> = {
-  // Cyrillic confusables
-  '\u0430': 'a', '\u0435': 'e', '\u043e': 'o', '\u0440': 'p',
-  '\u0441': 'c', '\u0445': 'x', '\u0443': 'y', '\u0456': 'i',
-  '\u0410': 'A', '\u0412': 'B', '\u0415': 'E', '\u041A': 'K',
-  '\u041C': 'M', '\u041D': 'H', '\u041E': 'O', '\u0420': 'P',
-  '\u0421': 'C', '\u0422': 'T', '\u0423': 'Y', '\u0425': 'X',
-  // Greek confusables
-  '\u03B1': 'a', '\u03B5': 'e', '\u03B9': 'i', '\u03BF': 'o',
-  '\u0391': 'A', '\u0395': 'E', '\u0399': 'I', '\u039F': 'O',
-  // Zero-width characters (remove)
-  '\u200b': '', '\u200c': '', '\u200d': '', '\ufeff': '', '\u00ad': '',
-  // Whitespace normalization
-  '\u00a0': ' ', '\u2000': ' ', '\u2001': ' ', '\u2002': ' ', '\u2003': ' ',
-};
-
-function normalizeUnicode(text: string): string {
-  let normalized = text.normalize('NFKC');
-  for (const [homoglyph, replacement] of Object.entries(HOMOGLYPHS)) {
-    normalized = normalized.split(homoglyph).join(replacement);
-  }
-  return normalized;
-}
+// Unicode normalization imported from shared module: ./lib/unicode-normalize
 
 function normalizeParams(params: Record<string, any>): Record<string, any> {
   const normalized: Record<string, any> = {};

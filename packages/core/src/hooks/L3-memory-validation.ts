@@ -28,6 +28,7 @@
 
 import { appendFileSync } from 'fs';
 import { ensureTalonDirs, getAuditLogPath } from './lib/talon-paths';
+import { normalizeUnicode } from './lib/unicode-normalize';
 
 const HOOK_NAME = 'L3-memory-validation';
 
@@ -103,26 +104,8 @@ const SENSITIVE_PATTERNS = [
   /xox[baprs]-[a-zA-Z0-9-]+/,                               // Slack tokens
 ];
 
-/**
- * Normalize Unicode to detect homoglyph-based evasion
- */
-function normalizeUnicode(text: string): string {
-  // Apply NFKC normalization
-  let normalized = text.normalize('NFKC');
-
-  // Replace common homoglyphs
-  const homoglyphs: Record<string, string> = {
-    '\u0430': 'a', '\u0435': 'e', '\u043e': 'o', '\u0440': 'p',
-    '\u0441': 'c', '\u0445': 'x', '\u0443': 'y', '\u0456': 'i',
-    '\u200b': '', '\u200c': '', '\u200d': '', '\ufeff': '',
-  };
-
-  for (const [char, replacement] of Object.entries(homoglyphs)) {
-    normalized = normalized.split(char).join(replacement);
-  }
-
-  return normalized;
-}
+// Unicode normalization imported from shared module: ./lib/unicode-normalize
+// normalizeUnicode() handles NFKC + Cyrillic/Greek homoglyphs + invisible chars
 
 function checkInjection(text: string): Finding | null {
   const normalized = normalizeUnicode(text.toLowerCase());
@@ -384,8 +367,12 @@ async function main() {
     // Alert provides context for behavioral defense - Claude sees the warning and can act on it
     const hasCritical = findings.some(f => f.severity === 'CRITICAL');
     process.exit(hasCritical ? 2 : 0);
-  } catch {
-    process.exit(0);
+  } catch (error) {
+    // Fail-closed: block operation if hook crashes (security-first)
+    // Even though MCP blocking is limited by Claude Code bugs #3514/#4669,
+    // maintain fail-closed principle for when those bugs are fixed
+    console.error(`[MemoryValidation L3] Error: ${error}`);
+    process.exit(2);
   }
 }
 

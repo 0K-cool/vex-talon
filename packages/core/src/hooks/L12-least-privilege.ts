@@ -14,9 +14,9 @@
  * Vex-Talon v0.1.0
  */
 
-import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { STATE_DIR, ensureDirectories } from './lib/talon-paths';
+import { atomicWriteFileSync } from './lib/atomic-file';
 
 // ============================================================================
 // Types
@@ -136,7 +136,7 @@ function getActiveProfilePath(): string {
 function saveActiveProfile(profile: Profile): void {
   ensureDirectories();
   const profilePath = getActiveProfilePath();
-  writeFileSync(profilePath, JSON.stringify(profile, null, 2));
+  atomicWriteFileSync(profilePath, JSON.stringify(profile, null, 2));
 }
 
 function getProfileFromEnv(): string {

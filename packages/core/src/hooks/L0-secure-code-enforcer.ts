@@ -27,6 +27,7 @@
 
 import { appendFileSync } from 'fs';
 import { extname } from 'path';
+import { normalizeUnicode } from './lib/unicode-normalize';
 import {
   ensureTalonDirs,
   getAuditLogPath,
@@ -229,27 +230,7 @@ const CRYPTO_PATTERNS = {
   ],
 };
 
-// ============================================================================
-// Unicode Normalization (Homoglyph Bypass Prevention)
-// ============================================================================
-
-const HOMOGLYPHS: Record<string, string> = {
-  '\u0430': 'a', '\u0435': 'e', '\u043e': 'o', '\u0440': 'p',
-  '\u0441': 'c', '\u0445': 'x', '\u0443': 'y', '\u0456': 'i',
-  '\u0410': 'A', '\u0412': 'B', '\u0415': 'E', '\u041A': 'K',
-  '\u041C': 'M', '\u041D': 'H', '\u041E': 'O', '\u0420': 'P',
-  '\u0421': 'C', '\u0422': 'T', '\u0423': 'Y', '\u0425': 'X',
-  '\u200b': '', '\u200c': '', '\u200d': '', '\ufeff': '', '\u00ad': '',
-  '\u00a0': ' ', '\u2000': ' ', '\u2001': ' ', '\u2002': ' ', '\u2003': ' ',
-};
-
-function normalizeUnicode(text: string): string {
-  let normalized = text.normalize('NFKC');
-  for (const [homoglyph, replacement] of Object.entries(HOMOGLYPHS)) {
-    normalized = normalized.split(homoglyph).join(replacement);
-  }
-  return normalized;
-}
+// Unicode normalization imported from shared module: ./lib/unicode-normalize
 
 // ============================================================================
 // Code Classification
