@@ -58,7 +58,7 @@ export type HookStatus = 'PORTED' | 'DOCS' | 'EXTERNAL';
 /**
  * Hook event types
  */
-export type HookEventType = 'PreToolUse' | 'PostToolUse' | 'SessionStart' | 'Stop' | 'Git' | 'External' | 'Documentation';
+export type HookEventType = 'PreToolUse' | 'PostToolUse' | 'SessionStart' | 'SessionEnd' | 'Git' | 'External' | 'Documentation';
 
 /**
  * Layer definitions with metadata
@@ -145,7 +145,7 @@ export const LAYERS: LayerDefinition[] = [
 
   // === STOP HOOK (Session End Report) ===
   {
-    id: 'STOP', name: 'Security Report', type: 'Stop', status: 'PORTED',
+    id: 'STOP', name: 'Security Report', type: 'SessionEnd', status: 'PORTED',
     file: 'stop-security-report.ts', description: 'Aggregates security events into HTML report',
     action: 'REPORT'
   },
@@ -226,8 +226,8 @@ export function getSessionStartHooks(): LayerDefinition[] {
 /**
  * Get Stop hooks (session end)
  */
-export function getStopHooks(): LayerDefinition[] {
-  return LAYERS.filter(l => l.type === 'Stop' && l.status === 'PORTED');
+export function getSessionEndHooks(): LayerDefinition[] {
+  return LAYERS.filter(l => l.type === 'SessionEnd' && l.status === 'PORTED');
 }
 
 /**
@@ -252,7 +252,7 @@ export function generateHooksConfig(basePath: string = './packages/core/src/hook
     timeout: 5000,
   }));
 
-  const stopHooks = getStopHooks().map(l => ({
+  const stopHooks = getSessionEndHooks().map(l => ({
     type: 'command',
     command: `bun run ${basePath}/${l.file}`,
     timeout: 30000, // Reports need more time to generate
@@ -289,7 +289,7 @@ export function getCoverageStats(): {
     preToolUse: getPreToolUseHooks().length,
     postToolUse: getPostToolUseHooks().length,
     sessionStart: getSessionStartHooks().length,
-    stop: getStopHooks().length,
+    stop: getSessionEndHooks().length,
   };
 }
 

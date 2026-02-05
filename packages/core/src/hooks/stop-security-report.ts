@@ -1197,12 +1197,14 @@ Write:`;
 
     // Call Haiku via claude CLI (uses Claude Code subscription - free)
     // Run from /tmp to avoid loading project context
-    const { execSync } = await import('child_process');
+    // Security: Write prompt to temp file to avoid shell injection via audit log content
+    const { execFileSync } = await import('child_process');
+    const { unlinkSync } = await import('fs');
+    const tmpFile = join('/tmp', `vex-talon-prompt-${Date.now()}-${process.pid}.txt`);
 
     try {
-      const analysis = execSync(
-        `echo ${JSON.stringify(prompt)} | claude -p --model haiku --no-session-persistence 2>/dev/null`,
-        {
+      writeFileSync(tmpFile, prompt, { mode: 0o600 });
+      const analysis = execFileSync('sh', ['-c', `cat "${tmpFile}" | claude -p --model haiku --no-session-persistence 2>/dev/null`], {
           cwd: '/tmp',
           encoding: 'utf-8',
           timeout: 60000, // 60 second timeout
@@ -1214,6 +1216,8 @@ Write:`;
     } catch (cliError) {
       console.error('Haiku CLI error:', cliError);
       return `Vex-Talon Analysis unavailable: CLI error`;
+    } finally {
+      try { unlinkSync(tmpFile); } catch { /* best effort cleanup */ }
     }
   } catch (error) {
     console.error('Error generating Vex-Talon analysis:', error);
@@ -1928,7 +1932,13 @@ function generateHTML(data: ReportData): string {
         html += '<div style="color: var(--text-muted); font-size: 10px; margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-color);">Click a row to navigate, or click card for most events</div>';
       }
 
-      tooltip.innerHTML = html;
+      // Security: Use DOM APIs instead of innerHTML to prevent stored XSS
+      tooltip.textContent = '';
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = html;
+      while (wrapper.firstChild) {
+        tooltip.appendChild(wrapper.firstChild);
+      }
 
       // Add click handlers to tooltip rows
       tooltip.querySelectorAll('.tooltip-row.has-events').forEach(row => {

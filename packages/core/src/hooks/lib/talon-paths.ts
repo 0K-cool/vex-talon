@@ -10,7 +10,7 @@
  * @version 0.1.0
  */
 
-import { existsSync, mkdirSync, statSync } from 'fs';
+import { existsSync, mkdirSync, statSync, chmodSync, appendFileSync as nodeAppendFileSync } from 'fs';
 import { join, resolve } from 'path';
 import { homedir } from 'os';
 
@@ -122,6 +122,9 @@ export function ensureDirectories(): void {
   for (const dir of dirs) {
     if (!existsSync(dir)) {
       mkdirSync(dir, { recursive: true, mode: 0o700 });
+    } else {
+      // Fix permissions on existing directories (may have been created with default umask)
+      try { chmodSync(dir, 0o700); } catch { /* best effort */ }
     }
   }
 }
@@ -199,4 +202,13 @@ export function getQuarantinePath(hookName: string): string {
     mkdirSync(path, { recursive: true, mode: 0o700 });
   }
   return path;
+}
+
+/**
+ * Append to audit log with enforced 0o600 permissions.
+ * Prevents world-readable audit logs from default umask.
+ */
+export function secureAppendLog(logPath: string, data: string): void {
+  nodeAppendFileSync(logPath, data);
+  try { chmodSync(logPath, 0o600); } catch { /* best effort */ }
 }

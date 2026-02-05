@@ -5,7 +5,7 @@
  * for the Least Privilege system.
  */
 
-import { existsSync, readFileSync, statSync } from 'fs';
+import { existsSync, openSync, fstatSync, readFileSync, closeSync } from 'fs';
 import { join } from 'path';
 import { STATE_DIR } from './talon-paths';
 
@@ -50,33 +50,34 @@ function getActiveProfilePath(): string {
  * Load the active profile set by L12 SessionStart hook.
  * Validates file ownership to prevent profile injection attacks.
  *
- * Security notes:
- * - TOCTOU: There is a small window between statSync and readFileSync where
- *   the file could be swapped. Practical exploitation requires existing local
- *   file system access and the window is microseconds. Acceptable risk for a
- *   CLI plugin. To eliminate, use openSync/fstatSync/readSync on same fd.
- * - Windows: process.getuid is undefined on Windows. The optional chain (?.)
- *   returns undefined, which never equals stat.uid, so ALL profiles are
- *   rejected on Windows. This is fail-safe (returns null = no restrictions).
+ * Security: Uses fd-based operations (openSync → fstatSync → readFileSync)
+ * on the same file descriptor to eliminate TOCTOU race between stat and read.
+ *
+ * Windows: process.getuid is undefined on Windows. The optional chain (?.)
+ * returns undefined, which never equals stat.uid, so ALL profiles are
+ * rejected on Windows. This is fail-safe (returns null = no restrictions).
  */
 export function loadActiveProfile(): Profile | null {
+  let fd: number | null = null;
   try {
     const profilePath = getActiveProfilePath();
-    if (existsSync(profilePath)) {
-      // Verify file is owned by current user (prevent profile injection)
-      // Note: TOCTOU window between stat and read - see JSDoc above
-      const stat = statSync(profilePath);
-      if (stat.uid !== process.getuid?.()) {
-        console.error(`[profile-loader] WARNING: ${profilePath} not owned by current user. Ignoring.`);
-        return null;
-      }
-      const content = readFileSync(profilePath, 'utf-8');
-      return JSON.parse(content) as Profile;
+    if (!existsSync(profilePath)) return null;
+
+    // Open fd, then stat+read on same fd to eliminate TOCTOU
+    fd = openSync(profilePath, 'r');
+    const stat = fstatSync(fd);
+    if (stat.uid !== process.getuid?.()) {
+      console.error(`[profile-loader] WARNING: ${profilePath} not owned by current user. Ignoring.`);
+      return null;
     }
+    const content = readFileSync(fd, 'utf-8');
+    return JSON.parse(content) as Profile;
   } catch {
     // Fall through - profile not set or invalid
+    return null;
+  } finally {
+    if (fd !== null) try { closeSync(fd); } catch { /* best effort */ }
   }
-  return null;
 }
 
 // ============================================================================

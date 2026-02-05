@@ -85,7 +85,9 @@ function compilePatterns(defs: PatternDef[]): CompiledPattern[] {
   const compiled: CompiledPattern[] = [];
   for (const def of defs) {
     try {
-      const flags = (def.flags || '') + 'i';
+      // Strip 'g' flag to prevent lastIndex statefulness bugs when reusing patterns
+      const rawFlags = (def.flags || '') + 'i';
+      const flags = rawFlags.replace(/g/gi, '');
       compiled.push({ ...def, regex: new RegExp(def.pattern, flags) });
     } catch {
       // Skip invalid regex

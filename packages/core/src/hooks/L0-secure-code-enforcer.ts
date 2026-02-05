@@ -142,11 +142,13 @@ const COMMAND_PATTERNS = {
     /os\.popen\s*\(/i,
     /exec\s*\(\s*f["']/i,
     /eval\s*\(/i,
+    /new\s+Function\s*\(/i,
+    /import\s*\(\s*[^)]*\+/i,
     /child_process\.exec\s*\(/i,
     /execSync\s*\(/i,
     /spawn\s*\(.*shell:\s*true/i,
   ],
-  keywords: /\b(subprocess|os\.system|os\.popen|exec|eval|child_process|spawn|execSync)\b/,
+  keywords: /\b(subprocess|os\.system|os\.popen|exec|eval|Function|child_process|spawn|execSync)\b/,
 };
 
 // CRITICAL: Hardcoded Secrets
@@ -486,7 +488,11 @@ async function main() {
     }
 
     for (const skipPath of SKIP_PATHS) {
-      if (filePath.includes(skipPath)) {
+      // Use segment-aware matching: path must contain the skip pattern as a directory segment
+      // Prevents bypass via filenames like "/tmp/hooks/evil.py"
+      const segments = filePath.split('/');
+      const isSegmentMatch = segments.some(s => skipPath.startsWith('.') ? filePath.endsWith(skipPath) : `/${s}/`.includes(skipPath) || s === skipPath.replace(/\//g, ''));
+      if (isSegmentMatch) {
         process.exit(0);
       }
     }

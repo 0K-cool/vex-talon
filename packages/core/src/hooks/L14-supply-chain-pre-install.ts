@@ -174,6 +174,7 @@ const ECOSYSTEM_MAP: Record<string, string> = {
   pip3: 'pypi',
   cargo: 'crates',
   go: 'go',
+  bun: 'npm',
 };
 
 const PM_PATTERNS: Record<string, { install: RegExp; packages: RegExp }> = {
@@ -200,6 +201,10 @@ const PM_PATTERNS: Record<string, { install: RegExp; packages: RegExp }> = {
   go: {
     install: /\bgo\s+(get|install)\s+/i,
     packages: /\bgo\s+(?:get|install)\s+([^&|;]+)/i,
+  },
+  bun: {
+    install: /\bbun\s+(add|install|i)\s+/i,
+    packages: /\bbun\s+(?:add|install|i)\s+([^&|;]+)/i,
   },
 };
 
