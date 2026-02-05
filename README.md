@@ -12,7 +12,7 @@
 [![MITRE ATLAS](https://img.shields.io/badge/MITRE-ATLAS-blueviolet)](https://atlas.mitre.org/)
 [![OWASP Agentic 2026](https://img.shields.io/badge/OWASP_Agentic-2026-blueviolet)](https://owasp.org/www-project-agentic-ai/)
 [![AI Secured](https://img.shields.io/badge/AI_Secured-Defense_in_Depth-8A2BE2)](README.md#architecture)
-[![Made in Puerto Rico](https://img.shields.io/badge/Made_in-Puerto_Rico_🇵🇷-red)](https://en.wikipedia.org/wiki/Puerto_Rico)
+[![Forged in Puerto Rico](https://img.shields.io/badge/Forged_in-Puerto_Rico_🇵🇷-red)](https://en.wikipedia.org/wiki/Puerto_Rico)
 
 **20-layer defense-in-depth security plugin for Claude Code.**
 
