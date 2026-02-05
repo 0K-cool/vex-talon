@@ -44,7 +44,7 @@ Most developers run Claude Code with zero security layers. Vex-Talon adds 20.
 | **L14** | Supply Chain Pre-Install | Blocks 60+ known malicious packages before installation. Optional real-time API via OpenSourceMalware.com |
 | **L19** | Skill Scanner | Scans skills for injection patterns, dangerous commands, credential exposure, and external URLs before invocation |
 
-_†L3 requires the [Anthropic MCP Memory Server](https://github.com/anthropics/claude-code/tree/main/packages/memory) to be configured. Without a memory server, L3 is installed but dormant (no memory operations to monitor). Due to Claude Code bugs [#3514](https://github.com/anthropics/claude-code/issues/3514) and [#4669](https://github.com/anthropics/claude-code/issues/4669), L3 provides detection and alerting only — it cannot block MCP tool calls._
+_†L3 requires the [Anthropic MCP Memory Server](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) to be configured. Without a memory server, L3 is installed but dormant (no memory operations to monitor). Due to Claude Code bugs [#3514](https://github.com/anthropics/claude-code/issues/3514) and [#4669](https://github.com/anthropics/claude-code/issues/4669), L3 provides detection and alerting only — it cannot block MCP tool calls._
 
 ### PostToolUse Hooks (Detect After Execution)
 
@@ -190,10 +190,10 @@ Vex-Talon provides the hook-based security layers. The full 20-layer architectur
 
 | Layer | What | Requires |
 |-------|------|----------|
-| **L11** Leash Kernel Sandbox | eBPF-based kernel sandbox with no prompt-injection bypass. For high-security and client work | [Leash](https://github.com/anthropics/leash) binary (Linux with eBPF) |
-| **L13** Strawberry Hallucination Detector | Information-theoretic hallucination detection via KL divergence. For threat intel, client deliverables | [hallucination-detector MCP](https://github.com/0K-cool/hallucination-detector) + OpenAI API key |
+| **L11** Leash Kernel Sandbox | eBPF-based kernel sandbox with no prompt-injection bypass. For high-security and client work | [Leash](https://github.com/strongdm/leash) binary (Linux with eBPF) |
+| **L13** Strawberry Hallucination Detector | Information-theoretic hallucination detection via KL divergence. For threat intel, client deliverables | [Pythea/Strawberry](https://github.com/leochlon/pythea) + OpenAI API key |
 | **L15** RAG Security Scanner | Anti-poisoning for RAG knowledge bases: injection detection, Unicode normalization, provenance tracking | [vex-rag](https://github.com/0K-cool/vex-rag) plugin |
-| **L18** MCP Audit | Pre-deployment security scanning for MCP servers using NOVA injection rules | [Proximity](https://github.com/anthropics/proximity) scanner |
+| **L18** MCP Audit | Pre-deployment security scanning for MCP servers using NOVA injection rules | [Proximity](https://github.com/fr0gger/proximity) scanner |
 
 ---
 
@@ -388,7 +388,7 @@ Yes. Configure `enabledLayers` in the plugin settings.
 macOS and Linux are fully supported. Windows is untested.
 
 **Do I need an MCP Memory Server for L3?**
-L3 Memory Validation only activates if you have the [Anthropic MCP Memory Server](https://github.com/anthropics/claude-code/tree/main/packages/memory) configured. Without one, L3 is installed but dormant — it won't slow anything down or produce false alerts. If you do use a memory server, L3 protects against memory poisoning attacks (instruction injection, fake facts, context manipulation).
+L3 Memory Validation only activates if you have the [Anthropic MCP Memory Server](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) configured. Without one, L3 is installed but dormant — it won't slow anything down or produce false alerts. If you do use a memory server, L3 protects against memory poisoning attacks (instruction injection, fake facts, context manipulation).
 
 **Is my data sent anywhere?**
 No. Everything runs 100% locally. The only optional network call is to OpenSourceMalware.com for supply chain scanning (opt-in via `OSM_API_TOKEN`).
@@ -418,7 +418,7 @@ Vex-Talon itself is developed with security in mind:
 - **Auditable** - Open source, review every hook
 - **Minimal deps** - Reduced supply chain surface
 - **4 rounds of security audit** - Score: 91/100
-- **Battle-tested** - Developed and tested on [Vex](https://github.com/0K-cool/vex), Kelvin's personal AI infrastructure built on Claude Code. Every hook runs in daily professional cybersecurity work before being ported to this plugin.
+- **Battle-tested** - Developed and tested on Vex, Kelvin's personal AI infrastructure built on Claude Code. Every hook runs in daily professional cybersecurity work before being ported to this plugin.
 
 ### Reporting Vulnerabilities
 
@@ -436,8 +436,8 @@ MIT
 
 Built by [Kelvin Lomboy](https://github.com/0K-cool).
 
-Frameworks: [OWASP LLM Top 10 2025](https://owasp.org/www-project-top-10-for-large-language-model-applications/), [OWASP Agentic Top 10 2026](https://owasp.org/www-project-agentic-security/), [MITRE ATLAS](https://atlas.mitre.org/).
+Frameworks: [OWASP LLM Top 10 2025](https://owasp.org/www-project-top-10-for-large-language-model-applications/), [OWASP Agentic Top 10 2026](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/), [MITRE ATLAS](https://atlas.mitre.org/).
 
 Vulnerability research: [0din.ai](https://0din.ai) (AI vulnerability disclosure).
 
-Threat intelligence: [OpenSourceMalware.com](https://opensourcemalware.com/), [NOVA Framework](https://github.com/anthropics/nova).
+Threat intelligence: [OpenSourceMalware.com](https://opensourcemalware.com/), [NOVA Framework](https://github.com/fr0gger/nova-framework).
