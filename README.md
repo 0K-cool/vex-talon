@@ -1,6 +1,10 @@
 # Vex-Talon
 
+![Vex-Talon Banner](vex-talon-banner.jpg)
+
 **20-layer defense-in-depth security plugin for Claude Code.**
+
+*Vex (velociraptor) + Talon (claw) — sharp, fast, always watching. Defense-in-depth security that strikes before threats land.*
 
 Zero cloud dependencies. OWASP LLM 2025 + MITRE ATLAS coverage. Works out of the box.
 
