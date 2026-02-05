@@ -139,52 +139,41 @@ alias claude='claude --plugin-dir ~/.claude/plugins/vex-talon'
 /plugin install vex-talon@claude-code-marketplace
 ```
 
-### Verify
+### Verify Installation
 
-```bash
-/plugin list          # Should show vex-talon
+On your **first session**, Claude will confirm Vex-Talon is active in its first response:
+
+> Vex-Talon v1.0.0 is active with 16 security hooks protecting this session.
+
+You can also verify at any time:
+
+**Ask Claude:**
 ```
+Is Vex-Talon active?
+```
+Claude knows the plugin status, version, hook count, and active profile from session context.
+
+**Run the status command:**
+```
+/talon-status
+```
+Shows all active security layers, event counts, and framework coverage.
+
+**Check the state file:**
+```bash
+cat ~/.vex-talon/state/onboarding.json
+```
+If this file exists, the onboarding hook ran successfully.
+
+**Check logs** (after a few tool calls):
+```bash
+ls ~/.vex-talon/logs/
+```
+You should see JSONL audit logs for each active security layer.
+
+**Verbose mode** (`Ctrl+O` in Claude Code) shows detailed hook output including a welcome banner on first run.
 
 Security events log to `~/.vex-talon/logs/` and a summary report generates when your session ends.
-
-### First Launch
-
-On your **first session**, Vex-Talon displays a welcome banner with a health check:
-
-```
-===================================================
-  VEX-TALON v1.0.0 - Security Hooks for Claude Code
-===================================================
-
-  Health Check:
-    [OK] Bun runtime found (v1.x.x)
-    [OK] Hooks directory verified (15 hooks)
-    [OK] State directory initialized
-
-  Coverage:
-    OWASP LLM 2025: 9/10 | OWASP Agentic 2026: Full
-    MITRE ATLAS: 16+ techniques
-
-  Profile: dev (all tools enabled)
-
-  Docs: https://github.com/0K-cool/vex-talon#readme
-===================================================
-```
-
-On **subsequent sessions**, you'll see a compact one-liner:
-
-```
-  TALON v1.0.0 | 15 hooks | dev | ready
-```
-
-After a **version upgrade** (e.g., `git pull`), a brief upgrade notice appears:
-
-```
-  TALON upgraded: v0.9.0 -> v1.0.0
-  TALON v1.0.0 | 15 hooks | dev | ready
-```
-
-State is tracked in `~/.vex-talon/state/onboarding.json`.
 
 ---
 
