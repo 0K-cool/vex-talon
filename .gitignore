@@ -37,3 +37,7 @@ pnpm-debug.log*
 
 # Cache
 .cache/
+
+# Dashboard (future commercial product - kept locally for development)
+packages/dashboard/
+packages/ui/

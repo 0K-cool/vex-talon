@@ -262,18 +262,6 @@ Covers ASI01 (Agent Prompt Injection), ASI04 (Dependency Chain Attacks), ASI06 (
 |---------|-------------|
 | `@vex-talon/core` | Security hooks, policies, detection patterns, and shared libraries |
 | `@vex-talon/db` | SQLite database layer for security event storage and querying |
-| `@vex-talon/dashboard` | Next.js security monitoring dashboard (optional) |
-
-### Dashboard (Optional)
-
-A web dashboard for visualizing security events:
-
-```bash
-cd vex-talon
-pnpm install && pnpm build
-pnpm --filter @vex-talon/dashboard dev
-# Open http://localhost:3333
-```
 
 ---
 
