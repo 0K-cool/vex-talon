@@ -5,62 +5,72 @@ All notable changes to Vex-Talon will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - 2026-02-04
+## [1.0.0] - 2026-02-04
 
-### Added - Initial Release
+### Added - Initial Public Release
 
 **20-Layer Defense-in-Depth Security for Claude Code**
 
-- **12 Ported Security Layers**
-  - L0: Secure Code Enforcer (PreToolUse - BLOCK)
-  - L1: Governor Agent (PreToolUse - BLOCK)
-  - L2: Secure Code Linter (PostToolUse - ALERT)
-  - L3: Memory Validation (PreToolUse - ALERT)
-  - L4: Injection Scanner (PostToolUse - ALERT)
-  - L5: Output Sanitizer (PostToolUse - WARN)
-  - L7: Image Safety Scanner (PostToolUse - ALERT)
-  - L9: Egress Scanner (PreToolUse - BLOCK)
-  - L12: Least Privilege (SessionStart - LOG)
-  - L14: Supply Chain Scanner (PostToolUse - WARN)
-  - L17: Spend Alerting (PostToolUse - ALERT)
-  - L19: Skill Scanner (PreToolUse - BLOCK)
+- **14 Ported Security Hooks**
 
-- **Stop Hook: Security Report**
-  - Aggregates all security events from session
-  - Generates HTML report at session end
-  - Auto-opens browser for CRITICAL/HIGH events
-  - Saves to `.talon/reports/` directory
+  *PreToolUse (Block Before Execution):*
+  - L0: Secure Code Enforcer - Blocks CRITICAL vulnerabilities before code is written
+  - L1: Governor Agent - 33+ policy enforcement rules with input modification
+  - L3: Memory Validation - Detects injection in MCP memory operations
+  - L9: Egress Scanner - Prevents data exfiltration via secrets, bulk data, blocked destinations
+  - L14-pre: Supply Chain Pre-Install - Blocks 60+ known malicious packages (+ optional OSM API)
+  - L19: Skill Scanner - Scans skills for injection patterns before invocation
+
+  *PostToolUse (Detect After Execution):*
+  - L2: Secure Code Linter - Post-write security analysis with static analysis + optional LLM review
+  - L4: Injection Scanner - Detects prompt injection in tool outputs (89+ patterns)
+  - L5: Output Sanitizer - Scans web files for XSS vectors
+  - L7: Image Safety Scanner - Detects steganography and visual prompt injection
+  - L14: Supply Chain Post-Install - Runs npm audit / pip-audit after installations
+  - L17: Spend Alerting - Tracks session costs with threshold warnings
+
+  *Session Lifecycle:*
+  - L12: Least Privilege Profiles - Permission profiles (dev, audit, client-work, research)
+  - STOP: Security Report - Generates HTML report at session end
 
 - **Dual Notification Pattern**
   - All PostToolUse hooks notify BOTH user (console.error) AND AI (additionalContext)
-  - User sees visual alerts with colors and details
-  - Claude/Vex receives context injection warning about untrusted content
-  - Defense-in-depth: detection influences AI interpretation
+  - Defense-in-depth: detection influences AI interpretation of flagged content
 
-- **Dashboard Template**
-  - 0K SaaS Dashboard Template synced to zerok-dashboard repo
-  - GitHub-inspired dark theme
-  - 20-layer defense grid visualization
-  - Framework coverage matrices (OWASP LLM, OWASP Agentic, MITRE ATLAS)
+- **Externalized Security Configs**
+  - JSON configs in `~/.vex-talon/config/` for custom patterns
+  - 60-second cache TTL with automatic fallback to built-in defaults
 
-- **Plugin Configuration**
-  - `.claude-plugin/plugin.json` with all 12 layers enabled by default
-  - Configurable via `.vex-talon.json` or plugin settings
-  - Layer enable/disable without code changes
+- **Plugin Commands**
+  - `/talon` - Main security command
+  - `/talon-status` - Layer status overview
+  - `/talon-report` - Generate security report
+  - `/talon-intel-update` - Update security intelligence
 
-### Technical
-
-- **Monorepo Structure**
-  - `@vex-talon/core` - Security hooks and pattern configs
-  - `@vex-talon/db` - SQLite event storage
-  - `@vex-talon/ui` - Themed component library
-  - `@vex-talon/dashboard` - Next.js monitoring dashboard
+- **Plugin Skills**
+  - `security-scan` - On-demand security scanning
+  - `security-intel-update` - Update detection patterns
 
 - **Framework Coverage**
   - OWASP LLM Top 10 2025: 9/10 coverage
   - OWASP Agentic Top 10 2026: Full coverage
   - MITRE ATLAS: 16+ technique mappings
 
+- **4 Rounds of Security Audits** - Score: 91/100
+
+### Technical
+
+- **Monorepo Structure**
+  - `@vex-talon/core` - Security hooks, policies, detection patterns, and shared libraries
+  - `@vex-talon/db` - SQLite database layer for security event storage and querying
+
+- **Shared Libraries**
+  - Atomic file operations (crash-safe writes)
+  - Circuit breaker (fault tolerance)
+  - Config loader (60s TTL cache with fallback)
+  - Profile loader (permission enforcement)
+  - Unicode normalization (homoglyph detection)
+
 ---
 
-**Vex-Talon** - Sharp, fast, defensive. 🦅
+**Vex-Talon** - Sharp, fast, always watching.
