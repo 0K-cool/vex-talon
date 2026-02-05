@@ -2,8 +2,12 @@
   "name": "vex-talon",
   "version": "1.0.0",
   "description": "20-layer defense-in-depth security for Claude Code - hooks, policies, and security reports",
-  "author": "Kelvin Lomboy",
+  "author": {
+    "name": "Kelvin Lomboy",
+    "url": "https://www.linkedin.com/in/kelvinlomboy"
+  },
   "repository": "https://github.com/0K-cool/vex-talon",
+  "homepage": "https://github.com/0K-cool/vex-talon",
   "license": "MIT",
   "keywords": [
     "security",
@@ -14,49 +18,5 @@
     "mitre-atlas",
     "claude-code",
     "ai-security"
-  ],
-  "homepage": "https://github.com/0K-cool/vex-talon",
-  "configuration": {
-    "enabledLayers": {
-      "type": "array",
-      "default": ["L0", "L1", "L2", "L3", "L4", "L5", "L7", "L9", "L12", "L14-pre", "L14", "L17", "L19"],
-      "description": "Security layers to enable. All 13 ported layers enabled by default."
-    },
-    "auditLogDir": {
-      "type": "string",
-      "default": "~/.vex-talon/logs",
-      "description": "Directory for security audit logs"
-    },
-    "stateDir": {
-      "type": "string",
-      "default": "~/.vex-talon/state",
-      "description": "Directory for hook state files"
-    }
-  },
-  "frameworks": {
-    "owaspLlm2025": "9/10 coverage",
-    "owaspAgentic2026": "Full coverage",
-    "mitreAtlas": "16+ techniques"
-  },
-  "portedLayers": {
-    "L0": "Secure Code Enforcer (PreToolUse - BLOCK)",
-    "L1": "Governor Agent (PreToolUse - BLOCK + Input Modification)",
-    "L2": "Secure Code Linter (PostToolUse - ALERT)",
-    "L3": "Memory Validation (PreToolUse - ALERT)",
-    "L4": "Injection Scanner (PostToolUse - ALERT)",
-    "L5": "Output Sanitizer (PostToolUse - WARN)",
-    "L7": "Image Safety Scanner (PostToolUse - ALERT)",
-    "L9": "Egress Scanner (PreToolUse - BLOCK)",
-    "L12": "Least Privilege (SessionStart - LOG)",
-    "L14-pre": "Supply Chain Pre-Install (PreToolUse - BLOCK, OSM API + blocklist)",
-    "L14": "Supply Chain Post-Install (PostToolUse - WARN, npm audit / pip-audit)",
-    "L17": "Spend Alerting (PostToolUse - ALERT)",
-    "L19": "Skill Scanner (PreToolUse - BLOCK)",
-    "STOP": "Security Report (Stop - REPORT)"
-  },
-  "optionalLayers": {
-    "L11": "Leash Kernel Sandbox (requires Leash binary)",
-    "L13": "Strawberry Hallucination (requires MCP server)",
-    "L18": "MCP Audit (requires Proximity scanner)"
-  }
+  ]
 }
