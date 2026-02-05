@@ -53,6 +53,7 @@ import {
   mkdirSync,
 } from 'fs';
 import { join } from 'path';
+import { homedir } from 'os';
 import { execSync } from 'child_process';
 import { TALON_DIR, LOGS_DIR, ensureDirectories } from './lib/talon-paths';
 
@@ -90,7 +91,9 @@ interface ATLASMapping {
   owaspNames: string[];
   owaspAgenticIds: string[];
   owaspAgenticNames: string[];
-  status: 'active' | 'partial' | 'planned';
+  status: 'active' | 'partial' | 'planned' | 'not_installed';
+  source: 'plugin' | 'external' | 'builtin';
+  setupHint?: string;
 }
 
 // Hardcoded layer mappings using sequential L0-L19 numbering
@@ -107,6 +110,7 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: ['ASI05'],
     owaspAgenticNames: ['Unexpected Code Execution'],
     status: 'active',
+    source: 'plugin',
   },
   {
     layer: '1',
@@ -116,9 +120,10 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     atlasNames: ['LLM Plugin Compromise', 'Exfiltration via Agent Tools', 'Modify AI Agent Configuration'],
     owaspIds: ['LLM06', 'LLM02'],
     owaspNames: ['Excessive Agency', 'Sensitive Information Disclosure'],
-    owaspAgenticIds: ['ASI02', 'ASI03', 'ASI07', 'ASI10'],
-    owaspAgenticNames: ['Tool Misuse & Exploitation', 'Identity & Privilege Abuse', 'Insecure Inter-Agent Communication', 'Rogue Agents'],
+    owaspAgenticIds: ['ASI02', 'ASI03', 'ASI07', 'ASI08', 'ASI10'],
+    owaspAgenticNames: ['Tool Misuse & Exploitation', 'Identity & Privilege Abuse', 'Insecure Inter-Agent Communication', 'Cascading Failures', 'Rogue Agents'],
     status: 'active',
+    source: 'plugin',
   },
   {
     layer: '2',
@@ -128,9 +133,10 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     atlasNames: ['LLM Data Leakage'],
     owaspIds: ['LLM02'],
     owaspNames: ['Sensitive Information Disclosure'],
-    owaspAgenticIds: ['ASI05'],
-    owaspAgenticNames: ['Unexpected Code Execution'],
+    owaspAgenticIds: ['ASI05', 'ASI08'],
+    owaspAgenticNames: ['Unexpected Code Execution', 'Cascading Failures'],
     status: 'active',
+    source: 'plugin',
   },
   {
     layer: '3',
@@ -143,6 +149,7 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: ['ASI06'],
     owaspAgenticNames: ['Memory & Context Poisoning'],
     status: 'active',
+    source: 'plugin',
   },
   {
     layer: '4',
@@ -155,6 +162,7 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: ['ASI01'],
     owaspAgenticNames: ['Agent Goal Hijack'],
     status: 'active',
+    source: 'plugin',
   },
   {
     layer: '5',
@@ -167,6 +175,7 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: [],
     owaspAgenticNames: [],
     status: 'active',
+    source: 'plugin',
   },
   {
     layer: '6',
@@ -179,6 +188,8 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: ['ASI02'],
     owaspAgenticNames: ['Tool Misuse & Exploitation'],
     status: 'active',
+    source: 'external',
+    setupHint: 'Add git pre-commit hook: .git/hooks/pre-commit',
   },
   {
     layer: '7',
@@ -191,6 +202,7 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: ['ASI01'],
     owaspAgenticNames: ['Agent Goal Hijack'],
     status: 'active',
+    source: 'plugin',
   },
   {
     layer: '8',
@@ -203,6 +215,8 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: [],
     owaspAgenticNames: [],
     status: 'active',
+    source: 'external',
+    setupHint: 'Add git post-commit hook: .git/hooks/post-commit',
   },
   {
     layer: '9',
@@ -215,6 +229,7 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: [],
     owaspAgenticNames: [],
     status: 'active',
+    source: 'plugin',
   },
   {
     layer: '10',
@@ -227,6 +242,7 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: ['ASI05'],
     owaspAgenticNames: ['Unexpected Code Execution'],
     status: 'active',
+    source: 'builtin',
   },
   {
     layer: '11',
@@ -239,6 +255,8 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: ['ASI05'],
     owaspAgenticNames: ['Unexpected Code Execution'],
     status: 'active',
+    source: 'external',
+    setupHint: 'Install Leash kernel sandbox and set VEX_LEASH_ACTIVE=true',
   },
   {
     layer: '12',
@@ -251,6 +269,7 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: ['ASI02', 'ASI03'],
     owaspAgenticNames: ['Tool Misuse & Exploitation', 'Identity & Privilege Abuse'],
     status: 'active',
+    source: 'plugin',
   },
   {
     layer: '13',
@@ -263,6 +282,8 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: ['ASI09'],
     owaspAgenticNames: ['Human-Agent Trust Exploitation'],
     status: 'active',
+    source: 'external',
+    setupHint: 'Add hallucination-detector MCP server to .mcp.json',
   },
   {
     layer: '14',
@@ -275,6 +296,7 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: ['ASI04'],
     owaspAgenticNames: ['Supply Chain Vulnerabilities'],
     status: 'active',
+    source: 'plugin',
   },
   {
     layer: '15',
@@ -287,11 +309,13 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: [],
     owaspAgenticNames: [],
     status: 'active',
+    source: 'external',
+    setupHint: 'Install vex-rag plugin with RAG security module',
   },
   {
     layer: '16',
     layerName: 'Human',
-    description: 'Kelvin reviews and approves critical decisions - final authority in defense-in-depth',
+    description: 'User reviews and approves critical decisions - final authority in defense-in-depth',
     atlasIds: [],
     atlasNames: [],
     owaspIds: [],
@@ -299,6 +323,7 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: ['ASI09'],
     owaspAgenticNames: ['Human-Agent Trust Exploitation'],
     status: 'active',
+    source: 'builtin',
   },
   {
     layer: '17',
@@ -311,6 +336,7 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: [],
     owaspAgenticNames: [],
     status: 'active',
+    source: 'plugin',
   },
   {
     layer: '18',
@@ -323,6 +349,8 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: ['ASI06'],
     owaspAgenticNames: ['Memory and Context Manipulation'],
     status: 'active',
+    source: 'external',
+    setupHint: 'Install Proximity scanner: ~/tools/proximity/',
   },
   {
     layer: '19',
@@ -335,8 +363,74 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticIds: ['ASI01', 'ASI02'],
     owaspAgenticNames: ['Agent Goal Hijack', 'Tool Misuse & Exploitation'],
     status: 'active',
+    source: 'plugin',
   },
 ];
+
+// ============================================================================
+// Runtime Layer Detection
+// ============================================================================
+
+/**
+ * Check if an MCP server is configured in .mcp.json (project or user level).
+ */
+function checkMcpServer(serverName: string): boolean {
+  const mcpPaths = [
+    join(process.cwd(), '.mcp.json'),
+    join(homedir(), '.claude', '.mcp.json'),
+  ];
+  for (const p of mcpPaths) {
+    try {
+      const content = readFileSync(p, 'utf-8');
+      if (content.includes(serverName)) return true;
+    } catch {
+      // File doesn't exist or not readable
+    }
+  }
+  return false;
+}
+
+/**
+ * Detect runtime status of external layers.
+ * Plugin and builtin layers are always active.
+ * External layers are probed via filesystem/env checks.
+ */
+function detectLayerStatus(): void {
+  const cwd = process.cwd();
+
+  for (const mapping of ATLAS_MAPPINGS) {
+    if (mapping.source === 'plugin' || mapping.source === 'builtin') {
+      mapping.status = 'active';
+      continue;
+    }
+
+    // External layer detection
+    switch (mapping.layer) {
+      case '6': // Git Pre-commit
+        mapping.status = existsSync(join(cwd, '.git/hooks/pre-commit')) ? 'active' : 'not_installed';
+        break;
+      case '8': // Evaluator Agent
+        mapping.status = existsSync(join(cwd, '.git/hooks/post-commit')) ? 'active' : 'not_installed';
+        break;
+      case '11': // Leash Kernel Sandbox
+        mapping.status = (
+          process.env.VEX_LEASH_ACTIVE === 'true' ||
+          existsSync('/opt/homebrew/bin/leash') ||
+          existsSync(join(cwd, '.claude/scripts/vex-sandboxed'))
+        ) ? 'active' : 'not_installed';
+        break;
+      case '13': // Strawberry Hallucination Detection
+        mapping.status = checkMcpServer('hallucination-detector') ? 'active' : 'not_installed';
+        break;
+      case '15': // RAG Security Scanner
+        mapping.status = checkMcpServer('vex-knowledge-base') ? 'active' : 'not_installed';
+        break;
+      case '18': // MCP Audit (Proximity)
+        mapping.status = existsSync(join(homedir(), 'tools/proximity')) ? 'active' : 'not_installed';
+        break;
+    }
+  }
+}
 
 // OWASP LLM Top 10 2025 Reference
 // Updated January 28, 2026 to reflect official 2025 names
@@ -355,18 +449,50 @@ const OWASP_LLM_2025: Record<string, { name: string; severity: string; color: st
 
 // OWASP Agentic 2026 Reference (for agentic AI systems)
 // Source: https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/
+// Coverage is calculated dynamically by calculateAgenticCoverage() based on active layers
 const OWASP_AGENTIC_2026: Record<string, { name: string; severity: string; color: string; coverage: string }> = {
-  ASI01: { name: 'Agent Goal Hijack', severity: 'CRITICAL', color: '#f85149', coverage: 'covered' },
-  ASI02: { name: 'Tool Misuse & Exploitation', severity: 'CRITICAL', color: '#f85149', coverage: 'covered' },
-  ASI03: { name: 'Identity & Privilege Abuse', severity: 'HIGH', color: '#f0883e', coverage: 'covered' },
-  ASI04: { name: 'Supply Chain Vulnerabilities', severity: 'HIGH', color: '#f0883e', coverage: 'covered' },
-  ASI05: { name: 'Unexpected Code Execution', severity: 'CRITICAL', color: '#f85149', coverage: 'covered' },
+  ASI01: { name: 'Agent Goal Hijack', severity: 'CRITICAL', color: '#f85149', coverage: 'gap' },
+  ASI02: { name: 'Tool Misuse & Exploitation', severity: 'CRITICAL', color: '#f85149', coverage: 'gap' },
+  ASI03: { name: 'Identity & Privilege Abuse', severity: 'HIGH', color: '#f0883e', coverage: 'gap' },
+  ASI04: { name: 'Supply Chain Vulnerabilities', severity: 'HIGH', color: '#f0883e', coverage: 'gap' },
+  ASI05: { name: 'Unexpected Code Execution', severity: 'CRITICAL', color: '#f85149', coverage: 'gap' },
   ASI06: { name: 'Memory & Context Poisoning', severity: 'HIGH', color: '#f0883e', coverage: 'gap' },
-  ASI07: { name: 'Insecure Inter-Agent Communication', severity: 'MEDIUM', color: '#d29922', coverage: 'partial' },
-  ASI08: { name: 'Cascading Failures', severity: 'MEDIUM', color: '#d29922', coverage: 'partial' },
-  ASI09: { name: 'Human-Agent Trust Exploitation', severity: 'HIGH', color: '#f0883e', coverage: 'covered' },
-  ASI10: { name: 'Rogue Agents', severity: 'CRITICAL', color: '#f85149', coverage: 'partial' },
+  ASI07: { name: 'Insecure Inter-Agent Communication', severity: 'MEDIUM', color: '#d29922', coverage: 'gap' },
+  ASI08: { name: 'Cascading Failures', severity: 'MEDIUM', color: '#d29922', coverage: 'gap' },
+  ASI09: { name: 'Human-Agent Trust Exploitation', severity: 'HIGH', color: '#f0883e', coverage: 'gap' },
+  ASI10: { name: 'Rogue Agents', severity: 'CRITICAL', color: '#f85149', coverage: 'gap' },
 };
+
+/**
+ * Calculate OWASP Agentic 2026 coverage dynamically based on which layers are active.
+ * - 2+ active layers covering an ASI → 'covered'
+ * - 1 active layer covering an ASI → 'partial'
+ * - 0 active layers covering an ASI → 'gap'
+ * Special case: ASI06 is always 'partial' when active (detection-only due to Claude Code bug)
+ */
+function calculateAgenticCoverage(): void {
+  for (const id of Object.keys(OWASP_AGENTIC_2026)) {
+    const entry = OWASP_AGENTIC_2026[id];
+    if (!entry) continue;
+    const coveringLayers = ATLAS_MAPPINGS.filter(
+      m => m.status === 'active' && m.owaspAgenticIds.includes(id)
+    );
+    if (coveringLayers.length >= 2) {
+      entry.coverage = 'covered';
+    } else if (coveringLayers.length === 1) {
+      entry.coverage = 'partial';
+    } else {
+      entry.coverage = 'gap';
+    }
+  }
+  // Special case: ASI06 is always 'partial' when L3 is active
+  // L3 Memory Validation provides detection but cannot block due to Claude Code bugs #3514/#4669
+  const l3 = ATLAS_MAPPINGS.find(m => m.layer === '3');
+  const asi06 = OWASP_AGENTIC_2026['ASI06'];
+  if (l3?.status === 'active' && asi06 && asi06.coverage === 'covered') {
+    asi06.coverage = 'partial';
+  }
+}
 
 // Use hardcoded mappings directly (no YAML loading in plugin context)
 const ATLAS_MAPPINGS_LOADED = ATLAS_MAPPINGS;
@@ -1360,6 +1486,7 @@ function generateHTML(data: ReportData): string {
     .atlas-card.status-active { border-left: 4px solid var(--accent-green); }
     .atlas-card.status-partial { border-left: 4px solid var(--accent-yellow); }
     .atlas-card.status-planned { border-left: 4px solid var(--text-muted); }
+    .atlas-card.status-not_installed { border-left: 4px solid var(--text-muted); opacity: 0.7; }
 
     .atlas-layer-header { display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--bg-tertiary); cursor: pointer; }
     .atlas-layer-header:hover { background: var(--bg-hover); }
@@ -1372,6 +1499,14 @@ function generateHTML(data: ReportData): string {
     .atlas-status.active { background: rgba(63, 185, 80, 0.15); color: var(--accent-green); }
     .atlas-status.partial { background: rgba(210, 153, 34, 0.15); color: var(--accent-yellow); }
     .atlas-status.planned { background: rgba(110, 118, 129, 0.15); color: var(--text-muted); }
+    .atlas-status.not_installed { background: rgba(210, 153, 34, 0.15); color: var(--accent-yellow); }
+
+    .source-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; margin-left: 8px; vertical-align: middle; }
+    .source-badge.external { background: rgba(88, 166, 255, 0.15); color: var(--accent-blue); }
+    .source-badge.builtin { background: rgba(110, 118, 129, 0.1); color: var(--text-muted); }
+    .source-badge.not-installed { background: rgba(210, 153, 34, 0.15); color: var(--accent-yellow); }
+
+    .coverage-sublabel { font-size: 11px; color: var(--accent-yellow); margin-top: 2px; }
 
     .atlas-details { padding: 16px; display: none; }
     .atlas-card.expanded .atlas-details { display: block; }
@@ -2648,10 +2783,12 @@ function generateErrorsHTML(errors: ErrorEntry[]): string {
 }
 
 function generateATLASMappingHTML(): string {
-  // Calculate coverage statistics
-  const uniqueAtlasIds = new Set(ATLAS_MAPPINGS_LOADED.flatMap(m => m.atlasIds));
-  const uniqueOwaspIds = new Set(ATLAS_MAPPINGS_LOADED.flatMap(m => m.owaspIds));
-  const activeLayers = ATLAS_MAPPINGS_LOADED.filter(m => m.status === 'active').length;
+  // Calculate coverage statistics — only count IDs from ACTIVE layers
+  const activeMappings = ATLAS_MAPPINGS_LOADED.filter(m => m.status === 'active');
+  const uniqueAtlasIds = new Set(activeMappings.flatMap(m => m.atlasIds));
+  const uniqueOwaspIds = new Set(activeMappings.flatMap(m => m.owaspIds));
+  const activeLayers = activeMappings.length;
+  const notInstalledLayers = ATLAS_MAPPINGS_LOADED.filter(m => m.status === 'not_installed').length;
 
   const getOwaspSeverityClass = (id: string): string => {
     const info = OWASP_LLM_2025[id as keyof typeof OWASP_LLM_2025];
@@ -2670,17 +2807,22 @@ function generateATLASMappingHTML(): string {
   const naOwaspIdsForSummary = new Set(architecturalGaps.map(g => g.id));
   const applicableOwaspCovered = Array.from(uniqueOwaspIds).filter(id => !naOwaspIdsForSummary.has(id)).length;
 
-  // Agentic stats for summary bar
+  // Agentic stats for summary bar (dynamically calculated)
   const agenticDataForSummary = OWASP_AGENTIC_2026;
   const agenticItemsForSummary = Object.entries(agenticDataForSummary).filter(([k]) => k.startsWith('ASI'));
   const agenticCoveredForSummary = agenticItemsForSummary.filter(([, v]: [string, any]) => v.coverage === 'covered').length;
   const agenticPartialForSummary = agenticItemsForSummary.filter(([, v]: [string, any]) => v.coverage === 'partial' || v.coverage === 'detection').length;
+
+  const setupNote = notInstalledLayers > 0
+    ? `<div class="coverage-sublabel">${notInstalledLayers} require setup</div>`
+    : '';
 
   const coverageSummary = `
     <div class="coverage-summary">
       <div class="coverage-item">
         <div class="coverage-value">${activeLayers}/${ATLAS_MAPPINGS_LOADED.length}</div>
         <div class="coverage-label">Active Security Layers</div>
+        ${setupNote}
       </div>
       <div class="coverage-item">
         <div class="coverage-value">${uniqueAtlasIds.size}/${TOTAL_RELEVANT_ATLAS}</div>
@@ -2884,22 +3026,54 @@ function generateATLASMappingHTML(): string {
     </div>
   `;
 
+  const getSourceBadge = (mapping: ATLASMapping): string => {
+    if (mapping.source === 'external' && mapping.status === 'active') {
+      return '<span class="source-badge external">EXTERNAL</span>';
+    }
+    if (mapping.source === 'external' && mapping.status === 'not_installed') {
+      return '<span class="source-badge not-installed">NOT INSTALLED</span>';
+    }
+    if (mapping.source === 'builtin') {
+      return '<span class="source-badge builtin">BUILT-IN</span>';
+    }
+    return ''; // plugin layers get no badge (they're the default)
+  };
+
+  const getSetupHint = (mapping: ATLASMapping): string => {
+    if (mapping.status === 'not_installed' && mapping.setupHint) {
+      return `
+        <div class="atlas-section" style="margin-top: 8px;">
+          <div style="padding: 8px 12px; background: rgba(210, 153, 34, 0.1); border-radius: 6px; border-left: 3px solid var(--accent-yellow);">
+            <div style="font-size: 11px; color: var(--accent-yellow); font-weight: 600;">Setup Required</div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">${mapping.setupHint}</div>
+          </div>
+        </div>`;
+    }
+    return '';
+  };
+
+  const getStatusLabel = (status: string): string => {
+    if (status === 'not_installed') return 'not installed';
+    return status;
+  };
+
   const layerCards = ATLAS_MAPPINGS_LOADED.map((mapping) => `
     <div class="atlas-card status-${mapping.status}">
       <div class="atlas-layer-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="atlas-layer-info">
           <div class="atlas-layer-number">${mapping.layer}</div>
           <div>
-            <div class="atlas-layer-name">${mapping.layerName}</div>
+            <div class="atlas-layer-name">${mapping.layerName} ${getSourceBadge(mapping)}</div>
             <div class="atlas-layer-desc">${mapping.description}</div>
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 12px;">
-          <span class="atlas-status ${mapping.status}">${mapping.status}</span>
+          <span class="atlas-status ${mapping.status}">${getStatusLabel(mapping.status)}</span>
           <span class="event-expand">\u25bc</span>
         </div>
       </div>
       <div class="atlas-details">
+        ${getSetupHint(mapping)}
         ${mapping.atlasIds && mapping.atlasIds.length > 0 ? `
         <div class="atlas-section">
           <div class="atlas-section-title">MITRE ATLAS Techniques Mitigated</div>
@@ -2953,6 +3127,11 @@ function generateATLASMappingHTML(): string {
 async function main() {
   try {
     console.error('TALON: Security Report Generator triggered...');
+
+    // Detect runtime status of external security layers
+    detectLayerStatus();
+    // Calculate OWASP Agentic coverage based on active layers
+    calculateAgenticCoverage();
 
     // Read stop hook input (Vex-Talon Stop hook format)
     let rawInput = '';
