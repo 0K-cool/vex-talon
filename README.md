@@ -143,7 +143,7 @@ alias claude='claude --plugin-dir ~/.claude/plugins/vex-talon'
 
 On your **first session**, Claude will confirm Vex-Talon is active in its first response:
 
-> Vex-Talon v1.0.0 is active with 16 security hooks protecting this session.
+> 🛡️ **New Plugin Installed** — Vex-Talon v1.0.0 is active with 16 security hooks protecting this session. Run `/vex-talon:status` for a detailed security dashboard.
 
 You can also verify at any time:
 
