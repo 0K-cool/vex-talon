@@ -59,7 +59,7 @@ RECENT ACTIVITY (Last 24h)
 QUICK ACTIONS
 ───────────────────────────────────────────────────────────────
 /talon-status          Refresh this status dashboard
-/security-intel-update Update threat patterns and frameworks
+/talon-intel-update    Update threat patterns and frameworks
 /talon-report          Generate detailed security report
 
 ═══════════════════════════════════════════════════════════════
