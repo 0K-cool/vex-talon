@@ -15,7 +15,6 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Bun](https://img.shields.io/badge/runtime-Bun-f9f1e1?logo=bun&logoColor=black)](https://bun.sh/)
 [![100% Local](https://img.shields.io/badge/100%25-Local-success)]()
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/0K-cool/vex-talon/pulls)
 [![Forged in Puerto Rico](https://img.shields.io/badge/Forged_in-Puerto_Rico_🇵🇷-red)](https://en.wikipedia.org/wiki/Puerto_Rico)
 
 **20-layer defense-in-depth security plugin for Claude Code.**
