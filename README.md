@@ -588,3 +588,5 @@ Vulnerability research: [0din.ai](https://0din.ai) (AI vulnerability disclosure)
 Threat intelligence: [OpenSourceMalware.com](https://opensourcemalware.com/), [NOVA Framework](https://github.com/fr0gger/nova-framework).
 
 External tools: [Leash](https://github.com/strongdm/leash) (L11 kernel sandbox), [Pythea/Strawberry](https://github.com/leochlon/pythea) (L13 hallucination detection), [Proximity](https://github.com/fr0gger/proximity) (L18 MCP audit).
+
+Static analysis: [Semgrep](https://semgrep.dev/) (SAST), [Bandit](https://bandit.readthedocs.io/) (Python), [ShellCheck](https://www.shellcheck.net/) (Bash), [gitleaks](https://github.com/gitleaks/gitleaks) (secrets), [trufflehog](https://github.com/trufflesecurity/trufflehog) (secrets).
