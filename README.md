@@ -325,6 +325,7 @@ Vex-Talon itself is developed with security in mind:
 - **Auditable** - Open source, review every hook
 - **Minimal deps** - Reduced supply chain surface
 - **4 rounds of security audit** - Score: 91/100
+- **Battle-tested** - Developed and tested on [Vex](https://github.com/0K-cool/vex), Kelvin's personal AI infrastructure built on Claude Code. Every hook runs in daily professional cybersecurity work before being ported to this plugin.
 
 ### Reporting Vulnerabilities
 
