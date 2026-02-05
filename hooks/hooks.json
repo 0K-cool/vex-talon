@@ -78,8 +78,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/packages/core/src/hooks/check-bun.sh",
-            "timeout": 2000
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/packages/core/src/hooks/onboarding.sh",
+            "timeout": 3000
           },
           {
             "type": "command",

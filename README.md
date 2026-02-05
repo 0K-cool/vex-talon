@@ -147,6 +147,45 @@ alias claude='claude --plugin-dir ~/.claude/plugins/vex-talon'
 
 Security events log to `~/.vex-talon/logs/` and a summary report generates when your session ends.
 
+### First Launch
+
+On your **first session**, Vex-Talon displays a welcome banner with a health check:
+
+```
+===================================================
+  VEX-TALON v1.0.0 - Security Hooks for Claude Code
+===================================================
+
+  Health Check:
+    [OK] Bun runtime found (v1.x.x)
+    [OK] Hooks directory verified (15 hooks)
+    [OK] State directory initialized
+
+  Coverage:
+    OWASP LLM 2025: 9/10 | OWASP Agentic 2026: Full
+    MITRE ATLAS: 16+ techniques
+
+  Profile: dev (all tools enabled)
+
+  Docs: https://github.com/0K-cool/vex-talon#readme
+===================================================
+```
+
+On **subsequent sessions**, you'll see a compact one-liner:
+
+```
+  TALON v1.0.0 | 15 hooks | dev | ready
+```
+
+After a **version upgrade** (e.g., `git pull`), a brief upgrade notice appears:
+
+```
+  TALON upgraded: v0.9.0 -> v1.0.0
+  TALON v1.0.0 | 15 hooks | dev | ready
+```
+
+State is tracked in `~/.vex-talon/state/onboarding.json`.
+
 ---
 
 ## Configuration
