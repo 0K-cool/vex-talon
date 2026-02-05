@@ -31,7 +31,7 @@ import { appendFileSync, existsSync, readFileSync, renameSync } from 'fs';
 import { join, resolve } from 'path';
 import { homedir } from 'os';
 import { readdirSync } from 'fs';
-import { ensureTalonDirs, getAuditLogPath, getQuarantinePath } from './lib/talon-paths';
+import { ensureTalonDirs, getAuditLogPath, getQuarantinePath, CONFIG_DIR } from './lib/talon-paths';
 import { normalizeUnicode } from './lib/unicode-normalize';
 
 const HOOK_NAME = 'L3-auto-memory-guardian';
@@ -40,77 +40,107 @@ interface Finding {
   type: string;
   severity: 'CRITICAL' | 'HIGH' | 'MEDIUM';
   detail: string;
+  patternId?: string;
   file?: string;
   line?: number;
 }
 
-// ---------------------------------------------------------------------------
-// Detection Patterns (shared with L3-memory-validation.ts)
-// ---------------------------------------------------------------------------
+interface PatternDef {
+  id: string;
+  pattern: string;
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+  description: string;
+  flags?: string;
+}
 
-const INJECTION_KEYWORDS = [
-  'ignore previous',
-  'ignore prior',
-  'ignore all',
-  'disregard all',
-  'disregard previous',
-  'new instructions',
-  'override previous',
-  'override system',
-  'forget everything',
-  'forget all',
-  'system prompt',
-  'you are now',
-  'act as if',
-  'pretend that',
-  'from now on',
-];
-
-const FAKE_FACT_KEYWORDS = [
-  'user said to',
-  'user wants you to',
-  'user instructed',
-  'previously agreed',
-  'we agreed that',
-  'remember that',
-  'important: always',
-];
-
-const ENCODING_PATTERNS = [
-  /^[A-Za-z0-9+/]{50,}={0,2}$/m,  // Base64 block
-  /^[0-9a-fA-F]{40,}$/m,           // Hex encoding
-  /\\u[0-9a-fA-F]{4}/,             // Unicode escapes
-];
-
-const SENSITIVE_PATTERNS = [
-  /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/,  // Email
-  /\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/,                          // Phone
-  /sk-[a-zA-Z0-9]{20,}/,                                    // API keys
-  /ghp_[a-zA-Z0-9]{36}/,                                    // GitHub tokens
-  /xox[baprs]-[a-zA-Z0-9-]+/,                               // Slack tokens
-];
+interface CompiledPattern extends PatternDef {
+  regex: RegExp;
+}
 
 // ---------------------------------------------------------------------------
-// Persistent Memory Poisoning Patterns (new — specific to auto memory)
-// These target instructions designed to persist across sessions.
+// Config Loading (reads from ~/.vex-talon/config/memory/config.json)
+// Updated by /talon-intel-update skill
 // ---------------------------------------------------------------------------
 
-const PERSISTENT_POISONING_KEYWORDS = [
-  'always do',
-  'every session',
-  'from now on always',
-  'default behavior is to',
-  'in all future sessions',
-  'never tell the user',
-  'hide this from',
-  'do not mention',
-  'secretly',
-  'covertly',
-  'without informing',
-  'bypass security',
-  'disable hook',
-  'skip validation',
-  'ignore safety',
+function loadMemoryConfig(): PatternDef[] {
+  const configPath = join(CONFIG_DIR, 'memory', 'config.json');
+  try {
+    if (!existsSync(configPath)) return [];
+    const raw = JSON.parse(readFileSync(configPath, 'utf-8'));
+    const patterns: PatternDef[] = [];
+    if (raw?.patterns) {
+      for (const category of Object.values(raw.patterns) as PatternDef[][]) {
+        if (Array.isArray(category)) {
+          patterns.push(...category);
+        }
+      }
+    }
+    return patterns;
+  } catch {
+    return [];
+  }
+}
+
+function compilePatterns(defs: PatternDef[]): CompiledPattern[] {
+  const compiled: CompiledPattern[] = [];
+  for (const def of defs) {
+    try {
+      const flags = (def.flags || '') + 'i';
+      compiled.push({ ...def, regex: new RegExp(def.pattern, flags) });
+    } catch {
+      // Skip invalid regex
+    }
+  }
+  return compiled;
+}
+
+// ---------------------------------------------------------------------------
+// Hardcoded Fallback Patterns (used when no config file exists)
+// ---------------------------------------------------------------------------
+
+const FALLBACK_INJECTION: PatternDef[] = [
+  { id: 'fb-inj-ignore', pattern: 'ignore\\s+(all\\s+)?(previous|prior)', severity: 'CRITICAL', description: 'Instruction override: ignore previous' },
+  { id: 'fb-inj-disregard', pattern: 'disregard\\s+(all|previous)', severity: 'CRITICAL', description: 'Instruction override: disregard' },
+  { id: 'fb-inj-new-instr', pattern: 'new\\s+instructions', severity: 'CRITICAL', description: 'New instructions injection' },
+  { id: 'fb-inj-override', pattern: 'override\\s+(previous|system)', severity: 'CRITICAL', description: 'Override instruction' },
+  { id: 'fb-inj-forget', pattern: 'forget\\s+(everything|all)', severity: 'CRITICAL', description: 'Forget instruction' },
+  { id: 'fb-inj-system', pattern: 'system\\s+prompt', severity: 'CRITICAL', description: 'System prompt reference' },
+  { id: 'fb-inj-identity', pattern: 'you\\s+are\\s+now', severity: 'CRITICAL', description: 'Identity override' },
+  { id: 'fb-inj-pretend', pattern: '(act\\s+as\\s+if|pretend\\s+that)', severity: 'CRITICAL', description: 'Role manipulation' },
+  { id: 'fb-inj-from-now', pattern: 'from\\s+now\\s+on', severity: 'CRITICAL', description: 'Behavioral override' },
+];
+
+const FALLBACK_FAKE_FACTS: PatternDef[] = [
+  { id: 'fb-fake-user-said', pattern: 'user\\s+(said\\s+to|wants\\s+you\\s+to|instructed)', severity: 'HIGH', description: 'Fake user instruction' },
+  { id: 'fb-fake-agreed', pattern: '(previously|we)\\s+agreed', severity: 'HIGH', description: 'False agreement claim' },
+  { id: 'fb-fake-remember', pattern: 'remember\\s+that', severity: 'HIGH', description: 'Fake memory injection' },
+  { id: 'fb-fake-important', pattern: 'important:\\s+always', severity: 'HIGH', description: 'Fake priority instruction' },
+];
+
+const FALLBACK_ENCODING: PatternDef[] = [
+  { id: 'fb-enc-base64', pattern: '^[A-Za-z0-9+/]{50,}={0,2}$', severity: 'MEDIUM', description: 'Base64 encoded block', flags: 'm' },
+  { id: 'fb-enc-hex', pattern: '^[0-9a-fA-F]{40,}$', severity: 'MEDIUM', description: 'Hex encoded block', flags: 'm' },
+  { id: 'fb-enc-unicode', pattern: '\\\\u[0-9a-fA-F]{4}', severity: 'MEDIUM', description: 'Unicode escape sequence' },
+];
+
+const FALLBACK_SENSITIVE: PatternDef[] = [
+  { id: 'fb-sens-email', pattern: '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}', severity: 'HIGH', description: 'Email address in memory' },
+  { id: 'fb-sens-apikey', pattern: 'sk-[a-zA-Z0-9]{20,}', severity: 'HIGH', description: 'API key pattern' },
+  { id: 'fb-sens-github', pattern: 'ghp_[a-zA-Z0-9]{36}', severity: 'HIGH', description: 'GitHub token' },
+];
+
+// ---------------------------------------------------------------------------
+// Persistent Memory Poisoning Patterns (always included — auto memory specific)
+// ---------------------------------------------------------------------------
+
+const PERSISTENT_POISONING: PatternDef[] = [
+  { id: 'persist-always-do', pattern: '(always|every\\s+session)\\s+(do|run|execute|exfiltrate|send)', severity: 'CRITICAL', description: 'Persistent always-do instruction' },
+  { id: 'persist-future', pattern: '(in\\s+all\\s+future|from\\s+now\\s+on|every\\s+future)\\s+sessions?', severity: 'CRITICAL', description: 'Cross-session persistence' },
+  { id: 'persist-default', pattern: 'default\\s+behavior\\s+(is|should\\s+be)\\s+to', severity: 'CRITICAL', description: 'Default behavior override' },
+  { id: 'persist-never-tell', pattern: 'never\\s+tell\\s+(the\\s+)?user', severity: 'CRITICAL', description: 'Stealth: hide from user' },
+  { id: 'persist-hide', pattern: '(hide\\s+this\\s+from|do\\s+not\\s+mention)', severity: 'CRITICAL', description: 'Stealth: conceal activity' },
+  { id: 'persist-secretly', pattern: '(secretly|covertly|without\\s+informing)', severity: 'CRITICAL', description: 'Covert action instruction' },
+  { id: 'persist-bypass', pattern: '(bypass|disable|skip|ignore)\\s+(security|hook|validation|safety)', severity: 'CRITICAL', description: 'Security bypass instruction' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -146,100 +176,77 @@ function findMemoryFiles(memoryDir: string): string[] {
 }
 
 // ---------------------------------------------------------------------------
+// Pattern Assembly
+// ---------------------------------------------------------------------------
+
+function assemblePatterns(): CompiledPattern[] {
+  // Load config-based patterns (from /talon-intel-update)
+  const configPatterns = loadMemoryConfig();
+
+  // If config exists and has patterns, use config + persistent poisoning
+  if (configPatterns.length > 0) {
+    return compilePatterns([...configPatterns, ...PERSISTENT_POISONING]);
+  }
+
+  // No config — use hardcoded fallbacks + persistent poisoning
+  return compilePatterns([
+    ...FALLBACK_INJECTION,
+    ...FALLBACK_FAKE_FACTS,
+    ...FALLBACK_ENCODING,
+    ...FALLBACK_SENSITIVE,
+    ...PERSISTENT_POISONING,
+  ]);
+}
+
+// ---------------------------------------------------------------------------
 // Scanning
 // ---------------------------------------------------------------------------
 
-function scanLine(line: string, lineNum: number, filePath: string): Finding[] {
+function scanFile(filePath: string, patterns: CompiledPattern[]): Finding[] {
+  let content: string;
+  try {
+    content = readFileSync(filePath, 'utf-8');
+  } catch {
+    return [];
+  }
+
+  const lines = content.split('\n');
   const findings: Finding[] = [];
-  const normalized = normalizeUnicode(line.toLowerCase());
+  const seenPatterns = new Set<string>(); // Dedupe per file
 
-  // Injection keywords (CRITICAL)
-  for (const keyword of INJECTION_KEYWORDS) {
-    if (normalized.includes(keyword)) {
-      findings.push({
-        type: 'INSTRUCTION_INJECTION',
-        severity: 'CRITICAL',
-        detail: `Injection keyword: "${keyword}"`,
-        file: filePath,
-        line: lineNum,
-      });
-      break; // One finding per category per line
-    }
-  }
+  for (let i = 0; i < lines.length; i++) {
+    const normalized = normalizeUnicode(lines[i]);
 
-  // Persistent poisoning keywords (CRITICAL)
-  for (const keyword of PERSISTENT_POISONING_KEYWORDS) {
-    if (normalized.includes(keyword)) {
-      findings.push({
-        type: 'PERSISTENT_POISONING',
-        severity: 'CRITICAL',
-        detail: `Persistent poisoning pattern: "${keyword}"`,
-        file: filePath,
-        line: lineNum,
-      });
-      break;
-    }
-  }
+    for (const pattern of patterns) {
+      if (seenPatterns.has(pattern.id)) continue;
+      if (pattern.severity === 'LOW') continue;
 
-  // Fake fact keywords (HIGH)
-  for (const keyword of FAKE_FACT_KEYWORDS) {
-    if (normalized.includes(keyword)) {
-      findings.push({
-        type: 'FAKE_FACT_INJECTION',
-        severity: 'HIGH',
-        detail: `Fake fact pattern: "${keyword}"`,
-        file: filePath,
-        line: lineNum,
-      });
-      break;
-    }
-  }
+      if (pattern.regex.test(normalized)) {
+        // Reset lastIndex for global regexes
+        pattern.regex.lastIndex = 0;
 
-  // Encoding patterns (MEDIUM)
-  for (const pattern of ENCODING_PATTERNS) {
-    if (pattern.test(line)) {
-      findings.push({
-        type: 'ENCODED_CONTENT',
-        severity: 'MEDIUM',
-        detail: 'Potentially encoded/obfuscated content',
-        file: filePath,
-        line: lineNum,
-      });
-      break;
-    }
-  }
-
-  // Sensitive data patterns (HIGH)
-  for (const pattern of SENSITIVE_PATTERNS) {
-    if (pattern.test(line)) {
-      findings.push({
-        type: 'SENSITIVE_DATA',
-        severity: 'HIGH',
-        detail: 'Potential sensitive data (PII/credentials)',
-        file: filePath,
-        line: lineNum,
-      });
-      break;
+        findings.push({
+          type: pattern.id.startsWith('persist') ? 'PERSISTENT_POISONING' :
+                pattern.id.includes('inj') ? 'INSTRUCTION_INJECTION' :
+                pattern.id.includes('fake') ? 'FAKE_FACT_INJECTION' :
+                pattern.id.includes('enc') ? 'ENCODED_CONTENT' :
+                pattern.id.includes('sens') ? 'SENSITIVE_DATA' :
+                'DETECTION',
+          severity: pattern.severity as 'CRITICAL' | 'HIGH' | 'MEDIUM',
+          detail: pattern.description,
+          patternId: pattern.id,
+          file: filePath,
+          line: i + 1,
+        });
+        seenPatterns.add(pattern.id);
+      } else {
+        // Reset lastIndex for global regexes
+        pattern.regex.lastIndex = 0;
+      }
     }
   }
 
   return findings;
-}
-
-function scanFile(filePath: string): Finding[] {
-  try {
-    const content = readFileSync(filePath, 'utf-8');
-    const lines = content.split('\n');
-    const findings: Finding[] = [];
-
-    for (let i = 0; i < lines.length; i++) {
-      findings.push(...scanLine(lines[i], i + 1, filePath));
-    }
-
-    return findings;
-  } catch {
-    return [];
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -371,6 +378,9 @@ async function main() {
       }
     }
 
+    // Assemble patterns (config-loaded + hardcoded fallbacks + persistent)
+    const patterns = assemblePatterns();
+
     // Resolve memory directory
     const memoryDir = getMemoryDir(cwd);
     const memoryFiles = findMemoryFiles(memoryDir);
@@ -385,7 +395,7 @@ async function main() {
     let totalFindingCount = 0;
 
     for (const file of memoryFiles) {
-      const findings = scanFile(file);
+      const findings = scanFile(file, patterns);
       if (findings.length > 0) {
         allFindings.set(file, findings);
         totalFindingCount += findings.length;
@@ -437,6 +447,7 @@ async function main() {
         type: f.type,
         severity: f.severity,
         detail: f.detail,
+        patternId: f.patternId,
         file: f.file?.split('/').pop(),
         line: f.line,
       })),

@@ -1,28 +1,134 @@
 ---
 name: security-intel-update
-description: Update Vex-Talon's security intelligence - syncs attack patterns (NOVA, 0din.ai) AND framework compliance (ATLAS, OWASP). USE WHEN user says "update security", "security intel update", "sync patterns", or when security coverage seems stale.
+description: Update Vex-Talon's security intelligence - syncs attack patterns (NOVA, 0din.ai) AND framework compliance (ATLAS, OWASP). Updates the actual config files that hooks consume at runtime. USE WHEN user says "update security", "security intel update", "sync patterns", or when security coverage seems stale.
 ---
 
 # Security Intelligence Update
 
 Keep Vex-Talon's security layers current with latest attack patterns and framework compliance.
 
+## CRITICAL: Update Runtime Config Files
+
+**This skill MUST update the JSON config files that hooks consume at runtime.**
+
+The config-loader (`packages/core/src/hooks/lib/config-loader.ts`) reads from `~/.vex-talon/config/`. Hooks fall back to hardcoded defaults if configs don't exist. When you find new patterns, you MUST write them to these files — NOT to memory/*.md files.
+
+### Target Config Files (hooks consume these)
+
+| Config File | Hook Consumer | Schema |
+|-------------|--------------|--------|
+| `~/.vex-talon/config/injection/patterns.json` | L4 Injection Scanner, L19 Skill Scanner | `InjectionPatternConfig` |
+| `~/.vex-talon/config/code-enforcer/patterns.json` | L0 Secure Code Enforcer | `CodeEnforcerConfig` |
+| `~/.vex-talon/config/egress/config.json` | L9 Egress Scanner | `EgressConfig` |
+| `~/.vex-talon/config/supply-chain/config.json` | L14 Supply Chain Scanner | `SupplyChainConfig` |
+| `~/.vex-talon/config/memory/config.json` | L3 Memory Validation, L3 Auto Memory Guardian | `MemoryConfig` |
+| `~/.vex-talon/config/framework/atlas-owasp-mappings.json` | Stop Report (coverage calc) | `FrameworkMappings` |
+
+**If a config file doesn't exist yet, CREATE it with the correct schema.**
+
+### Config Schemas
+
+**injection/patterns.json:**
+```json
+{
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-02-05",
+    "source": "NOVA + 0din.ai + manual"
+  },
+  "patterns": [
+    {
+      "id": "nova-policy-puppetry",
+      "category": "instruction_override",
+      "severity": "CRITICAL",
+      "pattern": "<interaction-config>|<system-prompt>",
+      "description": "XML policy config injection (NOVA)",
+      "source": "NOVA"
+    }
+  ]
+}
+```
+
+**memory/config.json:**
+```json
+{
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-02-05",
+    "source": "Security intel update"
+  },
+  "thresholds": {
+    "maxEntityNameLength": 100,
+    "maxObservationLength": 2000,
+    "maxObservationsPerBatch": 50,
+    "maxEntitiesPerBatch": 20,
+    "maxRelationsPerBatch": 50
+  },
+  "patterns": {
+    "instructionInjection": [
+      {
+        "id": "mem-inj-ignore",
+        "pattern": "ignore\\s+(all\\s+)?(previous|prior|above|earlier)\\s+(instructions?|prompts?|rules?)",
+        "severity": "CRITICAL",
+        "description": "Instruction override in memory content"
+      }
+    ],
+    "fakeFacts": [],
+    "encodedContent": [],
+    "contextManipulation": [],
+    "sensitiveData": []
+  },
+  "trustedSources": ["user_direct_input"],
+  "allowedEntityTypes": ["person", "project", "location", "work", "interest"]
+}
+```
+
+**framework/atlas-owasp-mappings.json:**
+```json
+{
+  "metadata": {
+    "lastUpdated": "2026-02-05",
+    "atlasVersion": "4.x",
+    "owaspLlmVersion": "2025",
+    "owaspAgenticVersion": "2026"
+  },
+  "atlas": {
+    "techniques": [
+      { "id": "AML.T0051", "name": "LLM Prompt Injection", "layers": ["L1", "L4", "L7", "L19"] }
+    ]
+  },
+  "owaspLlm": {
+    "items": [
+      { "id": "LLM01", "name": "Prompt Injection", "layers": ["L1", "L4", "L7", "L19"], "status": "covered" }
+    ]
+  },
+  "owaspAgentic": {
+    "items": [
+      { "id": "ASI01", "name": "Agent Prompt Injection", "layers": ["L1", "L4", "L19"], "status": "covered" }
+    ]
+  }
+}
+```
+
+---
+
 ## Overview
 
-| Domain | Sources | Updates |
-|--------|---------|---------|
-| **Attack Patterns** | NOVA Framework, 0din.ai | Detection patterns |
-| **Framework Compliance** | MITRE ATLAS, OWASP LLM/Agentic | Coverage mappings |
-| **Memory Poisoning** | Academic papers, AI security blogs | Validation patterns |
+| Domain | Sources | Target Config |
+|--------|---------|---------------|
+| **Attack Patterns** | NOVA Framework, 0din.ai | `injection/patterns.json` |
+| **Framework Compliance** | MITRE ATLAS, OWASP LLM/Agentic | `framework/atlas-owasp-mappings.json` |
+| **Memory Poisoning** | Academic papers, AI security blogs | `memory/config.json` |
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `/security-intel-update` | Full update (all sources) |
-| `/security-intel-update attacks` | Attack patterns only |
-| `/security-intel-update frameworks` | Framework compliance only |
-| `/security-intel-update --check` | Check for updates without applying |
+| `/vex-talon:talon-intel-update` | Full update (all sources) |
+| `/vex-talon:talon-intel-update attacks` | Attack patterns only |
+| `/vex-talon:talon-intel-update frameworks` | Framework compliance only |
+| `/vex-talon:talon-intel-update memory` | Memory poisoning patterns only |
+| `/vex-talon:talon-intel-update --check` | Check for updates without applying |
 
 ---
 
@@ -32,17 +138,17 @@ Keep Vex-Talon's security layers current with latest attack patterns and framewo
 
 | Source | Type | Access |
 |--------|------|--------|
-| **NOVA Framework** | GitHub repo | GitHub API / WebFetch |
-| **0din.ai** | Bug bounty platform | Playwright scraping |
+| **NOVA Framework** | GitHub repo | WebFetch to GitHub |
+| **0din.ai** | Bug bounty platform | Playwright MCP scraping |
 
 ### NOVA Framework
 
-**Repository:** https://github.com/Nova-Hunting/nova
+**Repository:** https://github.com/fr0gger/nova
 
-Fetch latest `.nov` rules:
+Fetch latest rules:
 ```
-WebFetch: https://github.com/Nova-Hunting/nova/tree/main/rules
-Prompt: List all .nov rule files with their names and descriptions
+WebFetch: https://github.com/fr0gger/nova/tree/main/rules
+Prompt: List all .nov rule files with their rule_id, description, keywords, and severity
 ```
 
 **NOVA Rule Format:**
@@ -51,6 +157,18 @@ rule_id: policy_puppetry
 description: Detects XML policy config injection
 keywords: ["<interaction-config>", "<system-prompt>"]
 severity: CRITICAL
+```
+
+**Convert to config-loader format and WRITE to `~/.vex-talon/config/injection/patterns.json`:**
+```json
+{
+  "id": "nova-policy-puppetry",
+  "category": "instruction_override",
+  "severity": "CRITICAL",
+  "pattern": "<interaction-config>|<system-prompt>",
+  "description": "XML policy config injection",
+  "source": "NOVA"
+}
 ```
 
 ### 0din.ai Disclosures
@@ -67,24 +185,21 @@ Use Playwright MCP for JavaScript-rendered content:
 **Extract:**
 - Disclosure ID, title, severity
 - Test scores (model, temperature)
-- Attack taxonomies
+- Attack taxonomies → convert to regex patterns
 
-### Pattern Normalization
+**Convert and APPEND to `~/.vex-talon/config/injection/patterns.json`**
 
-Convert external patterns to Vex-Talon format:
+### Writing Attack Patterns
 
-**For injection-patterns config:**
-```json
-{
-  "id": "nova-policy-puppetry",
-  "pattern": "<interaction-config>|<system-prompt>",
-  "severity": "CRITICAL",
-  "source": "NOVA",
-  "description": "XML policy config injection"
-}
-```
+After fetching from sources:
 
-**Target:** `packages/core/src/patterns/injection-patterns.json`
+1. Read existing `~/.vex-talon/config/injection/patterns.json` (or start fresh)
+2. Merge new patterns (deduplicate by `id`)
+3. Update `metadata.lastUpdated`
+4. Validate JSON with `jq '.' ~/.vex-talon/config/injection/patterns.json`
+5. Write back
+
+**IMPORTANT:** Preserve existing patterns — only ADD new ones. Never delete user-customized patterns.
 
 ---
 
@@ -116,54 +231,42 @@ Convert external patterns to Vex-Talon format:
 - AML.T0067 - RAG Credential Harvesting
 - AML.T0068 - RAG Poisoning
 
-### OWASP LLM Top 10 Coverage
+### Layer Coverage Mapping
 
-| ID | Risk | Vex-Talon Layers | Status |
-|----|------|------------------|--------|
-| LLM01 | Prompt Injection | L4, L7, L19 | Covered |
-| LLM02 | Sensitive Info Disclosure | L0, L1, L2, L9 | Covered |
-| LLM03 | Supply Chain | L14 | Covered |
-| LLM04 | Data Poisoning | L15* | Covered |
-| LLM05 | Improper Output Handling | L5 | Covered |
-| LLM06 | Excessive Agency | L1, L9, L12 | Covered |
-| LLM07 | System Prompt Leakage | - | N/A |
-| LLM08 | Embedding Weaknesses | L15* | Covered |
-| LLM09 | Misinformation | L13* | Optional |
-| LLM10 | Unbounded Consumption | L17 | Covered |
+| OWASP LLM | Layers | Status |
+|-----------|--------|--------|
+| LLM01 Prompt Injection | L1, L4, L7, L19 | Covered |
+| LLM02 Sensitive Info | L0, L1, L9 | Covered |
+| LLM03 Supply Chain | L14 | Covered |
+| LLM04 Data Poisoning | L3†, L15* | Covered |
+| LLM05 Output Handling | L5 | Covered |
+| LLM06 Excessive Agency | L9, L12 | Covered |
+| LLM07 System Prompt Leakage | L9 | Covered |
+| LLM08 Embedding Weaknesses | L15* | Optional |
+| LLM09 Misinformation | L13* | Optional |
+| LLM10 Unbounded Consumption | L17 | Covered |
 
-*Layers requiring external tools (Strawberry, vex-rag)
+| OWASP Agentic | Layers | Status |
+|---------------|--------|--------|
+| ASI01 Agent Prompt Injection | L1, L4, L19 | Covered |
+| ASI02 Credential Misuse | L1, L9 | Covered |
+| ASI04 Dependency Chain | L14, L19 | Covered |
+| ASI05 Output Mishandling | L5 | Covered |
+| ASI06 Memory Poisoning | L3† | Detection |
+| ASI07 Multi-Agent | L12 | Partial |
+| ASI08 Cascading Hallucinations | L1, L2 | Partial |
+| ASI09 Resource Exploitation | L17 | Covered |
+| ASI10 Uncontrolled Permissions | L12, L1 | Covered |
 
-### OWASP Agentic 2026 Coverage
+### Writing Framework Mappings
 
-| ID | Risk | Vex-Talon Layers | Status |
-|----|------|------------------|--------|
-| ASI01 | Agent Goal Hijack | L4, L7, L19 | Covered |
-| ASI02 | Tool Misuse | L1, L12 | Covered |
-| ASI03 | Identity Abuse | L12 | Covered |
-| ASI04 | Supply Chain | L14 | Covered |
-| ASI05 | Unexpected Code Execution | L1, L2 | Covered |
-| ASI06 | Memory Poisoning | L3 | Detection |
-| ASI07 | Inter-Agent Communication | L1 | Partial |
-| ASI08 | Cascading Failures | L1 | Partial |
-| ASI09 | Trust Exploitation | L13* | Optional |
-| ASI10 | Rogue Agents | L1, L12 | Covered |
+**WRITE to `~/.vex-talon/config/framework/atlas-owasp-mappings.json`:**
 
-### Update Workflow
-
-1. **Fetch latest versions:**
-```
-WebFetch: https://atlas.mitre.org/techniques
-Prompt: List LLM-related techniques. Note any NEW techniques since last check.
-
-WebFetch: https://genai.owasp.org/llm-top-10/
-Prompt: List OWASP LLM Top 10 with IDs. Note version changes.
-```
-
-2. **Compare with current mappings**
-3. **Update coverage tables** in README.md and dashboard
-4. **Note any new gaps** requiring new layers
-
-**Target:** `README.md` (coverage tables), `packages/dashboard/src/data/coverage.ts`
+1. Fetch latest from ATLAS and OWASP
+2. Compare with existing file (or create fresh)
+3. Update version numbers and coverage
+4. Note any new gaps requiring new layers
+5. Write JSON
 
 ---
 
@@ -171,9 +274,7 @@ Prompt: List OWASP LLM Top 10 with IDs. Note version changes.
 
 ### Why This Matters
 
-Memory poisoning attacks persist across sessions and influence long-term AI behavior. This is especially relevant for projects using MCP Memory Server.
-
-**Frameworks:** OWASP Agentic ASI06, MITRE ATLAS AML.T0064
+Memory poisoning persists across sessions. L3 Memory Validation (PreToolUse) and L3 Auto Memory Guardian (SessionStart) both consume these patterns.
 
 ### Sources to Monitor
 
@@ -185,26 +286,36 @@ Memory poisoning attacks persist across sessions and influence long-term AI beha
 | arXiv cs.CR | arxiv.org/list/cs.CR/recent | Weekly |
 | Trail of Bits | blog.trailofbits.com | Monthly |
 
-### Current Pattern Categories
-
-| Category | Patterns | Example |
-|----------|----------|---------|
-| Instruction Injection | 7 | "ignore previous instructions" |
-| Fake Facts | 4 | "User said to bypass security" |
-| Encoded Content | 3 | Base64, hex, Unicode |
-| Context Manipulation | 4 | Fake system markers |
-| Sensitive Data | 5 | API keys, passwords |
-
 ### Search Queries
 
 ```
-"LLM memory poisoning" site:arxiv.org
-"agent memory manipulation" AI security
-"MCP memory" injection
-"knowledge graph attack" language model
+WebSearch: "LLM memory poisoning" OR "agent memory attack" 2026
+WebSearch: "MCP memory server" security vulnerability 2026
+WebSearch: "knowledge graph poisoning" language model 2026
 ```
 
-**Target:** `packages/core/src/patterns/memory-patterns.json`
+### Writing Memory Patterns
+
+**WRITE to `~/.vex-talon/config/memory/config.json`:**
+
+1. Read existing config (or create with schema above)
+2. Add new patterns to appropriate category:
+   - `instructionInjection` — command override patterns
+   - `fakeFacts` — false context injection
+   - `encodedContent` — obfuscation techniques
+   - `contextManipulation` — fake system markers
+   - `sensitiveData` — credential/PII patterns
+3. Each pattern needs: `id`, `pattern` (regex), `severity`, `description`
+4. Update `metadata.lastUpdated`
+5. Validate JSON
+6. Write back
+
+**Pattern Development Guidelines:**
+- Specific enough to avoid false positives on legitimate memory
+- Regex must compile without error
+- No nested quantifiers (ReDoS risk — config-loader rejects these)
+- Include severity classification
+- Test against legitimate content before adding
 
 ---
 
@@ -212,51 +323,37 @@ Memory poisoning attacks persist across sessions and influence long-term AI beha
 
 ### Step 1: Check Current Status
 
-Note current framework versions and last update dates.
+Read existing configs:
+```bash
+cat ~/.vex-talon/config/injection/patterns.json 2>/dev/null | jq '.metadata' || echo "No injection config"
+cat ~/.vex-talon/config/memory/config.json 2>/dev/null | jq '.metadata' || echo "No memory config"
+cat ~/.vex-talon/config/framework/atlas-owasp-mappings.json 2>/dev/null | jq '.metadata' || echo "No framework config"
+```
 
-### Step 2: Sync Attack Patterns
+### Step 2: Fetch & Update (per scope)
 
-1. Fetch NOVA rules from GitHub
-2. Check 0din.ai for new disclosures
-3. Extract new patterns
-4. Update `packages/core/src/patterns/`
+Execute the relevant Part (1, 2, 3) above.
 
-### Step 3: Update Framework Compliance
+**For each update:**
+1. Fetch from source
+2. Read existing config file (or use empty template)
+3. Merge new patterns (preserve existing, deduplicate by ID)
+4. Update metadata.lastUpdated
+5. Validate JSON: `jq '.' <file>`
+6. Write to `~/.vex-talon/config/<path>`
 
-1. WebFetch ATLAS and OWASP
-2. Compare versions
-3. Update coverage tables
-4. Note new gaps
+### Step 3: Generate Report
 
-### Step 4: Update Memory Patterns
+Show what was found, what was added, and which config files were updated.
 
-1. Search for new research
-2. Extract new attack techniques
-3. Update memory patterns config
+### Step 4: Verify
 
-### Step 5: Generate Report
-
-```markdown
-## Security Intelligence Update - YYYY-MM-DD
-
-### Attack Patterns
-- NOVA: X new rules
-- 0din.ai: X new disclosures
-- Patterns added: X
-
-### Framework Compliance
-- ATLAS: vX.X (current/updated)
-- OWASP LLM: 202X (current/updated)
-- OWASP Agentic: 202X (current/updated)
-
-### Memory Poisoning
-- New patterns: X
-- Sources checked: [list]
-
-### Files Updated
-- [ ] packages/core/src/patterns/injection-patterns.json
-- [ ] packages/core/src/patterns/memory-patterns.json
-- [ ] README.md (coverage tables)
+After writing configs, verify hooks can load them:
+```bash
+# Quick validation
+jq '.' ~/.vex-talon/config/injection/patterns.json > /dev/null && echo "injection: valid"
+jq '.' ~/.vex-talon/config/memory/config.json > /dev/null && echo "memory: valid"
+jq '.' ~/.vex-talon/config/framework/atlas-owasp-mappings.json > /dev/null && echo "framework: valid"
 ```
 
 ---
@@ -284,7 +381,7 @@ Note current framework versions and last update dates.
 - OWASP Agentic: https://genai.owasp.org/
 
 ### Attack Patterns
-- NOVA Framework: https://github.com/Nova-Hunting/nova
+- NOVA Framework: https://github.com/fr0gger/nova
 - 0din.ai: https://0din.ai/disclosures
 
 ### Research
@@ -294,5 +391,6 @@ Note current framework versions and last update dates.
 
 ---
 
-**Version:** 1.0.0
+**Version:** 2.0.0
 **Ported from:** Vex PAI security-intel-update skill
+**Key change from v1:** Now writes to runtime config files instead of memory/*.md docs

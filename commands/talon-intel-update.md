@@ -1,6 +1,6 @@
 ---
 name: talon-intel-update
-description: Update Vex-Talon security intelligence - sync attack patterns and framework compliance
+description: Update Vex-Talon security intelligence - sync attack patterns and framework compliance to runtime config files
 arguments:
   - name: scope
     description: What to update - "all", "attacks", "frameworks", or "memory" (default: all)
@@ -29,27 +29,37 @@ Keep security layers current with latest attack patterns and framework complianc
 
 When the user runs `/talon-intel-update`, execute the security-intel-update skill.
 
+**CRITICAL:** The skill MUST write findings to `~/.vex-talon/config/` JSON files that hooks consume at runtime. Do NOT write to memory/*.md — those are documentation, not runtime configs.
+
+### Target Config Files
+
+| Config Path | Hooks That Read It |
+|-------------|-------------------|
+| `~/.vex-talon/config/injection/patterns.json` | L4, L19 |
+| `~/.vex-talon/config/memory/config.json` | L3 Memory Validation, L3 Auto Memory Guardian |
+| `~/.vex-talon/config/framework/atlas-owasp-mappings.json` | Stop Report |
+
 ### 1. Check Current Status
 
-Display current versions and last update dates:
+Read existing configs to show current state:
 
+```bash
+cat ~/.vex-talon/config/injection/patterns.json 2>/dev/null | jq '.metadata' || echo "No injection config yet"
+cat ~/.vex-talon/config/memory/config.json 2>/dev/null | jq '.metadata' || echo "No memory config yet"
+cat ~/.vex-talon/config/framework/atlas-owasp-mappings.json 2>/dev/null | jq '.metadata' || echo "No framework config yet"
+```
+
+Display status:
 ```
 ╔══════════════════════════════════════════════════════════════╗
 ║           VEX-TALON SECURITY INTELLIGENCE STATUS             ║
 ╠══════════════════════════════════════════════════════════════╣
-║  Framework Versions:                                         ║
-║    MITRE ATLAS: {{ atlas_version }}                          ║
-║    OWASP LLM:   {{ owasp_version }}                          ║
-║    OWASP Agentic: {{ agentic_version }}                      ║
+║  Config Files:                                               ║
+║    injection/patterns.json:  {{ exists/missing }}             ║
+║    memory/config.json:       {{ exists/missing }}             ║
+║    framework/mappings.json:  {{ exists/missing }}             ║
 ║                                                              ║
-║  Pattern Sources:                                            ║
-║    NOVA Rules:  {{ nova_count }} rules (last: {{ date }})    ║
-║    0din.ai:     {{ odin_count }} disclosures                 ║
-║                                                              ║
-║  Coverage:                                                   ║
-║    OWASP LLM:    9/10 covered                                ║
-║    OWASP Agentic: 8/10 covered, 2 partial                    ║
-║    ATLAS:        16 techniques mapped                        ║
+║  Last Updated: {{ date or "never" }}                         ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
@@ -57,55 +67,21 @@ Display current versions and last update dates:
 
 **If scope includes "attacks":**
 
-1. **NOVA Framework Sync**
-   ```
-   WebFetch: https://github.com/Nova-Hunting/nova/tree/main/rules
-   Prompt: List all .nov rule files. Extract rule_id, description, keywords, severity.
-   ```
-   - Compare with existing patterns
-   - Add new patterns to injection-patterns.json
-   - Log additions to update report
-
-2. **0din.ai Sync**
-   ```
-   mcp__playwright__browser_navigate: https://0din.ai/disclosures
-   mcp__playwright__browser_snapshot: Extract disclosure list
-   ```
-   - Get disclosure IDs, titles, severities
-   - Extract attack taxonomies
-   - Add new patterns to configs
+1. **NOVA Framework** — WebFetch GitHub, extract rules, convert to config-loader JSON format
+2. **0din.ai** — Playwright scrape, extract disclosures, convert to patterns
+3. **Write to `~/.vex-talon/config/injection/patterns.json`** (merge, deduplicate by ID)
 
 **If scope includes "frameworks":**
 
-1. **MITRE ATLAS Check**
-   ```
-   WebFetch: https://atlas.mitre.org/techniques
-   Prompt: List LLM-related techniques (AML.T0051-T0068). Note version and any NEW techniques.
-   ```
-   - Compare with current mappings
-   - Update coverage tables if changed
-
-2. **OWASP Check**
-   ```
-   WebFetch: https://genai.owasp.org/llm-top-10/
-   Prompt: List OWASP LLM Top 10 2025/2026 items. Note any changes.
-
-   WebFetch: https://genai.owasp.org/
-   Prompt: Check OWASP Agentic 2026 items (ASI01-ASI10). Note any updates.
-   ```
-   - Compare versions
-   - Update coverage status
+1. **MITRE ATLAS** — WebFetch techniques page
+2. **OWASP LLM/Agentic** — WebFetch and WebSearch for latest
+3. **Write to `~/.vex-talon/config/framework/atlas-owasp-mappings.json`**
 
 **If scope includes "memory":**
 
-1. **Research Check**
-   ```
-   WebSearch: "LLM memory poisoning" OR "agent memory attack" 2026
-   WebSearch: "MCP memory" security vulnerability
-   ```
-   - Find new attack techniques
-   - Extract patterns
-   - Update memory-patterns.json
+1. **Research** — WebSearch for new memory poisoning techniques
+2. **OWASP Agentic ASI06** — Check for updates
+3. **Write to `~/.vex-talon/config/memory/config.json`** (merge patterns into categories)
 
 ### 3. Generate Report
 
@@ -118,79 +94,51 @@ Date: {{ timestamp }}
 Scope: {{ scope }}
 
 ───────────────────────────────────────────────────────────────
+CONFIG FILES UPDATED
+───────────────────────────────────────────────────────────────
+
+  ~/.vex-talon/config/injection/patterns.json  ({{ status }})
+  ~/.vex-talon/config/memory/config.json       ({{ status }})
+  ~/.vex-talon/config/framework/mappings.json  ({{ status }})
+
+───────────────────────────────────────────────────────────────
 ATTACK PATTERNS
 ───────────────────────────────────────────────────────────────
 
-NOVA Framework:
-  Status: {{ nova_status }}
-  New Rules: {{ nova_new_count }}
-  {{ nova_new_rules_list }}
-
-0din.ai:
-  Status: {{ odin_status }}
-  New Disclosures: {{ odin_new_count }}
-  {{ odin_new_list }}
+NOVA: {{ count }} patterns ({{ new }} new)
+0din: {{ count }} patterns ({{ new }} new)
 
 ───────────────────────────────────────────────────────────────
 FRAMEWORK COMPLIANCE
 ───────────────────────────────────────────────────────────────
 
-MITRE ATLAS:
-  Current: {{ atlas_version }}
-  New Techniques: {{ atlas_new_count }}
-
-OWASP LLM:
-  Version: {{ owasp_version }}
-  Coverage: {{ owasp_coverage }}/10
-
-OWASP Agentic:
-  Version: {{ agentic_version }}
-  Coverage: {{ agentic_coverage }}/10
+ATLAS: {{ version }} ({{ technique_count }} techniques)
+OWASP LLM: {{ version }} ({{ coverage }}/10)
+OWASP Agentic: {{ version }} ({{ coverage }}/10)
 
 ───────────────────────────────────────────────────────────────
 MEMORY POISONING
 ───────────────────────────────────────────────────────────────
 
-Research Sources Checked: {{ memory_sources_count }}
-New Patterns Found: {{ memory_new_count }}
-{{ memory_new_patterns }}
-
-───────────────────────────────────────────────────────────────
-FILES UPDATED
-───────────────────────────────────────────────────────────────
-
-{{ updated_files_list }}
+Patterns: {{ total }} ({{ new }} new)
+Sources: {{ sources_checked }}
 
 ═══════════════════════════════════════════════════════════════
-Next Review: {{ next_review_date }} (+30 days)
+Next Review: {{ +30 days }}
 ═══════════════════════════════════════════════════════════════
+
+Sources:
+{{ source_urls }}
 ```
 
 ## Examples
 
-**Full update (all sources):**
 ```
-/talon-intel-update
-```
-
-**Check for updates without applying:**
-```
-/talon-intel-update --check
-```
-
-**Update attack patterns only:**
-```
-/talon-intel-update attacks
-```
-
-**Update framework compliance only:**
-```
-/talon-intel-update frameworks
-```
-
-**Update memory poisoning patterns:**
-```
-/talon-intel-update memory
+/talon-intel-update              # Full update (all sources → config files)
+/talon-intel-update attacks      # NOVA + 0din → injection/patterns.json
+/talon-intel-update frameworks   # ATLAS + OWASP → framework/mappings.json
+/talon-intel-update memory       # Research → memory/config.json
+/talon-intel-update --check      # Preview without writing
 ```
 
 ## Update Frequency
@@ -198,12 +146,6 @@ Next Review: {{ next_review_date }} (+30 days)
 | Source | Recommended |
 |--------|-------------|
 | Full Update | Monthly (1st Monday) |
-| NOVA/0din | Weekly (if active development) |
+| NOVA/0din | Weekly (if active) |
 | Frameworks | Quarterly |
-| Memory Patterns | Monthly |
-
-## Related Commands
-
-- `/talon` - Run security scan
-- `/talon-status` - View security layer status
-- `/talon-report` - Generate security report
+| Memory | Monthly |
