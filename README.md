@@ -21,7 +21,7 @@ Claude Code is powerful. But with great power comes great attack surface:
 - **Prompt injection** via files, images, MCP tools, and web content
 - **Data exfiltration** through tool calls, curl commands, and encoded payloads
 - **Supply chain attacks** via malicious npm/pip packages
-- **Memory poisoning** through MCP memory server manipulation
+- **Memory poisoning** through MCP memory server manipulation (if you use one)
 - **Credential exposure** from hardcoded secrets and .env files
 - **Unbounded spending** from runaway agent loops
 
@@ -39,10 +39,12 @@ Most developers run Claude Code with zero security layers. Vex-Talon adds 20.
 |-------|------|-------------|
 | **L0** | Secure Code Enforcer | Blocks CRITICAL vulnerabilities (SQL injection, command injection, hardcoded secrets) before code is written |
 | **L1** | Governor Agent | 33+ policy enforcement rules. Blocks dangerous operations, modifies risky inputs (e.g., `curl \| sh` replaced with safe warning) |
-| **L3** | Memory Validation | Detects instruction injection, fake facts, and context manipulation in MCP memory operations |
+| **L3** | Memory Validation† | Detects instruction injection, fake facts, and context manipulation in MCP memory operations |
 | **L9** | Egress Scanner | Prevents data exfiltration via secrets in URLs, bulk data transfer, base64-encoded payloads, and blocked destinations (pastebin, ngrok, webhook.site) |
 | **L14** | Supply Chain Pre-Install | Blocks 60+ known malicious packages before installation. Optional real-time API via OpenSourceMalware.com |
 | **L19** | Skill Scanner | Scans skills for injection patterns, dangerous commands, credential exposure, and external URLs before invocation |
+
+_†L3 requires the [Anthropic MCP Memory Server](https://github.com/anthropics/claude-code/tree/main/packages/memory) to be configured. Without a memory server, L3 is installed but dormant (no memory operations to monitor). Due to Claude Code bugs [#3514](https://github.com/anthropics/claude-code/issues/3514) and [#4669](https://github.com/anthropics/claude-code/issues/4669), L3 provides detection and alerting only — it cannot block MCP tool calls._
 
 ### PostToolUse Hooks (Detect After Execution)
 
@@ -204,7 +206,7 @@ Vex-Talon provides the hook-based security layers. The full 20-layer architectur
 | LLM01 | Prompt Injection | L1 Governor, L4 Injection Scanner, L7 Image Safety, L19 Skill Scanner |
 | LLM02 | Sensitive Information Disclosure | L0 Code Enforcer, L1 Governor, L9 Egress Scanner |
 | LLM03 | Supply Chain Vulnerabilities | L14 Pre-Install (block) + Post-Install (audit) |
-| LLM04 | Data and Model Poisoning | L3 Memory Validation, L15 RAG Security* |
+| LLM04 | Data and Model Poisoning | L3 Memory Validation†, L15 RAG Security* |
 | LLM05 | Improper Output Handling | L5 Output Sanitizer |
 | LLM06 | Excessive Agency | L9 Egress Scanner, L12 Least Privilege |
 | LLM07 | System Prompt Leakage | L9 Egress Scanner |
@@ -212,7 +214,7 @@ Vex-Talon provides the hook-based security layers. The full 20-layer architectur
 | LLM09 | Misinformation | L13 Strawberry* |
 | LLM10 | Unbounded Consumption | L17 Spend Alerting |
 
-_*Requires optional external tool_
+_*Requires optional external tool. †Requires MCP Memory Server (dormant without one)._
 
 ### MITRE ATLAS - 16+ Techniques
 
@@ -236,7 +238,7 @@ Covers ASI01 (Agent Prompt Injection), ASI04 (Dependency Chain Attacks), ASI06 (
                     |                   |
           +--------+-------+    +------+--------+
           |   |   |   |    |    |   |   |   |   |
-         L0  L1  L3  L9  L14   L2  L4  L5  L7 L14
+         L0  L1  L3† L9  L14   L2  L4  L5  L7 L14
          L19              pre   L17              post
           |   |   |   |    |    |   |   |   |   |
           v   v   v   v    v    v   v   v   v   v
@@ -296,6 +298,9 @@ Yes. Configure `enabledLayers` in the plugin settings.
 
 **Does it work on Windows?**
 macOS and Linux are fully supported. Windows is untested.
+
+**Do I need an MCP Memory Server for L3?**
+L3 Memory Validation only activates if you have the [Anthropic MCP Memory Server](https://github.com/anthropics/claude-code/tree/main/packages/memory) configured. Without one, L3 is installed but dormant — it won't slow anything down or produce false alerts. If you do use a memory server, L3 protects against memory poisoning attacks (instruction injection, fake facts, context manipulation).
 
 **Is my data sent anywhere?**
 No. Everything runs 100% locally. The only optional network call is to OpenSourceMalware.com for supply chain scanning (opt-in via `OSM_API_TOKEN`).
