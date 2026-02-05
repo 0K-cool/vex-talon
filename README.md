@@ -459,6 +459,9 @@ All data stays local. Zero cloud dependencies. Zero telemetry.
 
 ## FAQ
 
+**Why TypeScript + Bun instead of Bash or Python?**
+Bun spawns in ~25ms vs Node.js ~100ms+, which matters when 6 PreToolUse hooks fire on every tool call. TypeScript gives us type safety across 15 hooks sharing common patterns, first-class JSON for hook stdin/stdout, and alignment with Claude Code's own stack (Anthropic [acquired Bun](https://bun.com/blog/bun-joins-anthropic) in December 2025 and built Claude Code on it). Writing 3200-line security scanners in Bash isn't realistic, and Python adds its own dependency headaches (which version? venv? pip packages?). Bun is a single binary install: `curl -fsSL https://bun.sh/install | bash`.
+
 **Does this slow down Claude Code?**
 PreToolUse hooks typically complete in <50ms. PostToolUse hooks run asynchronously. The supply chain API has a 5-second timeout and 24-hour cache.
 
