@@ -25,12 +25,12 @@
  * @date 2026-02-04
  */
 
-import { appendFileSync } from 'fs';
 import { extname } from 'path';
 import { normalizeUnicode } from './lib/unicode-normalize';
 import {
   ensureTalonDirs,
   getAuditLogPath,
+  secureAppendLog,
 } from './lib/talon-paths';
 // Note: config-loader patterns available but using bundled defaults for reliability
 // import { loadCodeEnforcerPatterns, compilePattern } from './lib/config-loader';
@@ -382,7 +382,7 @@ function logToAudit(entry: AuditEntry): void {
     ensureTalonDirs();
     const auditPath = getAuditLogPath(HOOK_NAME);
     const logLine = JSON.stringify(entry) + '\n';
-    appendFileSync(auditPath, logLine);
+    secureAppendLog(auditPath, logLine);
   } catch {
     // Silent failure
   }

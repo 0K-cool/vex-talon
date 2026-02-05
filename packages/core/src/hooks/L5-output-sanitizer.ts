@@ -15,9 +15,8 @@
  * @date 2026-02-04
  */
 
-import { appendFileSync } from 'fs';
 import { extname } from 'path';
-import { ensureTalonDirs, getAuditLogPath } from './lib/talon-paths';
+import { ensureTalonDirs, getAuditLogPath, secureAppendLog } from './lib/talon-paths';
 
 const HOOK_NAME = 'L5-output-sanitizer';
 
@@ -63,7 +62,7 @@ function scanContent(content: string): Finding[] {
 function logToAudit(entry: any): void {
   try {
     ensureTalonDirs();
-    appendFileSync(getAuditLogPath(HOOK_NAME), JSON.stringify(entry) + '\n');
+    secureAppendLog(getAuditLogPath(HOOK_NAME), JSON.stringify(entry) + '\n');
   } catch {}
 }
 

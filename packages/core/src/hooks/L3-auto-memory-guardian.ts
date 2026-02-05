@@ -27,11 +27,11 @@
  * @date 2026-02-05
  */
 
-import { appendFileSync, existsSync, readFileSync, renameSync } from 'fs';
+import { existsSync, readFileSync, renameSync } from 'fs';
 import { join, resolve } from 'path';
 import { homedir } from 'os';
 import { readdirSync } from 'fs';
-import { ensureTalonDirs, getAuditLogPath, getQuarantinePath, CONFIG_DIR } from './lib/talon-paths';
+import { ensureTalonDirs, getAuditLogPath, getQuarantinePath, CONFIG_DIR, secureAppendLog } from './lib/talon-paths';
 import { normalizeUnicode } from './lib/unicode-normalize';
 
 const HOOK_NAME = 'L3-auto-memory-guardian';
@@ -351,7 +351,7 @@ function outputAlert(allFindings: Map<string, Finding[]>, quarantined: string[])
 function logToAudit(entry: Record<string, unknown>): void {
   try {
     ensureTalonDirs();
-    appendFileSync(getAuditLogPath(HOOK_NAME), JSON.stringify(entry) + '\n');
+    secureAppendLog(getAuditLogPath(HOOK_NAME), JSON.stringify(entry) + '\n');
   } catch {}
 }
 

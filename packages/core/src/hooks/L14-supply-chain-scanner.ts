@@ -16,8 +16,7 @@
  * @date 2026-02-04
  */
 
-import { appendFileSync } from 'fs';
-import { ensureTalonDirs, getAuditLogPath } from './lib/talon-paths';
+import { ensureTalonDirs, getAuditLogPath, secureAppendLog } from './lib/talon-paths';
 import { loadSupplyChainConfig } from './lib/config-loader';
 
 const HOOK_NAME = 'L14-supply-chain-scanner';
@@ -99,7 +98,7 @@ function checkMalicious(packages: string[], ecosystem: string): Array<{ pkg: str
 function logToAudit(entry: any): void {
   try {
     ensureTalonDirs();
-    appendFileSync(getAuditLogPath(HOOK_NAME), JSON.stringify(entry) + '\n');
+    secureAppendLog(getAuditLogPath(HOOK_NAME), JSON.stringify(entry) + '\n');
   } catch {}
 }
 

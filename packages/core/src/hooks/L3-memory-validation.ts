@@ -26,8 +26,7 @@
  * @date 2026-02-04
  */
 
-import { appendFileSync } from 'fs';
-import { ensureTalonDirs, getAuditLogPath } from './lib/talon-paths';
+import { ensureTalonDirs, getAuditLogPath, secureAppendLog } from './lib/talon-paths';
 import { normalizeUnicode } from './lib/unicode-normalize';
 
 const HOOK_NAME = 'L3-memory-validation';
@@ -284,7 +283,7 @@ function scanMemoryInput(toolName: string, input: Record<string, any>): Finding[
 function logToAudit(entry: any): void {
   try {
     ensureTalonDirs();
-    appendFileSync(getAuditLogPath(HOOK_NAME), JSON.stringify(entry) + '\n');
+    secureAppendLog(getAuditLogPath(HOOK_NAME), JSON.stringify(entry) + '\n');
   } catch {}
 }
 

@@ -16,9 +16,8 @@
  * Vex-Talon v0.1.0
  */
 
-import { appendFileSync } from 'fs';
 import { join } from 'path';
-import { TALON_DIR, getAuditLogPath, ensureDirectories } from './lib/talon-paths';
+import { TALON_DIR, getAuditLogPath, ensureDirectories, secureAppendLog } from './lib/talon-paths';
 import { checkCircuit, recordSuccess, recordFailure } from './lib/circuit-breaker';
 import { normalizeUnicode } from './lib/unicode-normalize';
 import {
@@ -393,7 +392,7 @@ function logToAudit(entry: AuditLogEntry): void {
     ensureDirectories();
     const logPath = getAuditLogPath(HOOK_NAME);
     const logLine = JSON.stringify(entry) + '\n';
-    appendFileSync(logPath, logLine);
+    secureAppendLog(logPath, logLine);
   } catch (error) {
     console.error(`[Governor] Failed to write audit log: ${error}`);
   }

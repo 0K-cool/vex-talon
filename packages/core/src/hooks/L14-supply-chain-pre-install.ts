@@ -24,8 +24,7 @@
  * @date 2026-02-04
  */
 
-import { appendFileSync } from 'fs';
-import { ensureTalonDirs, getAuditLogPath, getStateFilePath } from './lib/talon-paths';
+import { ensureTalonDirs, getAuditLogPath, getStateFilePath, secureAppendLog } from './lib/talon-paths';
 import { atomicWriteFileSync, readJsonFileSync } from './lib/atomic-file';
 import { loadSupplyChainConfig } from './lib/config-loader';
 
@@ -428,7 +427,7 @@ async function checkPackages(
 function logAudit(entry: AuditEntry): void {
   try {
     ensureTalonDirs();
-    appendFileSync(getAuditLogPath(HOOK_NAME), JSON.stringify(entry) + '\n');
+    secureAppendLog(getAuditLogPath(HOOK_NAME), JSON.stringify(entry) + '\n');
   } catch {
     // Audit log failure is non-fatal
   }

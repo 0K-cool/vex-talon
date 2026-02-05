@@ -30,11 +30,11 @@
  * @date 2026-02-04
  */
 
-import { appendFileSync } from 'fs';
 import {
   ensureTalonDirs,
   getAuditLogPath,
   getStateFilePath,
+  secureAppendLog,
 } from './lib/talon-paths';
 import { atomicUpdateJsonFile, readJsonFileSync } from './lib/atomic-file';
 import { checkCircuit, recordSuccess, recordFailure } from './lib/circuit-breaker';
@@ -315,7 +315,7 @@ function logToAudit(entry: AuditEntry): void {
   try {
     ensureTalonDirs();
     const auditPath = getAuditLogPath(HOOK_NAME);
-    appendFileSync(auditPath, JSON.stringify(entry) + '\n');
+    secureAppendLog(auditPath, JSON.stringify(entry) + '\n');
   } catch {
     // Silent failure
   }

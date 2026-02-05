@@ -22,9 +22,9 @@
  * @date 2026-02-04
  */
 
-import { appendFileSync, readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { extname } from 'path';
-import { ensureTalonDirs, getAuditLogPath } from './lib/talon-paths';
+import { ensureTalonDirs, getAuditLogPath, secureAppendLog } from './lib/talon-paths';
 
 const HOOK_NAME = 'L7-image-safety-scanner';
 
@@ -202,7 +202,7 @@ function scanImage(filePath: string): Finding[] {
 function logToAudit(entry: any): void {
   try {
     ensureTalonDirs();
-    appendFileSync(getAuditLogPath(HOOK_NAME), JSON.stringify(entry) + '\n');
+    secureAppendLog(getAuditLogPath(HOOK_NAME), JSON.stringify(entry) + '\n');
   } catch {}
 }
 

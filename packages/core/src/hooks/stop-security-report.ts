@@ -54,7 +54,6 @@ import {
 } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
-import { execSync } from 'child_process';
 import { TALON_DIR, LOGS_DIR, ensureDirectories } from './lib/talon-paths';
 
 // ============================================================================
@@ -1197,27 +1196,25 @@ Write:`;
 
     // Call Haiku via claude CLI (uses Claude Code subscription - free)
     // Run from /tmp to avoid loading project context
-    // Security: Write prompt to temp file to avoid shell injection via audit log content
-    const { execFileSync } = await import('child_process');
-    const { unlinkSync } = await import('fs');
-    const tmpFile = join('/tmp', `vex-talon-prompt-${Date.now()}-${process.pid}.txt`);
-
+    // Security: Use Bun.spawn with stdin pipe - no shell, no temp files, no injection vectors
     try {
-      writeFileSync(tmpFile, prompt, { mode: 0o600 });
-      const analysis = execFileSync('sh', ['-c', `cat "${tmpFile}" | claude -p --model haiku --no-session-persistence 2>/dev/null`], {
-          cwd: '/tmp',
-          encoding: 'utf-8',
-          timeout: 60000, // 60 second timeout
-          maxBuffer: 1024 * 1024, // 1MB buffer
-        }
-      ).trim();
+      const proc = Bun.spawn(['claude', '-p', '--model', 'haiku', '--no-session-persistence'], {
+        cwd: '/tmp',
+        stdin: new Blob([prompt]),
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
 
-      return analysis || 'No analysis generated';
+      const result = await Promise.race([
+        new Response(proc.stdout).text(),
+        new Promise<string>((_, reject) => setTimeout(() => reject(new Error('Timeout')), 60000)),
+      ]);
+
+      await proc.exited;
+      return result.trim() || 'No analysis generated';
     } catch (cliError) {
       console.error('Haiku CLI error:', cliError);
       return `Vex-Talon Analysis unavailable: CLI error`;
-    } finally {
-      try { unlinkSync(tmpFile); } catch { /* best effort cleanup */ }
     }
   } catch (error) {
     console.error('Error generating Vex-Talon analysis:', error);
@@ -1905,7 +1902,14 @@ function generateHTML(data: ReportData): string {
       const tooltip = card.querySelector('.severity-tooltip');
       const severity = card.dataset.filter;
 
-      let html = '<div class="tooltip-title">\ud83d\udcca ' + severity.toUpperCase() + ' by Tab</div>';
+      // Security: Build DOM nodes programmatically (no innerHTML) to prevent stored XSS
+      tooltip.textContent = '';
+
+      const title = document.createElement('div');
+      title.className = 'tooltip-title';
+      title.textContent = '\ud83d\udcca ' + severity.toUpperCase() + ' by Tab';
+      tooltip.appendChild(title);
+
       let hasAny = false;
       let tabsWithEvents = 0;
 
@@ -1914,11 +1918,23 @@ function generateHTML(data: ReportData): string {
           hasAny = true;
           tabsWithEvents++;
         }
-        const rowClass = count > 0 ? 'tooltip-row has-events' : 'tooltip-row';
-        html += '<div class="' + rowClass + '" data-tab="' + tabIds[key] + '" data-severity="' + severity + '" data-count="' + count + '">';
-        html += '<span class="tab-name">' + tabNames[key] + '</span>';
-        html += '<span class="count">' + count + '</span>';
-        html += '</div>';
+        const row = document.createElement('div');
+        row.className = count > 0 ? 'tooltip-row has-events' : 'tooltip-row';
+        row.dataset.tab = tabIds[key];
+        row.dataset.severity = severity;
+        row.dataset.count = String(count);
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'tab-name';
+        nameSpan.textContent = tabNames[key];
+        row.appendChild(nameSpan);
+
+        const countSpan = document.createElement('span');
+        countSpan.className = 'count';
+        countSpan.textContent = String(count);
+        row.appendChild(countSpan);
+
+        tooltip.appendChild(row);
       }
 
       if (tabsWithEvents === 1) {
@@ -1927,17 +1943,15 @@ function generateHTML(data: ReportData): string {
 
       if (!hasAny) {
         card.classList.add('no-events');
-        html += '<div style="color: var(--text-muted); font-style: italic; padding-top: 4px;">No events</div>';
+        const noEvents = document.createElement('div');
+        noEvents.style.cssText = 'color: var(--text-muted); font-style: italic; padding-top: 4px;';
+        noEvents.textContent = 'No events';
+        tooltip.appendChild(noEvents);
       } else if (tabsWithEvents > 1) {
-        html += '<div style="color: var(--text-muted); font-size: 10px; margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-color);">Click a row to navigate, or click card for most events</div>';
-      }
-
-      // Security: Use DOM APIs instead of innerHTML to prevent stored XSS
-      tooltip.textContent = '';
-      const wrapper = document.createElement('div');
-      wrapper.innerHTML = html;
-      while (wrapper.firstChild) {
-        tooltip.appendChild(wrapper.firstChild);
+        const hint = document.createElement('div');
+        hint.style.cssText = 'color: var(--text-muted); font-size: 10px; margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-color);';
+        hint.textContent = 'Click a row to navigate, or click card for most events';
+        tooltip.appendChild(hint);
       }
 
       // Add click handlers to tooltip rows

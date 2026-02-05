@@ -14,9 +14,8 @@
  * Vex-Talon v0.1.0
  */
 
-import { appendFileSync } from 'fs';
 import { extname, basename } from 'path';
-import { getAuditLogPath, ensureDirectories } from './lib/talon-paths';
+import { getAuditLogPath, ensureDirectories, secureAppendLog } from './lib/talon-paths';
 import { checkCircuit, recordSuccess, recordFailure } from './lib/circuit-breaker';
 
 const HOOK_NAME = 'L2-secure-code-linter';
@@ -265,7 +264,7 @@ function logToAudit(entry: AuditLogEntry): void {
     ensureDirectories();
     const logPath = getAuditLogPath(HOOK_NAME);
     const logLine = JSON.stringify(entry) + '\n';
-    appendFileSync(logPath, logLine);
+    secureAppendLog(logPath, logLine);
   } catch (error) {
     // Silent fail for logging
   }
