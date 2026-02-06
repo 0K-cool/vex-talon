@@ -13,8 +13,8 @@
  * Maps to:
  * - OWASP LLM10 (Unbounded Consumption)
  *
- * @version 0.1.0 (vex-talon)
- * @date 2026-02-04
+ * @version 0.2.0 (vex-talon)
+ * @date 2026-02-06
  */
 
 import { getStateFilePath } from './lib/talon-paths';
@@ -23,7 +23,8 @@ import { atomicUpdateJsonFile, readJsonFileSync } from './lib/atomic-file';
 const HOOK_NAME = 'L17-spend-alerting';
 
 const THRESHOLDS = { WARNING: 5.0, ALERT: 10.0, CRITICAL: 20.0 };
-const PRICING = { INPUT_PER_MILLION: 3.0, OUTPUT_PER_MILLION: 15.0 };
+// Opus 4.6 pricing (Feb 2026): $5/$25 base, $10/$37.50 for >200K context
+const PRICING = { INPUT_PER_MILLION: 5.0, OUTPUT_PER_MILLION: 25.0 };
 const CHARS_PER_TOKEN = 4;
 
 interface HookInput {
