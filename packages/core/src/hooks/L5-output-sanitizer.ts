@@ -5,14 +5,20 @@
  *
  * Part of Vex-Talon 20-layer defense-in-depth architecture.
  *
- * Purpose: Scan web files for unsafe DOM patterns after write.
+ * Purpose: Scan web and terminal files for unsafe output patterns after write.
  * Pattern: Sidecar Pattern (monitoring after tool execution)
+ *
+ * Detects:
+ * - XSS vectors: innerHTML, dangerouslySetInnerHTML, eval(), document.write
+ * - ANSI terminal injection: OSC 52 clipboard, DCS device control, 8-bit CSI,
+ *   bracketed paste manipulation, title social engineering, Sixel graphics
  *
  * Maps to:
  * - OWASP LLM05 (Improper Output Handling)
+ * - Terminal DiLLMa (SAGAI 2025 case study #6)
  *
- * @version 0.1.0 (vex-talon)
- * @date 2026-02-04
+ * @version 0.2.0 (vex-talon)
+ * @date 2026-02-11
  */
 
 import { extname } from 'path';
@@ -32,12 +38,13 @@ interface Finding {
   match: string;
 }
 
-// Web file extensions to scan
-const WEB_EXTENSIONS = ['.html', '.htm', '.js', '.jsx', '.ts', '.tsx', '.vue', '.svelte'];
+// Web and terminal file extensions to scan
+const WEB_EXTENSIONS = ['.html', '.htm', '.js', '.jsx', '.ts', '.tsx', '.vue', '.svelte', '.sh', '.bash', '.zsh', '.py', '.rb', '.pl'];
 const WRITE_TOOLS = ['Write', 'Edit'];
 
-// Unsafe DOM patterns (compiled at runtime to avoid false positive in source)
+// Unsafe DOM and terminal output patterns (compiled at runtime to avoid false positive in source)
 const UNSAFE_PATTERNS = [
+  // XSS / DOM injection
   { name: 'Direct DOM injection', regex: '\\.innerHTML\\s*=', severity: 'CRITICAL' as const },
   { name: 'React unsafe HTML', regex: 'dangerouslySetInnerHTML', severity: 'CRITICAL' as const },
   { name: 'Vue unsafe HTML', regex: 'v-html\\s*=', severity: 'CRITICAL' as const },
@@ -45,6 +52,13 @@ const UNSAFE_PATTERNS = [
   { name: 'Dynamic eval', regex: '\\beval\\s*\\(', severity: 'CRITICAL' as const },
   { name: 'Script URL', regex: 'href\\s*=\\s*["\']javascript:', severity: 'HIGH' as const },
   { name: 'jQuery HTML insert', regex: '\\$\\([^)]+\\)\\.html\\s*\\(', severity: 'HIGH' as const },
+  // ANSI terminal injection (Terminal DiLLMa defense)
+  { name: 'ANSI OSC52 clipboard', regex: '\\\\x1b\\]52;|\\\\033\\]52;|\\\\e\\]52;', severity: 'CRITICAL' as const },
+  { name: 'ANSI DCS device control', regex: '\\\\x1bP[^\\\\"\']*|\\\\033P[^\\\\"\']*', severity: 'HIGH' as const },
+  { name: 'ANSI 8-bit CSI bypass', regex: '\\\\x9b', severity: 'HIGH' as const },
+  { name: 'ANSI bracketed paste', regex: '\\\\x1b\\[\\?2004[hl]|\\\\033\\[\\?2004[hl]', severity: 'HIGH' as const },
+  { name: 'ANSI title manipulation', regex: '\\\\x1b\\][012];|\\\\033\\][012];|\\\\e\\][012];', severity: 'MEDIUM' as const },
+  { name: 'ANSI Sixel graphics', regex: '\\\\x1bPq|\\\\033Pq', severity: 'MEDIUM' as const },
 ];
 
 function scanContent(content: string): Finding[] {
@@ -67,11 +81,19 @@ function logToAudit(entry: any): void {
 }
 
 function displayWarning(findings: Finding[], filePath: string): void {
-  console.error('\n⚠️  TALON L5: Unsafe DOM patterns detected in ' + filePath);
-  for (const f of findings.slice(0, 3)) {
-    console.error(`   ${f.severity === 'CRITICAL' ? '🔴' : '🟠'} ${f.name}`);
+  const hasAnsi = findings.some(f => f.name.startsWith('ANSI'));
+  const label = hasAnsi ? 'Unsafe output patterns' : 'Unsafe DOM patterns';
+  console.error(`\n⚠️  TALON L5: ${label} detected in ${filePath}`);
+  for (const f of findings.slice(0, 5)) {
+    const icon = f.severity === 'CRITICAL' ? '🔴' : f.severity === 'HIGH' ? '🟠' : '🟡';
+    console.error(`   ${icon} ${f.name}`);
   }
-  console.error('   Consider using textContent or a sanitization library\n');
+  if (hasAnsi) {
+    console.error('   Remove ANSI escape sequences — clipboard/paste/device control injection risk');
+  } else {
+    console.error('   Consider using textContent or a sanitization library');
+  }
+  console.error('');
 }
 
 async function main() {
@@ -108,12 +130,17 @@ async function main() {
     const criticalFindings = findings.filter(f => f.severity === 'CRITICAL');
     const patternNames = findings.slice(0, 3).map(f => f.name).join(', ');
 
+    const hasAnsi = findings.some(f => f.name.startsWith('ANSI'));
+    const ansiWarning = hasAnsi ? 'ANSI terminal injection detected — remove dangerous escape sequences. ' : '';
+    const xssWarning = findings.some(f => !f.name.startsWith('ANSI'))
+      ? 'Use textContent instead of innerHTML, or sanitize with DOMPurify. Do NOT use dangerouslySetInnerHTML or document.write with user input. '
+      : '';
+
     console.log(JSON.stringify({
       continue: true,
-      additionalContext: `⚠️ TALON L5: Unsafe DOM patterns detected in "${filePath}": ${patternNames}. ` +
-        `${criticalFindings.length > 0 ? 'CRITICAL XSS risk! ' : ''}` +
-        `Use textContent instead of innerHTML, or sanitize with DOMPurify. ` +
-        `Do NOT use dangerouslySetInnerHTML or document.write with user input.`,
+      additionalContext: `⚠️ TALON L5: Unsafe output patterns detected in "${filePath}": ${patternNames}. ` +
+        `${criticalFindings.length > 0 ? 'CRITICAL risk! ' : ''}` +
+        ansiWarning + xssWarning,
     }));
 
     process.exit(0);

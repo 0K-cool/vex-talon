@@ -5,6 +5,34 @@ All notable changes to Vex-Talon will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-02-11
+
+### Added
+
+- **L5 Output Sanitizer: ANSI Terminal Injection Detection**
+  - 6 new patterns defending against the Terminal DiLLMa attack (SAGAI 2025 IEEE S&P workshop case study)
+  - OSC 52 clipboard manipulation (CRITICAL) — read/write terminal clipboard
+  - DCS device control strings (HIGH) — send commands to terminal emulator
+  - 8-bit CSI filter bypass (HIGH) — evade 7-bit escape sequence filters
+  - Bracketed paste mode manipulation (HIGH) — enable paste injection attacks
+  - OSC title-set social engineering (MEDIUM) — change terminal window title
+  - Sixel graphics data embedding (MEDIUM) — embedded data in image sequences
+  - New file extensions scanned: `.sh`, `.bash`, `.zsh`, `.py`, `.rb`, `.pl`
+  - Context-aware warnings: ANSI-specific remediation vs XSS-specific remediation
+
+### Changed
+
+- L5 Output Sanitizer now covers both web (XSS) and terminal (ANSI injection) attack vectors
+- Pattern count: 7 → 13 (6 new ANSI patterns)
+- File extension coverage: 8 → 14 (6 new terminal extensions)
+
+### Research
+
+- Based on analysis of "Systems Security Foundations for Agentic Computing" (Google, UCSD, UW Madison, EmbraceTheRed, December 2025)
+- Terminal DiLLMa case study: ANSI escape sequences in LLM output hijack terminal emulators for clipboard manipulation, data exfiltration via DNS, and unauthorized actions
+
+---
+
 ## [1.0.0] - 2026-02-04
 
 ### Added - Initial Public Release

@@ -2,7 +2,7 @@
 
 ![Vex-Talon Banner](vex-talon-banner.jpg)
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/0K-cool/vex-talon/releases/tag/v1.0.0)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue)](https://github.com/0K-cool/vex-talon/releases/tag/v1.1.0)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Claude_Code-orange)](https://code.claude.com)
 [![Hooks](https://img.shields.io/badge/hooks-15-informational)](hooks/hooks.json)
@@ -70,7 +70,7 @@ _†L3 requires the [MCP Memory Server](https://github.com/modelcontextprotocol/
 |-------|------|-------------|
 | **L2** | Secure Code Linter | Post-write security analysis with static analysis + optional LLM review |
 | **L4** | Injection Scanner | Detects prompt injection in tool outputs (89+ patterns including NOVA framework rules) |
-| **L5** | Output Sanitizer | Scans web files for XSS vectors: innerHTML, dangerouslySetInnerHTML, eval(), document.write |
+| **L5** | Output Sanitizer | Scans web and terminal files for XSS vectors and ANSI terminal injection (innerHTML, eval(), OSC 52 clipboard, DCS device control, bracketed paste) |
 | **L7** | Image Safety Scanner | Detects steganography, visual prompt injection, and adversarial content in images |
 | **L14** | Supply Chain Post-Install | Runs `npm audit` / `pip-audit` after package installations and warns on vulnerabilities |
 | **L17** | Spend Alerting | Tracks session costs and alerts at $5 / $10 / $20 thresholds (OWASP LLM10) |
@@ -238,7 +238,7 @@ Add custom security patterns without modifying hook code. Place JSON configs in 
 | `egress/config.json` | Blocked destinations, secret patterns, PII patterns |
 | `code-enforcer/patterns.json` | Vulnerability detection patterns |
 | `image-safety/config.json` | Stego signatures, visual injection patterns |
-| `output-sanitizer/patterns.json` | XSS/output sanitization rules |
+| `output-sanitizer/patterns.json` | XSS and ANSI terminal injection rules |
 | `supply-chain/config.json` | Additional malicious package entries |
 
 Configs are loaded with 60-second cache TTL and automatic fallback to built-in defaults if the file is missing or invalid.
@@ -312,7 +312,7 @@ These tools complement Vex-Talon's pattern-based detection with deeper static an
 | LLM02 | Sensitive Information Disclosure | L0 Code Enforcer, L1 Governor, L9 Egress Scanner |
 | LLM03 | Supply Chain Vulnerabilities | L14 Pre-Install (block) + Post-Install (audit) |
 | LLM04 | Data and Model Poisoning | L3 Memory Validation†, L15 RAG Security* |
-| LLM05 | Improper Output Handling | L5 Output Sanitizer |
+| LLM05 | Improper Output Handling | L5 Output Sanitizer (XSS + ANSI terminal injection) |
 | LLM06 | Excessive Agency | L9 Egress Scanner, L12 Least Privilege |
 | LLM07 | System Prompt Leakage | L9 Egress Scanner |
 | LLM08 | Vector and Embedding Weaknesses | L15 RAG Security* |
@@ -332,7 +332,7 @@ Covers AML.T0047 (Supply Chain Compromise), AML.T0048 (Adversarial Examples), AM
 | ASI01 | Agent Prompt Injection | L1 Governor, L4 Injection Scanner, L19 Skill Scanner |
 | ASI02 | Agent Credential Misuse | L1 Governor (.env protection), L9 Egress Scanner |
 | ASI04 | Dependency Chain Attacks | L14 Supply Chain Scanner, L19 Skill Scanner |
-| ASI05 | Agent Output Mishandling | L5 Output Sanitizer |
+| ASI05 | Agent Output Mishandling | L5 Output Sanitizer (XSS + ANSI terminal injection) |
 | ASI06 | Memory and Context Manipulation | L3 Memory Validation†, L18 MCP Audit* |
 | ASI07 | Multi-Agent Exploitation | L12 Least Privilege Profiles |
 | ASI08 | Cascading Hallucination Attacks | L1 Governor (circuit breaker), L2 Secure Code Linter (confidence-aware revert) |
@@ -583,7 +583,7 @@ Built by [Kelvin Lomboy](https://www.linkedin.com/in/kelvinlomboy).
 
 Frameworks: [OWASP LLM Top 10 2025](https://owasp.org/www-project-top-10-for-large-language-model-applications/), [OWASP Agentic Top 10 2026](https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/), [MITRE ATLAS](https://atlas.mitre.org/).
 
-Vulnerability research: [0din.ai](https://0din.ai) (AI vulnerability disclosure).
+Vulnerability research: [0din.ai](https://0din.ai) (AI vulnerability disclosure), [SAGAI 2025](https://www.computer.org/csdl/proceedings-article/sp/2025/sagai) (IEEE S&P workshop — Terminal DiLLMa ANSI patterns).
 
 Threat intelligence: [OpenSourceMalware.com](https://opensourcemalware.com/), [NOVA Framework](https://github.com/fr0gger/nova-framework).
 
