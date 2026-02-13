@@ -5,7 +5,7 @@
 [![Version](https://img.shields.io/badge/version-1.1.0-blue)](https://github.com/0K-cool/vex-talon/releases/tag/v1.1.0)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Claude_Code-orange)](https://code.claude.com)
-[![Hooks](https://img.shields.io/badge/hooks-15-informational)](hooks/hooks.json)
+[![Hooks](https://img.shields.io/badge/hooks-16-informational)](hooks/hooks.json)
 [![Security Layers](https://img.shields.io/badge/security_layers-20-critical)](README.md#architecture)
 [![Zero Config](https://img.shields.io/badge/config-zero_setup-brightgreen)]()
 [![OWASP LLM 2025](https://img.shields.io/badge/OWASP_LLM-2025-blueviolet)](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
@@ -29,6 +29,26 @@ Zero cloud dependencies. OWASP LLM 2025 + MITRE ATLAS coverage. Works out of the
 git clone https://github.com/0K-cool/vex-talon.git ~/.claude/plugins/vex-talon
 claude --plugin-dir ~/.claude/plugins/vex-talon
 ```
+
+---
+
+## Table of Contents
+
+- [Why Vex-Talon?](#why-vex-talon)
+- [What You Get (Out of the Box)](#what-you-get-out-of-the-box)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [What You Should Consider Adding](#what-you-should-consider-adding)
+- [Framework Coverage](#framework-coverage)
+- [Architecture](#architecture)
+- [Defense Philosophy: When You Can't Block, Anchor](#defense-philosophy-when-you-cant-block-anchor)
+- [Packages](#packages)
+- [Data Storage](#data-storage)
+- [FAQ](#faq)
+- [Uninstall](#uninstall)
+- [Security](#security)
+- [License](#license)
+- [Credits](#credits)
 
 ---
 
@@ -143,7 +163,7 @@ alias claude='claude --plugin-dir ~/.claude/plugins/vex-talon'
 
 On your **first session**, Claude will confirm Vex-Talon is active in its first response:
 
-> 🛡️ **New Plugin Installed** — Vex-Talon v1.0.0 is active with 16 security hooks protecting this session. Run `/vex-talon:status` for a detailed security dashboard.
+> 🛡️ **New Plugin Installed** — Vex-Talon v1.1.0 is active with 16 security hooks protecting this session. Run `/vex-talon:status` for a detailed security dashboard.
 
 You can also verify at any time:
 
