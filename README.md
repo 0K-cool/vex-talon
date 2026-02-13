@@ -2,7 +2,7 @@
 
 ![Vex-Talon Banner](vex-talon-banner.jpg)
 
-[![Version](https://img.shields.io/badge/version-1.1.0-blue)](https://github.com/0K-cool/vex-talon/releases/tag/v1.1.0)
+[![Version](https://img.shields.io/badge/version-1.2.0-blue)](https://github.com/0K-cool/vex-talon/releases/tag/v1.2.0)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Claude_Code-orange)](https://code.claude.com)
 [![Hooks](https://img.shields.io/badge/hooks-16-informational)](hooks/hooks.json)
@@ -89,7 +89,7 @@ _†L3 requires the [MCP Memory Server](https://github.com/modelcontextprotocol/
 | Layer | Name | What It Does |
 |-------|------|-------------|
 | **L2** | Secure Code Linter | Post-write security analysis with static analysis + optional LLM review |
-| **L4** | Injection Scanner | Detects prompt injection in tool outputs (89+ patterns including NOVA framework rules) |
+| **L4** | Injection Scanner | Detects prompt injection in tool outputs (89+ patterns, NOVA rules, session escalation for persistent attacks) |
 | **L5** | Output Sanitizer | Scans web and terminal files for XSS vectors and ANSI terminal injection (innerHTML, eval(), OSC 52 clipboard, DCS device control, bracketed paste) |
 | **L7** | Image Safety Scanner | Detects steganography, visual prompt injection, and adversarial content in images |
 | **L14** | Supply Chain Post-Install | Runs `npm audit` / `pip-audit` after package installations and warns on vulnerabilities |

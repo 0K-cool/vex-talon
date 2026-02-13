@@ -25,7 +25,8 @@
  * @date 2026-02-04
  */
 
-import { ensureTalonDirs, getAuditLogPath, secureAppendLog } from './lib/talon-paths';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { ensureTalonDirs, getAuditLogPath, getStateFilePath, secureAppendLog } from './lib/talon-paths';
 import { checkCircuit, recordSuccess, recordFailure } from './lib/circuit-breaker';
 import { normalizeUnicode } from './lib/unicode-normalize';
 
@@ -78,6 +79,9 @@ interface AuditEntry {
   categories: InjectionCategory[];
   heuristic_score: number;
   action: 'ALERT' | 'WARN' | 'LOG';
+  escalation_level?: 'NORMAL' | 'ELEVATED' | 'CRITICAL';
+  session_detection_count?: number;
+  session_near_miss_count?: number;
 }
 
 // ============================================================================
@@ -313,6 +317,89 @@ function detectSuspiciousHeuristics(content: string): HeuristicResult {
 // Unicode normalization imported from shared module: ./lib/unicode-normalize
 
 // ============================================================================
+// Session Escalation State
+// ============================================================================
+// Tracks cumulative injection detections per session. Persistent attack
+// campaigns (Anthropic data: 17.8% single → 78.6% at 200 attempts)
+// trigger escalated alert thresholds.
+
+interface SessionEscalationState {
+  session_id: string;
+  detection_count: number;
+  near_miss_count: number;
+  first_detection_at: string;
+  last_detection_at: string;
+  escalation_level: 'NORMAL' | 'ELEVATED' | 'CRITICAL';
+}
+
+const ESCALATION_THRESHOLDS = { ELEVATED: 3, CRITICAL: 5 };
+
+function getSessionStatePath(): string {
+  try {
+    return getStateFilePath(HOOK_NAME, 'session-escalation.json');
+  } catch {
+    return '/tmp/talon-injection-session-state.json';
+  }
+}
+
+function createFreshState(sessionId: string): SessionEscalationState {
+  return {
+    session_id: sessionId,
+    detection_count: 0, near_miss_count: 0,
+    first_detection_at: '', last_detection_at: '',
+    escalation_level: 'NORMAL',
+  };
+}
+
+function loadSessionState(sessionId: string): SessionEscalationState {
+  try {
+    const path = getSessionStatePath();
+    if (existsSync(path)) {
+      const state = JSON.parse(readFileSync(path, 'utf-8')) as SessionEscalationState;
+      if (state.session_id !== sessionId) return createFreshState(sessionId);
+      return state;
+    }
+  } catch { /* ignore */ }
+  return createFreshState(sessionId);
+}
+
+function saveSessionState(state: SessionEscalationState): void {
+  try { writeFileSync(getSessionStatePath(), JSON.stringify(state)); } catch { /* silent */ }
+}
+
+function updateSessionState(
+  state: SessionEscalationState, detected: boolean, nearMiss: boolean,
+): SessionEscalationState {
+  const now = new Date().toISOString();
+  if (detected) {
+    state.detection_count++;
+    if (!state.first_detection_at) state.first_detection_at = now;
+    state.last_detection_at = now;
+  }
+  if (nearMiss) state.near_miss_count++;
+
+  const totalSignals = state.detection_count + Math.floor(state.near_miss_count / 2);
+  if (totalSignals >= ESCALATION_THRESHOLDS.CRITICAL) {
+    state.escalation_level = 'CRITICAL';
+  } else if (totalSignals >= ESCALATION_THRESHOLDS.ELEVATED) {
+    state.escalation_level = 'ELEVATED';
+  } else {
+    state.escalation_level = 'NORMAL';
+  }
+  return state;
+}
+
+function applyEscalation(
+  action: 'ALERT' | 'WARN' | 'LOG',
+  level: 'NORMAL' | 'ELEVATED' | 'CRITICAL',
+): 'ALERT' | 'WARN' | 'LOG' {
+  if (level === 'NORMAL') return action;
+  if (level === 'CRITICAL' && (action === 'WARN' || action === 'LOG')) return 'ALERT';
+  if (level === 'ELEVATED' && action === 'WARN') return 'ALERT';
+  return action;
+}
+
+// ============================================================================
 // Scanning Logic
 // ============================================================================
 
@@ -474,6 +561,19 @@ async function main() {
       action = 'WARN';
     }
 
+    // Session escalation: track cumulative detections, escalate thresholds
+    const sessionState = loadSessionState(data.session_id);
+    const previousLevel = sessionState.escalation_level;
+    updateSessionState(sessionState, scanResult.detected, heuristic.suspicious);
+    action = applyEscalation(action, sessionState.escalation_level);
+    saveSessionState(sessionState);
+
+    if (sessionState.escalation_level !== previousLevel && sessionState.escalation_level !== 'NORMAL') {
+      console.error(`\n⚡ TALON L4: Session escalation: ${previousLevel} → ${sessionState.escalation_level}`);
+      console.error(`   Detections: ${sessionState.detection_count}, Near-misses: ${sessionState.near_miss_count}`);
+      console.error(`   Persistent attack pattern — raising alert thresholds.\n`);
+    }
+
     // Log to audit
     logToAudit({
       timestamp: new Date().toISOString(),
@@ -487,6 +587,9 @@ async function main() {
       categories: scanResult.categories,
       heuristic_score: heuristic.score,
       action,
+      escalation_level: sessionState.escalation_level,
+      session_detection_count: sessionState.detection_count,
+      session_near_miss_count: sessionState.near_miss_count,
     });
 
     // Output alert if injection detected

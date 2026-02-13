@@ -5,6 +5,28 @@ All notable changes to Vex-Talon will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-02-13
+
+### Added
+
+- **L4 Injection Scanner: Session Escalation (Persistence Defense)**
+  - Cumulative detection tracking across tool calls within a session
+  - Three escalation levels: NORMAL → ELEVATED (3+ signals) → CRITICAL (5+ signals)
+  - ELEVATED: WARN actions escalate to ALERT
+  - CRITICAL: All detections escalate to ALERT (maximum vigilance)
+  - Near-misses (heuristic triggers) count at half weight
+  - Session state tracked per `session_id`, auto-resets on new session
+  - Audit log includes `escalation_level`, `session_detection_count`, `session_near_miss_count`
+  - stderr warning when escalation level changes
+
+### Research
+
+- Based on Anthropic Opus 4.6 System Card (February 2026) persistence scaling data
+- Single-attempt attack success: 17.8% → 200 attempts: 78.6% (without safeguards)
+- Multiple detections in one session indicate persistent attack campaign, warranting escalated thresholds
+
+---
+
 ## [1.1.0] - 2026-02-11
 
 ### Added
