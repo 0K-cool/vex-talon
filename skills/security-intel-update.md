@@ -1,6 +1,6 @@
 ---
 name: security-intel-update
-description: Update Vex-Talon's security intelligence - syncs attack patterns (NOVA, 0din.ai) AND framework compliance (ATLAS, OWASP). Updates the actual config files that hooks consume at runtime. USE WHEN user says "update security", "security intel update", "sync patterns", or when security coverage seems stale.
+description: Update Vex-Talon's security intelligence - syncs attack patterns (NOVA, 0din.ai, PromptIntel) AND framework compliance (ATLAS, OWASP). Updates the actual config files that hooks consume at runtime. USE WHEN user says "update security", "security intel update", "sync patterns", or when security coverage seems stale.
 ---
 
 # Security Intelligence Update
@@ -34,7 +34,7 @@ The config-loader (`packages/core/src/hooks/lib/config-loader.ts`) reads from `~
   "metadata": {
     "version": "1.0.0",
     "lastUpdated": "2026-02-05",
-    "source": "NOVA + 0din.ai + manual"
+    "source": "NOVA + 0din.ai + PromptIntel + manual"
   },
   "patterns": [
     {
@@ -116,7 +116,7 @@ The config-loader (`packages/core/src/hooks/lib/config-loader.ts`) reads from `~
 
 | Domain | Sources | Target Config |
 |--------|---------|---------------|
-| **Attack Patterns** | NOVA Framework, 0din.ai | `injection/patterns.json` |
+| **Attack Patterns** | NOVA Framework, 0din.ai, PromptIntel | `injection/patterns.json` |
 | **Framework Compliance** | MITRE ATLAS, OWASP LLM/Agentic | `framework/atlas-owasp-mappings.json` |
 | **Memory Poisoning** | Academic papers, AI security blogs | `memory/config.json` |
 
@@ -125,7 +125,7 @@ The config-loader (`packages/core/src/hooks/lib/config-loader.ts`) reads from `~
 | Command | Description |
 |---------|-------------|
 | `/vex-talon:talon-intel-update` | Full update (all sources) |
-| `/vex-talon:talon-intel-update attacks` | Attack patterns only |
+| `/vex-talon:talon-intel-update attacks` | Attack patterns only (NOVA + 0din + PromptIntel) |
 | `/vex-talon:talon-intel-update frameworks` | Framework compliance only |
 | `/vex-talon:talon-intel-update memory` | Memory poisoning patterns only |
 | `/vex-talon:talon-intel-update --check` | Check for updates without applying |
@@ -140,6 +140,7 @@ The config-loader (`packages/core/src/hooks/lib/config-loader.ts`) reads from `~
 |--------|------|--------|
 | **NOVA Framework** | GitHub repo | WebFetch to GitHub |
 | **0din.ai** | Bug bounty platform | Playwright MCP scraping |
+| **PromptIntel** | Malicious prompt samples + threat intel | API (requires key) |
 
 ### NOVA Framework
 
@@ -205,6 +206,63 @@ Try calling mcp__playwright__browser_navigate — if the tool doesn't exist, Pla
 - Attack taxonomies → convert to regex patterns
 
 **Convert and APPEND to `~/.vex-talon/config/injection/patterns.json`**
+
+### PromptIntel (IoPC Threat Feed)
+
+**Website:** https://promptintel.novahunting.ai/
+**NOVA Sync Repo:** https://github.com/xampla/threatfeeds-to-nova
+
+PromptIntel is an IoPC (Indicators of Prompt Compromise) platform that collects malicious prompt samples and generates NOVA-compatible rules. It provides three tiers of rules:
+
+| Tier | Prefix | Quality | Count (~) | Use |
+|------|--------|---------|-----------|-----|
+| **Hand-Crafted** | `PI_HC_*` | High — novel patterns, semantic matching | ~9 | Cherry-pick all |
+| **Auto-Generated** | `PI_AUTO_*` | Basic — keyword matching, some overlap | ~40 | Selective |
+| **MoltThreats** | `Molt_AUTO_*` | Threat intel — IOCs, campaign-specific | ~20 | Reference only |
+
+**Cherry-Pick Strategy:** Focus on HC (hand-crafted) rules — these contain novel attack patterns not in NOVA core. AUTO rules often overlap with existing patterns. Molt rules are campaign-specific threat intel (IOCs, infrastructure) less relevant for prompt injection detection.
+
+**Key HC Rules (high value for Vex-Talon):**
+- `PI_HC_88ebf0a9_RoutineDataExfiltration` — disguised data exfil as routine operations
+- `PI_HC_4f7fc901_ReceiveCommandExecPrompt` — reverse shell / command execution
+- `PI_HC_157f6289_Join_Injection_string` — URL concatenation concealment
+- `PI_HC_5ab46e79_AnonymousDataExfiltration` — anonymous exfil channels
+
+**Method 1: GitHub Repo (preferred — no API key needed)**
+
+```
+WebFetch: https://github.com/xampla/threatfeeds-to-nova/tree/main/rules/PromptIntel
+Prompt: List all PI_HC_* rule files with rule_id, description, keywords, semantics, severity
+```
+
+Review each HC rule, extract novel patterns, convert to config-loader format.
+
+**Method 2: PromptIntel API (requires API key)**
+
+```bash
+# Fetch latest samples (requires PROMPTINTEL_API_KEY)
+curl -H "Authorization: Bearer $PROMPTINTEL_API_KEY" \
+  https://api.promptintel.novahunting.ai/v1/samples?limit=50
+```
+
+**Method 3: WebSearch Fallback**
+
+```
+WebSearch: site:promptintel.novahunting.ai new samples 2026
+WebSearch: "PromptIntel" "NOVA" prompt injection rules 2026
+```
+
+**Convert HC patterns and WRITE to `~/.vex-talon/config/injection/patterns.json`:**
+```json
+{
+  "id": "pi-hc-routine-data-exfil",
+  "category": "data_exfiltration",
+  "severity": "HIGH",
+  "pattern": "routine\\s+(data|backup|sync).*?(send|upload|transfer|post)",
+  "description": "Disguised data exfiltration as routine operations (PromptIntel HC)",
+  "source": "PromptIntel"
+}
+```
 
 ### Writing Attack Patterns
 
@@ -343,6 +401,7 @@ WebSearch: "knowledge graph poisoning" language model 2026
 Read existing configs:
 ```bash
 cat ~/.vex-talon/config/injection/patterns.json 2>/dev/null | jq '.metadata' || echo "No injection config"
+echo "PromptIntel HC patterns:" && cat ~/.vex-talon/config/injection/patterns.json 2>/dev/null | jq '[.patterns[] | select(.source == "PromptIntel")] | length' || echo "0"
 cat ~/.vex-talon/config/memory/config.json 2>/dev/null | jq '.metadata' || echo "No memory config"
 cat ~/.vex-talon/config/framework/atlas-owasp-mappings.json 2>/dev/null | jq '.metadata' || echo "No framework config"
 ```
@@ -381,6 +440,7 @@ jq '.' ~/.vex-talon/config/framework/atlas-owasp-mappings.json > /dev/null && ec
 |--------|-------------|-----------|
 | NOVA Framework | Monthly | 1-2 rules/quarter |
 | 0din.ai | Weekly | 1-3/week |
+| PromptIntel | Monthly | Daily API updates, cherry-pick HC rules monthly |
 | MITRE ATLAS | Quarterly | Infrequent updates |
 | OWASP LLM | Quarterly | Annual cycle |
 | OWASP Agentic | Quarterly | New framework |
@@ -400,6 +460,8 @@ jq '.' ~/.vex-talon/config/framework/atlas-owasp-mappings.json > /dev/null && ec
 ### Attack Patterns
 - NOVA Framework: https://github.com/fr0gger/nova
 - 0din.ai: https://0din.ai/disclosures
+- PromptIntel: https://promptintel.novahunting.ai/
+- PromptIntel NOVA Sync: https://github.com/xampla/threatfeeds-to-nova
 
 ### Research
 - Simon Willison: https://simonwillison.net/
@@ -408,6 +470,7 @@ jq '.' ~/.vex-talon/config/framework/atlas-owasp-mappings.json > /dev/null && ec
 
 ---
 
-**Version:** 2.0.0
-**Ported from:** Vex PAI security-intel-update skill
-**Key change from v1:** Now writes to runtime config files instead of memory/*.md docs
+**Version:** 2.1.0
+**Ported from:** Vex PAI security-intel-update skill v1.2.0
+**Updated:** 2026-02-13
+**Changes:** Added PromptIntel as third attack pattern source (HC rule cherry-pick strategy, 3 sync methods)
