@@ -140,7 +140,7 @@ The config-loader (`packages/core/src/hooks/lib/config-loader.ts`) reads from `~
 |--------|------|--------|
 | **NOVA Framework** | GitHub repo | WebFetch to GitHub |
 | **0din.ai** | Bug bounty platform | Playwright MCP scraping |
-| **PromptIntel** | Malicious prompt samples + threat intel | API (requires key) |
+| **PromptIntel** | Malicious prompt samples + threat intel (Thomas Roccia) | Website (Playwright) / API |
 
 ### NOVA Framework
 
@@ -210,9 +210,11 @@ Try calling mcp__playwright__browser_navigate — if the tool doesn't exist, Pla
 ### PromptIntel (IoPC Threat Feed)
 
 **Website:** https://promptintel.novahunting.ai/
-**NOVA Sync Repo:** https://github.com/xampla/threatfeeds-to-nova
+**Author:** Thomas Roccia (same author as NOVA Framework)
+**API:** Available (sign up at website for key)
+**Third-party sync repo:** https://github.com/xampla/threatfeeds-to-nova (community tool — NOT official PromptIntel or NOVA)
 
-PromptIntel is an IoPC (Indicators of Prompt Compromise) platform that collects malicious prompt samples and generates NOVA-compatible rules. It provides three tiers of rules:
+PromptIntel is an IoPC (Indicators of Prompt Compromise) platform by Thomas Roccia that collects malicious prompt samples. It provides three tiers of rules (as seen in the xampla community sync):
 
 | Tier | Prefix | Quality | Count (~) | Use |
 |------|--------|---------|-----------|-----|
@@ -228,7 +230,20 @@ PromptIntel is an IoPC (Indicators of Prompt Compromise) platform that collects 
 - `PI_HC_157f6289_Join_Injection_string` — URL concatenation concealment
 - `PI_HC_5ab46e79_AnonymousDataExfiltration` — anonymous exfil channels
 
-**Method 1: GitHub Repo (preferred — no API key needed)**
+**Method 1: Browse via Playwright (preferred — full details from official source)**
+
+```
+1. mcp__playwright__browser_navigate({ url: "https://promptintel.novahunting.ai/" })
+2. mcp__playwright__browser_snapshot()  # Get prompt/molt listings
+3. For each new entry:
+   - Click to view details
+   - Extract: title, severity, category, keywords, nova_rule (if HC)
+   - Navigate back
+```
+
+**Method 2: Third-party GitHub Repo (community pre-synced rules)**
+
+⚠️ `xampla/threatfeeds-to-nova` is a community-maintained repo, NOT official PromptIntel or NOVA. Rules may lag behind the official source.
 
 ```
 WebFetch: https://github.com/xampla/threatfeeds-to-nova/tree/main/rules/PromptIntel
@@ -237,7 +252,7 @@ Prompt: List all PI_HC_* rule files with rule_id, description, keywords, semanti
 
 Review each HC rule, extract novel patterns, convert to config-loader format.
 
-**Method 2: PromptIntel API (requires API key)**
+**Method 3: PromptIntel API (requires API key)**
 
 ```bash
 # Fetch latest samples (requires PROMPTINTEL_API_KEY)
@@ -245,11 +260,11 @@ curl -H "Authorization: Bearer $PROMPTINTEL_API_KEY" \
   https://api.promptintel.novahunting.ai/v1/samples?limit=50
 ```
 
-**Method 3: WebSearch Fallback**
+**Method 4: WebSearch Fallback**
 
 ```
 WebSearch: site:promptintel.novahunting.ai new samples 2026
-WebSearch: "PromptIntel" "NOVA" prompt injection rules 2026
+WebSearch: "PromptIntel" "Thomas Roccia" new rules 2026
 ```
 
 **Convert HC patterns and WRITE to `~/.vex-talon/config/injection/patterns.json`:**
@@ -460,8 +475,8 @@ jq '.' ~/.vex-talon/config/framework/atlas-owasp-mappings.json > /dev/null && ec
 ### Attack Patterns
 - NOVA Framework: https://github.com/fr0gger/nova
 - 0din.ai: https://0din.ai/disclosures
-- PromptIntel: https://promptintel.novahunting.ai/
-- PromptIntel NOVA Sync: https://github.com/xampla/threatfeeds-to-nova
+- PromptIntel (Thomas Roccia): https://promptintel.novahunting.ai/
+- Third-party NOVA sync (xampla, community): https://github.com/xampla/threatfeeds-to-nova
 
 ### Research
 - Simon Willison: https://simonwillison.net/
