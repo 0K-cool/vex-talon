@@ -119,6 +119,7 @@ The config-loader (`packages/core/src/hooks/lib/config-loader.ts`) reads from `~
 | **Attack Patterns** | NOVA Framework, 0din.ai, PromptIntel | `injection/patterns.json` |
 | **Framework Compliance** | MITRE ATLAS, OWASP LLM/Agentic | `framework/atlas-owasp-mappings.json` |
 | **Memory Poisoning** | Academic papers, AI security blogs | `memory/config.json` |
+| **Standards Tracking** | Shield.md (Thomas Roccia) | `framework/atlas-owasp-mappings.json` |
 
 ## Commands
 
@@ -329,6 +330,7 @@ After fetching from sources:
 | **MITRE ATLAS** | https://atlas.mitre.org/techniques | AI/ML attack techniques |
 | **OWASP LLM** | https://genai.owasp.org/llm-top-10/ | LLM application risks |
 | **OWASP Agentic** | https://genai.owasp.org/ | Autonomous agent risks |
+| **Shield.md** | https://nova-hunting.github.io/shield.md/ | AI agent security spec (Thomas Roccia) |
 
 ### Vex-Talon Relevant ATLAS Techniques
 
@@ -460,6 +462,22 @@ Execute the relevant Part (1, 2, 3) above.
 5. Validate JSON: `jq '.' <file>`
 6. Write to `~/.vex-talon/config/<path>`
 
+### Step 2.5: Check Shield.md Evolution (Quarterly)
+
+1. Check Shield.md repo for version changes:
+```
+WebFetch: https://nova-hunting.github.io/shield.md/
+Prompt: What is the current Shield.md version? List threat categories, action types, and any changes since v0.
+
+gh api repos/Nova-Hunting/shield.md/commits --jq '.[0:5] | .[] | "\(.sha[0:7]) \(.commit.message) (\(.commit.author.date[0:10]))"'
+```
+2. Track key evolution signals:
+   - Version bump (v0 → v1 = external enforcement, major milestone)
+   - New threat categories beyond the original 11
+   - Community adoption (stars, forks, integrations)
+   - Tooling (parsers, validators, runtime enforcers)
+3. Note findings in report under "Standards Tracking"
+
 ### Step 3: Generate Report
 
 Show what was found, what was added, and which config files were updated.
@@ -486,6 +504,7 @@ jq '.' ~/.vex-talon/config/framework/atlas-owasp-mappings.json > /dev/null && ec
 | MITRE ATLAS | Quarterly | Infrequent updates |
 | OWASP LLM | Quarterly | Annual cycle |
 | OWASP Agentic | Quarterly | New framework |
+| Shield.md | Quarterly | Watch for v1 (external enforcement), adoption signals |
 | Memory Patterns | Monthly | Emerging area |
 
 **Trigger:** First Monday of month, or when coverage seems stale.
@@ -505,6 +524,11 @@ jq '.' ~/.vex-talon/config/framework/atlas-owasp-mappings.json > /dev/null && ec
 - PromptIntel (Thomas Roccia): https://promptintel.novahunting.ai/
 - Third-party NOVA sync (xampla, community): https://github.com/xampla/threatfeeds-to-nova
 
+### Standards & Specs
+- Shield.md Spec: https://nova-hunting.github.io/shield.md/
+- Shield.md Repo: https://github.com/Nova-Hunting/shield.md
+- Shield.md Blog: https://blog.securitybreak.io/shield-md-a-security-standard-for-openclaw-and-ai-agents-b38637031460
+
 ### Research
 - Simon Willison: https://simonwillison.net/
 - Anthropic Research: https://anthropic.com/research
@@ -512,7 +536,7 @@ jq '.' ~/.vex-talon/config/framework/atlas-owasp-mappings.json > /dev/null && ec
 
 ---
 
-**Version:** 2.1.0
-**Ported from:** Vex PAI security-intel-update skill v1.2.0
+**Version:** 2.2.0
+**Ported from:** Vex PAI security-intel-update skill v1.3.0
 **Updated:** 2026-02-13
-**Changes:** Added PromptIntel as third attack pattern source (HC rule cherry-pick strategy, 3 sync methods)
+**Changes:** Added Shield.md (Thomas Roccia) as standards tracking source — quarterly check for spec evolution, v1 milestone, community adoption
