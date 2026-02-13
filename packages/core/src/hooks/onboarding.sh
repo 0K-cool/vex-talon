@@ -16,10 +16,16 @@
 set -euo pipefail
 
 # --- Configuration ---
-TALON_VERSION="1.0.0"
 STATE_DIR="${TALON_DIR:-$HOME/.vex-talon}/state"
 STATE_FILE="$STATE_DIR/onboarding.json"
 HOOK_DIR="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/../../../.." && pwd)}"
+
+# Read version from plugin.json (single source of truth)
+PLUGIN_JSON="$HOOK_DIR/.claude-plugin/plugin.json"
+if [ -f "$PLUGIN_JSON" ]; then
+  TALON_VERSION=$(grep -o '"version": *"[^"]*"' "$PLUGIN_JSON" | head -1 | sed 's/"version": *"//;s/"//')
+fi
+TALON_VERSION="${TALON_VERSION:-1.1.0}"
 HOOKS_JSON="$HOOK_DIR/hooks/hooks.json"
 PROFILE="${VEX_TALON_PROFILE:-dev}"
 
