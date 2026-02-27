@@ -5,6 +5,36 @@ All notable changes to Vex-Talon will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-02-27
+
+### Added
+
+- **L18 MCP Audit: ConfigChange Hook (Real-time Config Blocking)**
+  - New ConfigChange hook scans `.mcp.json` edits mid-session in real-time (<2s)
+  - CRITICAL findings → blocks config change (exit 2), HIGH → warns
+  - Detects: blocked URLs (webhook.site, ngrok, pastebin, raw IPs), dangerous commands
+    (curl|sh, reverse shells, base64 decode to shell), injection patterns (instruction
+    override, role hijack, system prompt injection), malicious npm packages (10 known)
+  - Env var scanning for suspicious URLs in server configurations
+  - JSONL audit logging with severity, duration, and block/warn/pass result
+  - Complements existing L18 pre-deployment Proximity scanning with real-time defense
+  - Maps to: OWASP LLM01, OWASP Agentic ASI06, MITRE ATLAS AML.T0051, AML.T0053
+  - Requires Claude Code v2.1.59+ (ConfigChange hook event)
+
+- **Session Logger Library (SessionStart stderr fix)**
+  - New shared `session-logger.ts` library redirects informational messages to log file
+  - Prevents Claude Code from displaying false "hook error" on `/clear` for normal
+    SessionStart status output
+  - Auto-rotation at 512KB with last-256KB preservation
+  - Exports `logInfo()` and `logWarn()` for consistent logging across SessionStart hooks
+
+### Changed
+
+- Hook count: 16 → 17 (added ConfigChange event)
+- Shared libraries: 4 → 5 (added session-logger)
+
+---
+
 ## [1.2.0] - 2026-02-13
 
 ### Added

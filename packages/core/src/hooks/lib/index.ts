@@ -8,3 +8,4 @@ export * from './talon-paths';
 export * from './atomic-file';
 export * from './circuit-breaker';
 export * from './config-loader';
+export * from './session-logger';

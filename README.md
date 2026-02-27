@@ -2,10 +2,10 @@
 
 ![Vex-Talon Banner](vex-talon-banner.jpg)
 
-[![Version](https://img.shields.io/badge/version-1.2.0-blue)](https://github.com/0K-cool/vex-talon/releases/tag/v1.2.0)
+[![Version](https://img.shields.io/badge/version-1.3.0-blue)](https://github.com/0K-cool/vex-talon/releases/tag/v1.3.0)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Claude_Code-orange)](https://code.claude.com)
-[![Hooks](https://img.shields.io/badge/hooks-16-informational)](hooks/hooks.json)
+[![Hooks](https://img.shields.io/badge/hooks-17-informational)](hooks/hooks.json)
 [![Security Layers](https://img.shields.io/badge/security_layers-20-critical)](README.md#architecture)
 [![Zero Config](https://img.shields.io/badge/config-zero_setup-brightgreen)]()
 [![OWASP LLM 2025](https://img.shields.io/badge/OWASP_LLM-2025-blueviolet)](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
@@ -21,7 +21,7 @@
 
 *Vex (velociraptor) + Talon (claw) — sharp, fast, always watching. Defense-in-depth security that strikes before threats land.*
 
-> **This plugin is not for the faint of heart.** Vex-Talon runs 15 security hooks on every tool call — 6 before execution, 6 after, plus session lifecycle hooks. It was built for security professionals and developers who want serious protection for their AI coding agent. If you want a lightweight linter, this isn't it. If you want defense-in-depth that maps to OWASP and MITRE frameworks, keep reading.
+> **This plugin is not for the faint of heart.** Vex-Talon runs 16 security hooks on every tool call and config change — 6 before execution, 6 after, plus session lifecycle and config change hooks. It was built for security professionals and developers who want serious protection for their AI coding agent. If you want a lightweight linter, this isn't it. If you want defense-in-depth that maps to OWASP and MITRE frameworks, keep reading.
 
 Zero cloud dependencies. OWASP LLM 2025 + MITRE ATLAS coverage. Works out of the box.
 
@@ -69,7 +69,7 @@ Most developers run Claude Code with zero security layers. Vex-Talon adds 20.
 
 ## What You Get (Out of the Box)
 
-15 security hooks activate automatically after installation. No configuration required.
+16 security hooks activate automatically after installation. No configuration required.
 
 ### PreToolUse Hooks (Block Before Execution)
 
@@ -94,6 +94,12 @@ _†L3 requires the [MCP Memory Server](https://github.com/modelcontextprotocol/
 | **L7** | Image Safety Scanner | Detects steganography, visual prompt injection, and adversarial content in images |
 | **L14** | Supply Chain Post-Install | Runs `npm audit` / `pip-audit` after package installations and warns on vulnerabilities |
 | **L17** | Spend Alerting | Tracks session costs and alerts at $5 / $10 / $20 thresholds (OWASP LLM10) |
+
+### ConfigChange Hook
+
+| Layer | Name | What It Does |
+|-------|------|-------------|
+| **L18** | MCP Audit ConfigChange | Real-time scanning of `.mcp.json` edits mid-session. Detects blocked URLs, dangerous commands, injection patterns, and malicious packages. CRITICAL findings **block** the config change |
 
 ### SessionStart & Stop Hooks
 
@@ -144,7 +150,7 @@ git clone https://github.com/0K-cool/vex-talon.git ~/.claude/plugins/vex-talon
 claude --plugin-dir ~/.claude/plugins/vex-talon
 ```
 
-All 15 hooks activate immediately. No build step required — hooks run directly via Bun.
+All 16 hooks activate immediately. No build step required — hooks run directly via Bun.
 
 To load the plugin automatically on every session, add it to your shell config:
 
@@ -290,7 +296,7 @@ Vex-Talon provides the hook-based security layers. The full 20-layer architectur
 | **L11** Leash Kernel Sandbox | eBPF-based kernel sandbox with no prompt-injection bypass. For high-security and client work | [Leash](https://github.com/strongdm/leash) binary (Linux with eBPF) |
 | **L13** Strawberry Hallucination Detector | Information-theoretic hallucination detection via KL divergence. For threat intel, client deliverables | [Pythea/Strawberry](https://github.com/leochlon/pythea) + OpenAI API key |
 | **L15** RAG Security Scanner | Anti-poisoning for RAG knowledge bases: injection detection, Unicode normalization, provenance tracking | [vex-rag](https://github.com/0K-cool/vex-rag) plugin |
-| **L18** MCP Audit | Pre-deployment security scanning for MCP servers using NOVA injection rules | [Proximity](https://github.com/fr0gger/proximity) scanner |
+| **L18** MCP Audit | Pre-deployment security scanning for MCP servers using NOVA injection rules. **Built-in:** ConfigChange hook blocks malicious `.mcp.json` edits in real-time (no external tools needed) | Optional: [Proximity](https://github.com/fr0gger/proximity) scanner for deep static analysis |
 
 ### Static Analysis Tools (Extend L2 & L6)
 
@@ -383,6 +389,12 @@ _†Requires MCP Memory Server. *Requires external tool. Coverage is dynamically
                     |                   |
                     +---------+---------+
                               |
+                    CONFIG CHANGE (.mcp.json)
+                              |
+                    L18: MCP Audit ConfigChange
+                              |
+                         BLOCK or WARN
+                              |
                          SESSION END
                               |
                      STOP: Security Report
@@ -406,6 +418,7 @@ Anthropic's [official hooks documentation](https://code.claude.com/docs/en/hooks
 |-----------|-----------|---------------------|
 | PreToolUse | **Yes** | Blocks the tool call |
 | PostToolUse | No | Shows stderr to Claude (tool already ran) |
+| ConfigChange | **Yes** | Blocks the config change |
 | PermissionRequest | **Yes** | Denies the permission |
 | SessionStart | No | Shows stderr to user only |
 
@@ -448,7 +461,7 @@ When a PostToolUse hook detects prompt injection in a file Claude just read, tha
 
 ### The `additionalContext` Pattern
 
-Claude Code hooks support an `additionalContext` field in their JSON output. Vex-Talon uses this across **all 15 hooks** to inject security awareness directly into the AI's reasoning context — creating a **dual notification** system:
+Claude Code hooks support an `additionalContext` field in their JSON output. Vex-Talon uses this across **all 16 hooks** to inject security awareness directly into the AI's reasoning context — creating a **dual notification** system:
 
 | Channel | Who Receives It | What It Says |
 |---------|----------------|-------------|
