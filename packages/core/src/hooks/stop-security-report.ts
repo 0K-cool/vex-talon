@@ -21,6 +21,7 @@
  * - L7-image-safety-scanner-audit.jsonl
  * - L8-evaluator-agent-audit.jsonl
  * - leash-events.jsonl
+ * - security-radar-rules.jsonl
  * - errors.jsonl
  * - Session transcript (for conversation trace)
  *
@@ -650,6 +651,18 @@ interface MemorySecurityEntry {
   sessionId: string;
 }
 
+interface SecurityRadarEntry {
+  timestamp: string;
+  risk_description: string;
+  triggered_by: string;
+  config_target: string;
+  rule_name: string;
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+  is_nova_rule: boolean;
+  approved: boolean;
+  applied: boolean;
+}
+
 interface TranscriptEntry {
   type: string;
   timestamp?: string;
@@ -684,6 +697,7 @@ interface ReportData {
   secureCodeLinterEvents: SecureCodeLinterEntry[];
   leashEvents: LeashEvent[];
   memorySecurityEvents: MemorySecurityEntry[];
+  securityRadarEvents: SecurityRadarEntry[];
   errors: ErrorEntry[];
   conversationTrace: ConversationEvent[];
   leashActive: boolean;
@@ -694,6 +708,7 @@ interface ReportData {
     imageSafetyDetections: number;
     securitySensitiveWrites: number;
     memoryPoisoningAttempts: number;
+    securityRadarFindings: number;
     codeReverts: number;
     leashBlocks: number;
     errors: number;
@@ -705,10 +720,10 @@ interface ReportData {
     sessionDurationMs: number;
     overallStatus: 'CLEAN' | 'WARNINGS' | 'DETECTED';
     severityBreakdown: {
-      critical: { governor: number; injection: number; imageSafety: number; secureCode: number; linter: number; leash: number; memory: number };
-      high: { governor: number; injection: number; imageSafety: number; secureCode: number; linter: number; leash: number; memory: number };
-      medium: { governor: number; injection: number; imageSafety: number; secureCode: number; linter: number; leash: number; memory: number };
-      low: { governor: number; injection: number; imageSafety: number; secureCode: number; linter: number; leash: number; memory: number };
+      critical: { governor: number; injection: number; imageSafety: number; secureCode: number; linter: number; leash: number; memory: number; securityRadar: number };
+      high: { governor: number; injection: number; imageSafety: number; secureCode: number; linter: number; leash: number; memory: number; securityRadar: number };
+      medium: { governor: number; injection: number; imageSafety: number; secureCode: number; linter: number; leash: number; memory: number; securityRadar: number };
+      low: { governor: number; injection: number; imageSafety: number; secureCode: number; linter: number; leash: number; memory: number; securityRadar: number };
     };
   };
   vexAnalysis?: string;
@@ -727,6 +742,7 @@ const SECURE_CODE_LOG = join(LOGS_DIR, 'L0-secure-code-enforcer-audit.jsonl');
 const SECURE_CODE_LINTER_LOG = join(LOGS_DIR, 'L2-secure-code-linter-audit.jsonl');
 const LEASH_LOG = join(LOGS_DIR, 'leash-events.jsonl');
 const MEMORY_SECURITY_LOG = join(LOGS_DIR, 'L3-memory-validation-audit.jsonl');
+const SECURITY_RADAR_LOG = join(LOGS_DIR, 'security-radar-rules.jsonl');
 const ERRORS_LOG = join(LOGS_DIR, 'errors.jsonl');
 
 // Only include events from last 4 hours (typical session length)
@@ -862,6 +878,7 @@ function collectReportData(sessionId: string, transcriptPath?: string): ReportDa
   const allSecureCodeLinterEvents = readJsonlFile<SecureCodeLinterEntry>(SECURE_CODE_LINTER_LOG);
   const leashEvents = readJsonlFile<LeashEvent>(LEASH_LOG, sessionId);
   const memorySecurityEvents = readJsonlFile<MemorySecurityEntry>(MEMORY_SECURITY_LOG, sessionId);
+  const allSecurityRadarEvents = readJsonlFile<SecurityRadarEntry>(SECURITY_RADAR_LOG);
   const errors = readJsonlFile<ErrorEntry>(ERRORS_LOG, sessionId);
   const conversationTrace = transcriptPath ? readTranscript(transcriptPath) : [];
 
@@ -917,6 +934,16 @@ function collectReportData(sessionId: string, transcriptPath?: string): ReportDa
       })
     : allSecureCodeLinterEvents.slice(-20);
 
+  // Filter security radar events to those during this session
+  const securityRadarEvents = sessionStart && sessionEnd
+    ? allSecurityRadarEvents.filter((e) => {
+        const ts = new Date(e.timestamp).getTime();
+        const start = new Date(sessionStart).getTime();
+        const end = new Date(sessionEnd).getTime() + 60000;
+        return ts >= start && ts <= end;
+      })
+    : allSecurityRadarEvents.slice(-20);
+
   // Calculate summary
   const policyViolations = governorEvents.filter(
     (e) => e.policy_matched && e.policy_matched !== 'none' && e.severity !== 'LOW'
@@ -938,6 +965,8 @@ function collectReportData(sessionId: string, transcriptPath?: string): ReportDa
     (e) => e.findings && e.findings.length > 0
   ).length;
 
+  const securityRadarFindings = securityRadarEvents.length;
+
   // Per-tab severity counts for breakdown tooltips
   const governorSeverities = sortBySeverity(governorEvents.filter((e) => e.policy_matched && e.policy_matched !== 'none')).slice(0, 50).map((e) => e.severity);
   const injectionSeverities = sortBySeverity(injectionScans.filter((e) => e.injection_detected)).slice(0, 30).map((e) => e.severity || 'MEDIUM');
@@ -946,6 +975,7 @@ function collectReportData(sessionId: string, transcriptPath?: string): ReportDa
   const linterSeverities = sortBySeverity(secureCodeLinterEvents).slice(0, 30).map((e) => e.severity);
   const leashSeverities = sortBySeverity(leashEvents.filter((e) => e.decision === 'DENY')).slice(0, 50).map((e) => e.severity);
   const memorySeverities = memorySecurityEvents.filter((e) => e.findings && e.findings.length > 0).slice(0, 50).map((e) => e.highestSeverity);
+  const securityRadarSeverities = securityRadarEvents.slice(0, 50).map((e) => e.severity);
 
   const allSeverities = [
     ...governorSeverities,
@@ -955,6 +985,7 @@ function collectReportData(sessionId: string, transcriptPath?: string): ReportDa
     ...linterSeverities,
     ...leashSeverities,
     ...memorySeverities,
+    ...securityRadarSeverities,
   ];
 
   const criticalCount = allSeverities.filter((s) => s === 'CRITICAL').length;
@@ -972,6 +1003,7 @@ function collectReportData(sessionId: string, transcriptPath?: string): ReportDa
       linter: linterSeverities.filter((s) => s === 'CRITICAL').length,
       leash: leashSeverities.filter((s) => s === 'CRITICAL').length,
       memory: memorySeverities.filter((s) => s === 'CRITICAL').length,
+      securityRadar: securityRadarSeverities.filter((s) => s === 'CRITICAL').length,
     },
     high: {
       governor: governorSeverities.filter((s) => s === 'HIGH').length,
@@ -981,6 +1013,7 @@ function collectReportData(sessionId: string, transcriptPath?: string): ReportDa
       linter: linterSeverities.filter((s) => s === 'HIGH').length,
       leash: leashSeverities.filter((s) => s === 'HIGH').length,
       memory: memorySeverities.filter((s) => s === 'HIGH').length,
+      securityRadar: securityRadarSeverities.filter((s) => s === 'HIGH').length,
     },
     medium: {
       governor: governorSeverities.filter((s) => s === 'MEDIUM').length,
@@ -990,6 +1023,7 @@ function collectReportData(sessionId: string, transcriptPath?: string): ReportDa
       linter: linterSeverities.filter((s) => s === 'MEDIUM').length,
       leash: leashSeverities.filter((s) => s === 'MEDIUM').length,
       memory: memorySeverities.filter((s) => s === 'MEDIUM').length,
+      securityRadar: securityRadarSeverities.filter((s) => s === 'MEDIUM').length,
     },
     low: {
       governor: governorSeverities.filter((s) => s === 'LOW').length,
@@ -999,6 +1033,7 @@ function collectReportData(sessionId: string, transcriptPath?: string): ReportDa
       linter: linterSeverities.filter((s) => s === 'LOW').length,
       leash: leashSeverities.filter((s) => s === 'LOW').length,
       memory: memorySeverities.filter((s) => s === 'LOW').length,
+      securityRadar: securityRadarSeverities.filter((s) => s === 'LOW').length,
     },
   };
 
@@ -1006,7 +1041,7 @@ function collectReportData(sessionId: string, transcriptPath?: string): ReportDa
   const estimatedTokens = conversationTrace.reduce((acc, e) => acc + Math.ceil(e.content.length / 4), 0);
 
   let overallStatus: 'CLEAN' | 'WARNINGS' | 'DETECTED' = 'CLEAN';
-  if (criticalCount > 0 || codeReverts > 0 || leashBlocks > 0 || injectionDetections > 0 || imageSafetyDetections > 0 || memoryPoisoningAttempts > 0) {
+  if (criticalCount > 0 || codeReverts > 0 || leashBlocks > 0 || injectionDetections > 0 || imageSafetyDetections > 0 || memoryPoisoningAttempts > 0 || securityRadarFindings > 0) {
     overallStatus = 'DETECTED';
   } else if (highCount > 0 || policyViolations > 2) {
     overallStatus = 'WARNINGS';
@@ -1025,6 +1060,7 @@ function collectReportData(sessionId: string, transcriptPath?: string): ReportDa
     secureCodeLinterEvents,
     leashEvents,
     memorySecurityEvents,
+    securityRadarEvents,
     errors,
     conversationTrace,
     leashActive,
@@ -1034,6 +1070,7 @@ function collectReportData(sessionId: string, transcriptPath?: string): ReportDa
       injectionDetections,
       imageSafetyDetections,
       memoryPoisoningAttempts,
+      securityRadarFindings,
       securitySensitiveWrites,
       codeReverts,
       leashBlocks,
@@ -1116,6 +1153,7 @@ async function generateVexAnalysis(data: ReportData): Promise<string> {
       injectionDetections: data.summary.injectionDetections,
       codeReverts: data.summary.codeReverts,
       memoryPoisoningAttempts: data.summary.memoryPoisoningAttempts,
+      securityRadarFindings: data.summary.securityRadarFindings,
       errors: data.summary.errors,
       totalToolCalls: data.summary.totalToolCalls,
     };
@@ -1155,6 +1193,7 @@ Session Metrics:
 - Policy violations: ${securitySummary.policyViolations} (L1 Governor - blocked dangerous actions)
 - Injection detections: ${securitySummary.injectionDetections} (L4 Injection Scanner - prompt injection attempts)
 - Memory poisoning: ${securitySummary.memoryPoisoningAttempts} (L3 Memory Validation - knowledge graph attacks)
+- Security Radar: ${securitySummary.securityRadarFindings || 0} (novel risk detection and rule generation)
 - Code reverts: ${securitySummary.codeReverts} (L2 Linter - auto-fixed insecure code)
 - Findings: ${findingsSummary}
 
@@ -1240,6 +1279,7 @@ function generateHTML(data: ReportData): string {
   const displayLeashEvents = sortBySeverity(data.leashEvents.filter((e) => e.decision === 'DENY')).slice(0, 50);
   const displayEvaluatorEvents = sortBySeverity(data.evaluatorEvents).slice(0, 20);
   const displayMemoryEvents = data.memorySecurityEvents.filter((e) => e.findings && e.findings.length > 0).slice(0, 50);
+  const displaySecurityRadarEvents = sortBySeverity(data.securityRadarEvents).slice(0, 50);
 
   // Embed session data as JSON for JavaScript interactivity
   const sessionDataJson = JSON.stringify({
@@ -1253,6 +1293,7 @@ function generateHTML(data: ReportData): string {
     secureCodeLinterEvents: displayLinterEvents,
     leashEvents: displayLeashEvents,
     evaluatorEvents: displayEvaluatorEvents,
+    securityRadarEvents: displaySecurityRadarEvents,
     conversationTrace: data.conversationTrace.slice(-50),
     errors: data.errors.slice(0, 20),
   });
@@ -1278,6 +1319,11 @@ function generateHTML(data: ReportData): string {
   // Add Injection detections
   data.injectionScans.filter((e) => e.injection_detected).forEach((e) => {
     allTimelineEvents.push({ timestamp: e.timestamp, type: 'injection', label: 'Injection Detected', color: 'var(--accent-yellow)' });
+  });
+
+  // Add Security Radar events
+  data.securityRadarEvents.forEach((e) => {
+    allTimelineEvents.push({ timestamp: e.timestamp, type: 'security-radar', label: `Radar: ${e.rule_name}`, color: 'var(--accent-blue)' });
   });
 
   // Add Errors
@@ -1701,6 +1747,12 @@ function generateHTML(data: ReportData): string {
         <span class="count">${displayMemoryEvents.length}</span>
       </div>
       ` : ''}
+      ${displaySecurityRadarEvents.length > 0 ? `
+      <div class="tab" data-tab="security-radar">
+        \ud83d\udce1 Radar
+        <span class="count">${displaySecurityRadarEvents.length}</span>
+      </div>
+      ` : ''}
       <div class="tab" data-tab="trace">
         \ud83d\udcdc Trace
         <span class="count">${data.conversationTrace.length}</span>
@@ -1839,6 +1891,21 @@ function generateHTML(data: ReportData): string {
     </div>
     ` : ''}
 
+    ${displaySecurityRadarEvents.length > 0 ? `
+    <div id="content-security-radar" class="tab-content">
+      <div class="filter-controls">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="critical">Critical</button>
+        <button class="filter-btn" data-filter="high">High</button>
+        <button class="filter-btn" data-filter="medium">Medium</button>
+        <button class="filter-btn" data-filter="low">Low</button>
+      </div>
+      <div class="events-container" id="security-radar-events">
+        ${generateSecurityRadarEventsHTML(data.securityRadarEvents)}
+      </div>
+    </div>
+    ` : ''}
+
     <div id="content-trace" class="tab-content">
       <div class="events-container" id="trace-events">
         ${generateTraceHTML(data.conversationTrace)}
@@ -1884,7 +1951,8 @@ function generateHTML(data: ReportData): string {
       secureCode: '\ud83d\udd10 Secure Code',
       linter: '\ud83d\udd04 Auto-Revert',
       leash: '\ud83d\udd12 Leash',
-      memory: '\ud83e\udde0 Memory'
+      memory: '\ud83e\udde0 Memory',
+      securityRadar: '\ud83d\udce1 Radar'
     };
 
     const tabIds = {
@@ -1894,7 +1962,8 @@ function generateHTML(data: ReportData): string {
       secureCode: 'secure-code',
       linter: 'linter',
       leash: 'leash',
-      memory: 'memory'
+      memory: 'memory',
+      securityRadar: 'security-radar'
     };
 
     document.querySelectorAll('.metric-card[data-breakdown]').forEach(card => {
@@ -2744,6 +2813,86 @@ function generateMemorySecurityEventsHTML(events: MemorySecurityEntry[]): string
       </div>
     `;
   }).join('');
+
+  return summaryHtml + eventsHtml;
+}
+
+function generateSecurityRadarEventsHTML(events: SecurityRadarEntry[]): string {
+  if (events.length === 0) {
+    return '<div class="empty-state"><div class="emoji">\ud83d\udce1</div><p>No Security Radar findings this session</p></div>';
+  }
+
+  const approved = events.filter((e) => e.approved).length;
+  const applied = events.filter((e) => e.applied).length;
+  const novaRules = events.filter((e) => e.is_nova_rule).length;
+
+  const summaryHtml = `
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; padding: 12px; background: rgba(139, 148, 158, 0.05); border-radius: 8px;">
+      <div style="text-align: center;">
+        <div style="font-size: 20px; font-weight: bold; color: var(--accent-blue);">${events.length}</div>
+        <div style="font-size: 11px; color: var(--text-muted);">Risks Detected</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 20px; font-weight: bold; color: var(--accent-green);">${approved}</div>
+        <div style="font-size: 11px; color: var(--text-muted);">Approved</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 20px; font-weight: bold; color: var(--accent-green);">${applied}</div>
+        <div style="font-size: 11px; color: var(--text-muted);">Applied</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 20px; font-weight: bold; color: var(--accent-purple);">${novaRules}</div>
+        <div style="font-size: 11px; color: var(--text-muted);">NOVA Rules</div>
+      </div>
+    </div>
+    <div style="margin-bottom: 12px; padding: 8px; background: rgba(86, 182, 194, 0.1); border-radius: 6px; border-left: 3px solid var(--accent-blue);">
+      <div style="font-size: 12px; color: var(--accent-blue); font-weight: 500;">\ud83d\udce1 Security Radar \u2014 Cross-Cutting Concern</div>
+      <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">
+        Cognitive risk detection that identifies novel threats and generates permanent enforcement rules for security layers.
+      </div>
+    </div>
+  `;
+
+  const getSeverityClass = (severity: string) => {
+    switch (severity) {
+      case 'CRITICAL': return 'critical';
+      case 'HIGH': return 'high';
+      case 'MEDIUM': return 'medium';
+      case 'LOW': return 'low';
+      default: return 'low';
+    }
+  };
+
+  const eventsHtml = sortBySeverity(events).slice(0, 50).map((e) => `
+    <div class="event-card severity-${getSeverityClass(e.severity)}">
+      <div class="event-header">
+        <div class="event-icon">\ud83d\udce1</div>
+        <div class="event-title">${escapeHtml(e.rule_name)}</div>
+        <div class="event-badges">
+          <span class="badge badge-severity badge-${getSeverityClass(e.severity)}">${escapeHtml(e.severity)}</span>
+          ${e.approved ? '<span class="badge" style="background: var(--accent-green); color: white;">APPROVED</span>' : '<span class="badge" style="background: var(--accent-yellow); color: black;">PENDING</span>'}
+          ${e.applied ? '<span class="badge" style="background: var(--accent-green); color: white;">APPLIED</span>' : ''}
+          ${e.is_nova_rule ? '<span class="badge" style="background: var(--accent-purple); color: white;">NOVA</span>' : ''}
+        </div>
+        <span class="event-time">${formatTime(e.timestamp)}</span>
+        <span class="event-expand">\u25bc</span>
+      </div>
+      <div class="event-details">
+        <div class="detail-row">
+          <span class="detail-label">Risk Description</span>
+          <span class="detail-value">${escapeHtml(e.risk_description)}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Triggered By</span>
+          <span class="detail-value">${escapeHtml(e.triggered_by)}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Config Target</span>
+          <span class="detail-value"><code>${escapeHtml(e.config_target)}</code></span>
+        </div>
+      </div>
+    </div>
+  `).join('');
 
   return summaryHtml + eventsHtml;
 }
