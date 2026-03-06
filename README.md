@@ -412,6 +412,12 @@ _†Requires MCP Memory Server. *Requires external tool. Coverage is dynamically
 ## Architecture
 
 ```
+  ╔═══════════════════════════════════════════════════════╗
+  ║  SECURITY RADAR (CLAUDE.md behavioral directive)     ║
+  ║  Always-on AI cognitive detection across all work    ║
+  ║  Catches novel risks → feeds new rules into L0-L19  ║
+  ╚═══════════════════════════════════════════════════════╝
+                              |
                          USER REQUEST
                               |
                     +---------+---------+
@@ -444,6 +450,7 @@ _†Requires MCP Memory Server. *Requires external tool. Coverage is dynamically
 
 **Design principles:**
 
+- **Security Radar** (CLAUDE.md) provides always-on cognitive detection — catches novel risks that no pattern exists for yet, and feeds them back as new rules for L0-L19
 - **PreToolUse** hooks can BLOCK or MODIFY before execution (fail-closed on crash). WARN paths inject `additionalContext` for AI awareness
 - **PostToolUse** hooks can only ALERT and inform (fail-open — content already in context). All inject `additionalContext` for behavioral anchoring
 - **Defense-in-depth** — multiple overlapping layers catch what one might miss
