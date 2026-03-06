@@ -5,6 +5,18 @@ All notable changes to Vex-Talon will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2026-03-06
+
+### Added
+
+- **Input-side DLP (L1 Governor — Phase 4B)**
+  - 17 secret patterns scanned across ALL tool parameters (not just Bash)
+  - Detects: AWS, GitHub, Stripe, OpenAI, Anthropic, Slack, Discord, Google, Twilio, SendGrid, npm tokens + private keys + bearer tokens
+  - Warn-only: alerts user and AI via dual notification, does not block
+  - Redacted snippets in stderr output (shows first/last 4 chars only)
+  - DLP findings logged to audit trail (`dlp_findings` field)
+  - Maps to: OWASP LLM02 (Sensitive Information Disclosure)
+
 ## [1.5.0] - 2026-03-06
 
 ### Added

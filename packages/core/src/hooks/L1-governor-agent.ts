@@ -89,6 +89,8 @@ interface AuditLogEntry {
   // IFC taint tracking
   ifc_taint_level?: number;
   ifc_taint_label?: string;
+  // DLP findings
+  dlp_findings?: string[];
 }
 
 // ============================================================================
@@ -393,6 +395,59 @@ function normalizeParams(params: Record<string, any>): Record<string, any> {
 }
 
 // ============================================================================
+// Input-side DLP: Secret Detection in Tool Parameters (Phase 4B)
+// ============================================================================
+
+const SECRET_PATTERNS: Array<{ name: string; pattern: RegExp }> = [
+  { name: 'AWS Access Key', pattern: /\bAKIA[0-9A-Z]{16}\b/ },
+  { name: 'AWS Secret Key', pattern: /\b[0-9a-zA-Z/+]{40}\b(?=.*aws)/i },
+  { name: 'GitHub Token', pattern: /\b(ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9_]{36,255}\b/ },
+  { name: 'GitHub Fine-grained Token', pattern: /\bgithub_pat_[A-Za-z0-9_]{22,255}\b/ },
+  { name: 'Stripe Key', pattern: /\b(sk|pk)_(test|live)_[A-Za-z0-9]{20,}\b/ },
+  { name: 'OpenAI Key', pattern: /\bsk-[A-Za-z0-9]{20,}\b/ },
+  { name: 'Anthropic Key', pattern: /\bsk-ant-[A-Za-z0-9_-]{20,}\b/ },
+  { name: 'Slack Token', pattern: /\bxox[bprs]-[A-Za-z0-9\-]{10,}\b/ },
+  { name: 'Discord Token', pattern: /\b[MN][A-Za-z\d]{23,}\.[A-Za-z\d-_]{6}\.[A-Za-z\d-_]{27,}\b/ },
+  { name: 'Google API Key', pattern: /\bAIza[0-9A-Za-z_-]{35}\b/ },
+  { name: 'Twilio Key', pattern: /\bSK[0-9a-fA-F]{32}\b/ },
+  { name: 'SendGrid Key', pattern: /\bSG\.[A-Za-z0-9_-]{22,}\.[A-Za-z0-9_-]{43,}\b/ },
+  { name: 'Mailgun Key', pattern: /\bkey-[0-9a-zA-Z]{32}\b/ },
+  { name: 'npm Token', pattern: /\bnpm_[A-Za-z0-9]{36}\b/ },
+  { name: 'Generic Bearer Token', pattern: /\bBearer\s+[A-Za-z0-9_\-.]{20,}\b/ },
+  { name: 'Private Key Header', pattern: /-----BEGIN\s+(RSA|EC|OPENSSH|DSA|PGP)\s+PRIVATE\s+KEY-----/ },
+  { name: 'Base64 Secret (long)', pattern: /\b[A-Za-z0-9+/]{64,}={0,2}\b/ },
+];
+
+const DLP_SKIP_KEYS = new Set(['file_path', 'filePath', 'cwd', 'timeout', 'offset', 'limit']);
+
+interface DlpFinding {
+  paramKey: string;
+  secretType: string;
+  snippet: string;
+}
+
+function scanParamsForSecrets(params: Record<string, any>): DlpFinding[] {
+  const findings: DlpFinding[] = [];
+  for (const [key, value] of Object.entries(params)) {
+    if (DLP_SKIP_KEYS.has(key)) continue;
+    const strValue = typeof value === 'string' ? value : JSON.stringify(value);
+    if (!strValue || strValue.length < 10) continue;
+    for (const { name, pattern } of SECRET_PATTERNS) {
+      const match = strValue.match(pattern);
+      if (match) {
+        const matched = match[0];
+        const redacted = matched.length > 12
+          ? `${matched.slice(0, 4)}...${matched.slice(-4)}`
+          : `${matched.slice(0, 4)}...`;
+        findings.push({ paramKey: key, secretType: name, snippet: redacted });
+        break;
+      }
+    }
+  }
+  return findings;
+}
+
+// ============================================================================
 // Audit Logging
 // ============================================================================
 
@@ -638,6 +693,18 @@ async function main() {
     );
     // ========== END CEDAR FORMAL AUTHORIZATION ==========
 
+    // ========== INPUT-SIDE DLP (Phase 4B) ==========
+    const dlpFindings = scanParamsForSecrets(normalizedParams);
+    if (dlpFindings.length > 0) {
+      console.error(`\n🔐 [Governor/DLP] Secret detected in ${data.tool_name} parameters:`);
+      for (const f of dlpFindings) {
+        console.error(`    • ${f.secretType} in "${f.paramKey}" (${f.snippet})`);
+      }
+      console.error(`    Action: WARN (secret may enter model context)`);
+      console.error(`    Remediation: Use environment variables or secret manager references instead\n`);
+    }
+    // ========== END INPUT-SIDE DLP ==========
+
     const auditEntry: AuditLogEntry = {
       timestamp: new Date().toISOString(),
       tool: data.tool_name,
@@ -655,6 +722,7 @@ async function main() {
       cedar_time_ms: cedarResult.evaluationTimeMs,
       ifc_taint_level: sessionTaintLevel,
       ifc_taint_label: getTaintLabel(sessionTaintLevel),
+      dlp_findings: dlpFindings.length > 0 ? dlpFindings.map(f => `${f.secretType}:${f.paramKey}`) : undefined,
     };
     logToAudit(auditEntry);
 
@@ -690,6 +758,15 @@ async function main() {
         console.error(`    Message: ${result.message}`);
         console.error('');
       }
+    }
+
+    // DLP context injection (warn AI about leaked secrets)
+    if (dlpFindings.length > 0 && !result.modifiedInput) {
+      const dlpTypes = dlpFindings.map(f => f.secretType).join(', ');
+      console.log(JSON.stringify({
+        additionalContext: `🔐 TALON DLP WARNING: Possible ${dlpTypes} detected in ${data.tool_name} parameters. ` +
+          `Secrets should use environment variables or secret manager references, not inline values.`,
+      }));
     }
 
     if (result.modifiedInput) {
