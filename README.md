@@ -21,7 +21,7 @@
 
 *Vex (velociraptor) + Talon (claw) — sharp, fast, always watching. Defense-in-depth security that strikes before threats land.*
 
-> **This plugin is not for the faint of heart.** Vex-Talon runs 16 security hooks on every tool call and config change — 6 before execution, 6 after, plus session lifecycle and config change hooks. It was built for security professionals and developers who want serious protection for their AI coding agent. If you want a lightweight linter, this isn't it. If you want defense-in-depth that maps to OWASP and MITRE frameworks, keep reading.
+> **This plugin is not for the faint of heart.** Vex-Talon runs 16 security hooks on every tool call and config change — 6 before execution, 6 after, plus session lifecycle and config change hooks — plus behavioral security directives loaded into the AI's reasoning context. It was built for security professionals and developers who want serious protection for their AI coding agent. If you want a lightweight linter, this isn't it. If you want defense-in-depth that maps to OWASP and MITRE frameworks, keep reading.
 
 Zero cloud dependencies. OWASP LLM 2025 + MITRE ATLAS coverage. Works out of the box.
 
@@ -41,6 +41,7 @@ claude --plugin-dir ~/.claude/plugins/vex-talon
 - [What You Should Consider Adding](#what-you-should-consider-adding)
 - [Framework Coverage](#framework-coverage)
 - [Architecture](#architecture)
+- [Security Radar (Behavioral Directive)](#security-radar-behavioral-directive)
 - [Defense Philosophy: When You Can't Block, Anchor](#defense-philosophy-when-you-cant-block-anchor)
 - [Packages](#packages)
 - [Data Storage](#data-storage)
@@ -121,6 +122,45 @@ This ensures both the user AND the AI are independently aware of detected threat
 - **PostToolUse hooks** use `additionalContext` to tell Claude to treat flagged content as untrusted (cannot block — content already in context)
 - **PreToolUse hooks** use `additionalContext` on WARN paths to inform Claude of flagged-but-allowed operations (CRITICAL/BLOCK paths use `exit 2` or input modification instead)
 - **SessionStart hooks** use `additionalContext` to inform Claude of active session restrictions (e.g., permission profiles)
+
+---
+
+## Security Radar (Behavioral Directive)
+
+Hooks catch known patterns. But what about novel risks no pattern exists for yet?
+
+Vex-Talon v1.4.0 ships with a `CLAUDE.md` that loads into the AI's reasoning context when the plugin is active. This delivers **Security Radar** — a behavioral directive that instructs the AI to:
+
+- **Proactively detect** security risks during any work (installs, builds, integrations, config changes)
+- **Flag immediately** with impact assessment — don't wait to be asked
+- **Suggest mitigations** (hook updates, Governor policies, Egress rules, config changes)
+- **Propose concrete fixes** before moving on
+
+### Feed-Forward Loop
+
+Security Radar creates a self-improving security cycle:
+
+```
+Normal work (installs, builds, integrations)
+    → Security Radar detects novel risk
+    → Flags to user with impact assessment
+    → Proposes new hook rule or policy
+    → Rule added to L0-L19 automated layers
+    → Pattern now caught automatically forever
+```
+
+**Example:** Security Radar detected that a CLI tool (NotebookLM) uploads source documents to Google's cloud servers — a data exfiltration risk for confidential work. This led to two new Governor (L1) policies that now automatically block client data uploads and warn on all uploads. The AI caught a risk no pattern existed for, and it became permanent automated enforcement.
+
+### Why This Matters
+
+| | Automated Hooks (L0-L19) | Security Radar |
+|---|---|---|
+| **Catches** | Known patterns (regex, blocklists) | Novel risks through reasoning |
+| **Trigger** | Specific tool call events | Continuous — any work |
+| **Enforcement** | Block, modify, or alert | Flag and propose |
+| **Output** | Security event | New rule for automated layers |
+
+Hooks and Security Radar are complementary — hooks handle the known threats at machine speed, Security Radar catches the unknown threats through AI judgment and feeds them back into the hooks.
 
 ---
 
