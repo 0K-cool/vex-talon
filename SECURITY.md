@@ -24,9 +24,10 @@ If you discover a security vulnerability in Vex-Talon, please report it responsi
 The following are in scope:
 
 - Security hook bypasses (e.g., evading L0-L19 detection)
-- Pattern detection gaps (injection patterns, egress rules, supply chain blocklist)
-- Vulnerabilities in shared libraries (config-loader, circuit-breaker, atomic-file)
-- Information disclosure through audit logs or reports
+- Pattern detection gaps (injection patterns, egress rules, supply chain blocklist, DLP secret patterns)
+- Cedar policy bypasses (formal authorization logic, IFC taint tracking, trajectory limits)
+- Vulnerabilities in shared libraries (config-loader, circuit-breaker, atomic-file, cedar-evaluator, ifc-taint-tracker)
+- Information disclosure through audit logs, reports, or DLP redaction failures
 - Denial of service against hook execution
 
 ### Out of Scope
@@ -39,5 +40,7 @@ The following are in scope:
 
 | Version | Supported |
 |---------|-----------|
-| 1.0.x   | Yes       |
-| < 1.0   | No        |
+| 1.5.x   | Yes (current) |
+| 1.4.x   | Security fixes only |
+| 1.3.x   | Security fixes only |
+| < 1.3   | No |
