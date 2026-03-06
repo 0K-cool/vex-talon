@@ -1,0 +1,17 @@
+{
+  "$schema": "Vex-Talon Sensitivity Labels for IFC",
+  "version": "1.0.0",
+  "levels": {
+    "0": { "label": "PUBLIC", "description": "Source code, documentation, research output" },
+    "1": { "label": "INTERNAL", "description": "Plugin infrastructure, hooks, security configs" },
+    "2": { "label": "CONFIDENTIAL", "description": "Project-specific sensitive data" },
+    "3": { "label": "SECRET", "description": "Secrets, credentials, private keys" }
+  },
+  "path_rules": [
+    { "pattern": ".env", "level": 3, "label": "SECRET", "note": "Environment files with secrets" },
+    { "pattern": "credentials", "level": 3, "label": "SECRET" },
+    { "pattern": "private_key", "level": 3, "label": "SECRET" },
+    { "pattern": ".ssh/", "level": 3, "label": "SECRET" },
+    { "pattern": ".vex-talon/security/", "level": 1, "label": "INTERNAL" }
+  ]
+}

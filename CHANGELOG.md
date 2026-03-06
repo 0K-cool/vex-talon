@@ -5,6 +5,69 @@ All notable changes to Vex-Talon will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-03-06
+
+### Added
+
+- **Cedar Formal Authorization (L1 Governor — Phase 1-3)**
+  - Cedar policy evaluator (`hooks/lib/cedar-evaluator.ts`) using `@cedar-policy/cedar-wasm`
+  - Hybrid model: Cedar evaluates alongside YAML — Cedar `forbid` overrides YAML `allow`
+  - Cedar `allow` does NOT override an already-blocked YAML result (defense-in-depth)
+  - Graceful degradation: Cedar failure falls back to YAML-only evaluation
+  - 7 Cedar policy files covering Phase 1 (core), Phase 2 (IFC), and Phase 3 (trajectory)
+  - Bundled fallback: schema and policies ship with plugin source under `packages/core/src/security/cedar/`
+  - User override: policies also loaded from `~/.vex-talon/security/cedar/` when present
+  - New audit log fields: `cedar_decision`, `cedar_policies`, `cedar_time_ms`
+  - Maps to: OWASP LLM01, LLM02, LLM10, MITRE ATLAS AML.T0024, AML.T0047, AML.T0054
+
+- **IFC Taint Tracker (Bell-LaPadula, Phase 2)**
+  - Taint tracker (`hooks/lib/ifc-taint-tracker.ts`) with session-scoped state
+  - Bell-LaPadula "No write-down": taint level escalates but never decreases within a session
+  - 4 sensitivity levels: PUBLIC (0), INTERNAL (1), CONFIDENTIAL (2), SECRET (3)
+  - Sensitivity labels configured via `~/.vex-talon/security/cedar/sensitivity-labels.json`
+  - Bundled default labels for universal patterns: `.env`, `credentials`, `private_key`, `.ssh/`
+  - State file: `~/.vex-talon/state/session-taint.json` (scoped per `session_id`)
+  - New audit log fields: `ifc_taint_level`, `ifc_taint_label`
+
+- **Trajectory Modeling (Phase 3)**
+  - Per-category tool-call counters in taint state: `file_reads`, `file_writes`, `shell_commands`,
+    `web_fetches`, `web_searches`, `mcp_calls`, `skill_invokes`, `consecutive_same_tool`
+  - Cedar trajectory-limits policy enforces step-count limits in tainted sessions:
+    - SECRET taint: hard limit at 50 total tool calls
+    - CONFIDENTIAL taint: block WebFetch after 10 requests
+    - CONFIDENTIAL taint: block shell after 50 commands
+    - Any taint: block after 20 consecutive same tool (runaway agent detection)
+
+- **Cedar Policy Files** (`packages/core/src/security/cedar/policies/`)
+  - `env-protection.cedar` — Block .env file reads/writes
+  - `pipe-execution.cedar` — Block curl/wget piped to shell
+  - `git-safety.cedar` — Block git force-push
+  - `destructive-ops.cedar` — Block rm -rf on critical paths
+  - `ifc-egress.cedar` — Block network when session taint >= CONFIDENTIAL
+  - `sensitive-data-exfil.cedar` — Defense-in-depth exfiltration prevention
+  - `trajectory-limits.cedar` — Step-count limits for tainted sessions
+
+- **Cedar Schema** (`packages/core/src/security/cedar/talon.cedarschema`)
+  - `namespace Talon` with entity types: `Agent`, `Tool`, `File`, `Session`, `Profile`, `Label`
+  - Actions: `tool_use`, `read_file`, `write_file`, `execute_command`, `git_operation`, `network_request`
+  - Full context schema for trajectory fields
+
+- **Cedar Test Suite** (`packages/core/src/security/cedar/test-cedar-policies.ts`)
+  - 23 test cases covering all 3 phases
+  - Run: `bun run packages/core/src/security/cedar/test-cedar-policies.ts`
+  - All 23/23 passing
+
+- **Dependency**: `@cedar-policy/cedar-wasm@^4.9.1` added to `@vex-talon/core`
+
+### Changed
+
+- L1 Governor audit log now includes Cedar decision, matched policies, Cedar eval time,
+  IFC taint level and label on every tool call
+- L1 Governor blocks on Cedar DENY even when YAML policies allow (Cedar takes precedence)
+- Shared libraries: 5 → 7 (added `cedar-evaluator`, `ifc-taint-tracker`)
+
+---
+
 ## [1.4.0] - 2026-03-06
 
 ### Added

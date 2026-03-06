@@ -26,6 +26,8 @@ import {
   isPathAllowed,
   isBashCommandAllowed,
 } from './lib/profile-loader';
+import { evaluateCedarPolicies, type TrajectoryContext } from './lib/cedar-evaluator';
+import { recordFileRead, recordToolCall, getTaintLabel, type TaintState } from './lib/ifc-taint-tracker';
 
 const HOOK_NAME = 'L1-governor-agent';
 
@@ -80,6 +82,13 @@ interface AuditLogEntry {
   message: string;
   evaluation_time_ms: number;
   session_id: string;
+  // Cedar formal authorization
+  cedar_decision?: 'ALLOW' | 'DENY';
+  cedar_policies?: string[];
+  cedar_time_ms?: number;
+  // IFC taint tracking
+  ifc_taint_level?: number;
+  ifc_taint_label?: string;
 }
 
 // ============================================================================
@@ -595,6 +604,40 @@ async function main() {
     const result = evaluatePolicies(data.tool_name, normalizedParams);
     const evaluationTime = Date.now() - startTime;
 
+    // ========== IFC TAINT TRACKING ==========
+    // Track file reads for Bell-LaPadula taint propagation.
+    // recordFileRead also updates trajectory counters for Phase 3 limits.
+    let taintState: TaintState | null = null;
+    if (data.tool_name === 'Read') {
+      const filePath = String(normalizedParams.file_path || '');
+      taintState = recordFileRead(data.session_id, filePath);
+    } else {
+      taintState = recordToolCall(data.session_id, data.tool_name);
+    }
+    // ========== END IFC TAINT TRACKING ==========
+
+    // ========== CEDAR FORMAL AUTHORIZATION ==========
+    // Cedar evaluates after YAML — Cedar DENY overrides YAML ALLOW.
+    // Cedar ALLOW does NOT override an already-BLOCKed YAML result.
+    const trajectory: TrajectoryContext = taintState ? {
+      toolCallCount: taintState.tool_call_count,
+      webFetchCount: taintState.trajectory.web_fetches,
+      shellCommandCount: taintState.trajectory.shell_commands,
+      consecutiveSameTool: taintState.trajectory.consecutive_same_tool,
+    } : { toolCallCount: 0, webFetchCount: 0, shellCommandCount: 0, consecutiveSameTool: 0 };
+
+    const sessionProfile = (activeProfile?.name) || 'dev';
+    const sessionTaintLevel = taintState?.taint_level ?? 0;
+
+    const cedarResult = evaluateCedarPolicies(
+      data.tool_name,
+      normalizedParams,
+      sessionProfile,
+      sessionTaintLevel,
+      trajectory
+    );
+    // ========== END CEDAR FORMAL AUTHORIZATION ==========
+
     const auditEntry: AuditLogEntry = {
       timestamp: new Date().toISOString(),
       tool: data.tool_name,
@@ -607,8 +650,30 @@ async function main() {
       message: result.message,
       evaluation_time_ms: evaluationTime,
       session_id: data.session_id,
+      cedar_decision: cedarResult.decision,
+      cedar_policies: cedarResult.matchedPolicies,
+      cedar_time_ms: cedarResult.evaluationTimeMs,
+      ifc_taint_level: sessionTaintLevel,
+      ifc_taint_label: getTaintLabel(sessionTaintLevel),
     };
     logToAudit(auditEntry);
+
+    // Cedar DENY blocks even if YAML allowed
+    if (cedarResult.decision === 'DENY' && result.action !== 'BLOCK') {
+      const policies = cedarResult.matchedPolicies.join(', ') || 'unknown';
+      console.error(`\n🔒 [Governor L1] CEDAR DENY`);
+      console.error(`    Tool: ${data.tool_name}`);
+      console.error(`    Policies: ${policies}`);
+      console.error(`    IFC Taint: ${getTaintLabel(sessionTaintLevel)} (${sessionTaintLevel})`);
+      console.error(`    Cedar time: ${cedarResult.evaluationTimeMs}ms`);
+      console.error('');
+      console.log(JSON.stringify({
+        decision: 'block',
+        reason: `🔒 TALON CEDAR (L1) DENY: Formal policy blocked ${data.tool_name}. Matched: ${policies}. ` +
+          `IFC taint: ${getTaintLabel(sessionTaintLevel)}.`,
+      }));
+      process.exit(2);
+    }
 
     if (result.severity === 'CRITICAL' || result.severity === 'HIGH') {
       if (result.modifiedInput) {

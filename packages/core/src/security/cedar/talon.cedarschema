@@ -1,0 +1,110 @@
+// Vex-Talon Cedar Schema v1
+// Phase 1: Core authorization | Phase 2: IFC | Phase 3: Trajectory
+// Used by Governor Agent (L1) for formal authorization decisions
+
+namespace Talon {
+    // --- Entity Types ---
+
+    entity Agent = {
+        "profile": String,
+        "sessionId": String
+    };
+
+    entity Tool = {
+        "name": String
+    };
+
+    entity File = {
+        "path": String,
+        "sensitivity": Long       // 0=PUBLIC, 1=INTERNAL, 2=CONFIDENTIAL, 3=SECRET
+    };
+
+    entity Session = {
+        "profile": String,
+        "taintLevel": Long
+    };
+
+    entity Profile;
+    entity Label;
+
+    // --- Actions ---
+
+    action "tool_use";
+
+    // File operations
+    action "read_file" in [Action::"tool_use"] appliesTo {
+        principal: [Agent],
+        resource: [File],
+        context: {
+            "toolName": String,
+            "filePath": String,
+            "sessionProfile": String,
+            "sessionTaintLevel": Long,
+            "toolCallCount": Long,
+            "webFetchCount": Long,
+            "shellCommandCount": Long,
+            "consecutiveSameTool": Long
+        }
+    };
+
+    action "write_file" in [Action::"tool_use"] appliesTo {
+        principal: [Agent],
+        resource: [File],
+        context: {
+            "toolName": String,
+            "filePath": String,
+            "sessionProfile": String,
+            "sessionTaintLevel": Long,
+            "toolCallCount": Long,
+            "webFetchCount": Long,
+            "shellCommandCount": Long,
+            "consecutiveSameTool": Long
+        }
+    };
+
+    action "execute_command" in [Action::"tool_use"] appliesTo {
+        principal: [Agent],
+        resource: [Tool],
+        context: {
+            "toolName": String,
+            "command": String,
+            "sessionProfile": String,
+            "sessionTaintLevel": Long,
+            "toolCallCount": Long,
+            "webFetchCount": Long,
+            "shellCommandCount": Long,
+            "consecutiveSameTool": Long
+        }
+    };
+
+    action "git_operation" in [Action::"tool_use"] appliesTo {
+        principal: [Agent],
+        resource: [Tool],
+        context: {
+            "toolName": String,
+            "command": String,
+            "branch": String,
+            "sessionProfile": String,
+            "sessionTaintLevel": Long,
+            "toolCallCount": Long,
+            "webFetchCount": Long,
+            "shellCommandCount": Long,
+            "consecutiveSameTool": Long
+        }
+    };
+
+    action "network_request" in [Action::"tool_use"] appliesTo {
+        principal: [Agent],
+        resource: [Tool],
+        context: {
+            "toolName": String,
+            "url": String,
+            "sessionProfile": String,
+            "sessionTaintLevel": Long,
+            "toolCallCount": Long,
+            "webFetchCount": Long,
+            "shellCommandCount": Long,
+            "consecutiveSameTool": Long
+        }
+    };
+}
