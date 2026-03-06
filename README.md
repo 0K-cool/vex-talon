@@ -439,10 +439,7 @@ _†Requires MCP Memory Server. *Requires external tool. Coverage is dynamically
           +--------+-------+    +------+--------+
           |   |   |   |    |    |   |   |   |   |
          L0  L1  L3† L9  L14   L2  L4  L5  L7 L14
-         L19 ├Cedar       pre   L17              post
-              ├IFC
-              ├Trajectory
-              └DLP
+         L19              pre   L17              post
           |   |   |   |    |    |   |   |   |   |
           v   v   v   v    v    v   v   v   v   v
         BLOCK              BLOCK ALERT          WARN
