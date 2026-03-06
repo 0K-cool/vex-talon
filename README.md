@@ -21,7 +21,7 @@
 
 *Vex (velociraptor) + Talon (claw) — sharp, fast, always watching. Defense-in-depth security that strikes before threats land.*
 
-> **This plugin is not for the faint of heart.** Vex-Talon runs 16 security hooks on every tool call and config change — 6 before execution, 6 after, plus session lifecycle and config change hooks — plus behavioral security directives loaded into the AI's reasoning context. It was built for security professionals and developers who want serious protection for their AI coding agent. If you want a lightweight linter, this isn't it. If you want defense-in-depth that maps to OWASP and MITRE frameworks, keep reading.
+> **This plugin is not for the faint of heart.** Vex-Talon runs 17 hooks on every tool call and config change — 6 before execution, 6 after, plus session lifecycle, config change, and onboarding hooks — plus behavioral security directives loaded into the AI's reasoning context. It was built for security professionals and developers who want serious protection for their AI coding agent. If you want a lightweight linter, this isn't it. If you want defense-in-depth that maps to OWASP and MITRE frameworks, keep reading.
 
 Zero cloud dependencies. OWASP LLM 2025 + MITRE ATLAS coverage. Works out of the box.
 
@@ -70,7 +70,7 @@ Most developers run Claude Code with zero security layers. Vex-Talon adds 20.
 
 ## What You Get (Out of the Box)
 
-16 security hooks activate automatically after installation. No configuration required.
+17 hooks activate automatically after installation (16 security + 1 onboarding). No configuration required.
 
 ### PreToolUse Hooks (Block Before Execution)
 
@@ -129,7 +129,7 @@ This ensures both the user AND the AI are independently aware of detected threat
 
 Hooks catch known patterns. But what about novel risks no pattern exists for yet?
 
-Vex-Talon v1.4.0 ships with a `CLAUDE.md` that loads into the AI's reasoning context when the plugin is active. This delivers **Security Radar** — a behavioral directive that instructs the AI to:
+Vex-Talon ships with a `CLAUDE.md` that loads into the AI's reasoning context when the plugin is active. This delivers **Security Radar** — a behavioral directive that instructs the AI to:
 
 - **Proactively detect** security risks during any work (installs, builds, integrations, config changes)
 - **Flag immediately** with impact assessment — don't wait to be asked
@@ -190,7 +190,7 @@ git clone https://github.com/0K-cool/vex-talon.git ~/.claude/plugins/vex-talon
 claude --plugin-dir ~/.claude/plugins/vex-talon
 ```
 
-All 16 hooks activate immediately. No build step required — hooks run directly via Bun.
+All 17 hooks activate immediately. No build step required — hooks run directly via Bun.
 
 To load the plugin automatically on every session, add it to your shell config:
 
@@ -209,7 +209,7 @@ alias claude='claude --plugin-dir ~/.claude/plugins/vex-talon'
 
 On your **first session**, Claude will confirm Vex-Talon is active in its first response:
 
-> 🛡️ **New Plugin Installed** — Vex-Talon v1.1.0 is active with 16 security hooks protecting this session. Run `/vex-talon:status` for a detailed security dashboard.
+> 🛡️ **New Plugin Installed** — Vex-Talon is active with 17 hooks protecting this session. Run `/vex-talon:status` for a detailed security dashboard.
 
 You can also verify at any time:
 
@@ -375,7 +375,7 @@ These tools complement Vex-Talon's pattern-based detection with deeper static an
 | # | Vulnerability | Vex-Talon Coverage |
 |---|--------------|-------------------|
 | LLM01 | Prompt Injection | L1 Governor, L4 Injection Scanner, L7 Image Safety, L19 Skill Scanner |
-| LLM02 | Sensitive Information Disclosure | L0 Code Enforcer, L1 Governor, L9 Egress Scanner |
+| LLM02 | Sensitive Information Disclosure | L0 Code Enforcer, L1 Governor (DLP: 17 secret patterns), L9 Egress Scanner |
 | LLM03 | Supply Chain Vulnerabilities | L14 Pre-Install (block) + Post-Install (audit) |
 | LLM04 | Data and Model Poisoning | L3 Memory Validation†, L15 RAG Security* |
 | LLM05 | Improper Output Handling | L5 Output Sanitizer (XSS + ANSI terminal injection) |
@@ -396,7 +396,8 @@ Covers AML.T0047 (Supply Chain Compromise), AML.T0048 (Adversarial Examples), AM
 | # | Vulnerability | Vex-Talon Coverage |
 |---|--------------|-------------------|
 | ASI01 | Agent Prompt Injection | L1 Governor, L4 Injection Scanner, L19 Skill Scanner |
-| ASI02 | Agent Credential Misuse | L1 Governor (.env protection), L9 Egress Scanner |
+| ASI02 | Agent Credential Misuse | L1 Governor (.env protection, DLP), L9 Egress Scanner |
+| ASI03 | Insecure Agent Communication | L1 Governor (IFC taint tracking), L9 Egress Scanner |
 | ASI04 | Dependency Chain Attacks | L14 Supply Chain Scanner, L19 Skill Scanner |
 | ASI05 | Agent Output Mishandling | L5 Output Sanitizer (XSS + ANSI terminal injection) |
 | ASI06 | Memory and Context Manipulation | L3 Memory Validation†, L18 MCP Audit* |
@@ -428,7 +429,10 @@ _†Requires MCP Memory Server. *Requires external tool. Coverage is dynamically
           +--------+-------+    +------+--------+
           |   |   |   |    |    |   |   |   |   |
          L0  L1  L3† L9  L14   L2  L4  L5  L7 L14
-         L19              pre   L17              post
+         L19 ├Cedar       pre   L17              post
+              ├IFC
+              ├Trajectory
+              └DLP
           |   |   |   |    |    |   |   |   |   |
           v   v   v   v    v    v   v   v   v   v
         BLOCK              BLOCK ALERT          WARN
@@ -508,7 +512,7 @@ When a PostToolUse hook detects prompt injection in a file Claude just read, tha
 
 ### The `additionalContext` Pattern
 
-Claude Code hooks support an `additionalContext` field in their JSON output. Vex-Talon uses this across **all 16 hooks** to inject security awareness directly into the AI's reasoning context — creating a **dual notification** system:
+Claude Code hooks support an `additionalContext` field in their JSON output. Vex-Talon uses this across **all 16 security hooks** to inject security awareness directly into the AI's reasoning context — creating a **dual notification** system:
 
 | Channel | Who Receives It | What It Says |
 |---------|----------------|-------------|
@@ -598,7 +602,7 @@ All data stays local. Zero cloud dependencies. Zero telemetry.
 ## FAQ
 
 **Why TypeScript + Bun instead of Bash or Python?**
-Bun spawns in ~25ms vs Node.js ~100ms+, which matters when 6 PreToolUse hooks fire on every tool call. TypeScript gives us type safety across 15 hooks sharing common patterns, first-class JSON for hook stdin/stdout, and alignment with Claude Code's own stack (Anthropic [acquired Bun](https://bun.com/blog/bun-joins-anthropic) in December 2025 and built Claude Code on it). Writing 3200-line security scanners in Bash isn't realistic, and Python adds its own dependency headaches (which version? venv? pip packages?). Bun is a single binary install: `curl -fsSL https://bun.sh/install | bash`.
+Bun spawns in ~25ms vs Node.js ~100ms+, which matters when 6 PreToolUse hooks fire on every tool call. TypeScript gives us type safety across 17 hooks sharing common patterns, first-class JSON for hook stdin/stdout, and alignment with Claude Code's own stack (Anthropic [acquired Bun](https://bun.com/blog/bun-joins-anthropic) in December 2025 and built Claude Code on it). Writing 3200-line security scanners in Bash isn't realistic, and Python adds its own dependency headaches (which version? venv? pip packages?). Bun is a single binary install: `curl -fsSL https://bun.sh/install | bash`.
 
 **Does this slow down Claude Code?**
 PreToolUse hooks typically complete in <50ms. PostToolUse hooks run asynchronously. The supply chain API has a 5-second timeout and 24-hour cache.
@@ -667,6 +671,10 @@ Vulnerability research: [0din.ai](https://0din.ai) (AI vulnerability disclosure)
 
 Threat intelligence: [OpenSourceMalware.com](https://opensourcemalware.com/), [NOVA Framework](https://github.com/fr0gger/nova-framework).
 
+Policy engine: [Cedar](https://www.cedarpolicy.com/) by Amazon (L1 formal authorization, Apache 2.0), [@cedar-policy/cedar-wasm](https://www.npmjs.com/package/@cedar-policy/cedar-wasm).
+
 External tools: [Leash](https://github.com/strongdm/leash) (L11 kernel sandbox), [Pythea/Strawberry](https://github.com/leochlon/pythea) (L13 hallucination detection), [Proximity](https://github.com/fr0gger/proximity) (L18 MCP audit).
 
 Static analysis: [Semgrep](https://semgrep.dev/) (SAST), [Bandit](https://bandit.readthedocs.io/) (Python), [ShellCheck](https://www.shellcheck.net/) (Bash), [gitleaks](https://github.com/gitleaks/gitleaks) (secrets), [trufflehog](https://github.com/trufflesecurity/trufflehog) (secrets).
+
+Built with [Claude Code](https://claude.com/claude-code) + [Claude Opus 4.6](https://www.anthropic.com/claude).
