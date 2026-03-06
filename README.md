@@ -419,6 +419,16 @@ _†Requires MCP Memory Server. *Requires external tool. Coverage is dynamically
   ║  Catches novel risks → feeds new rules into L0-L19    ║
   ╚═══════════════════════════════════════════════════════╝
                               |
+                        SESSION START
+                              |
+              +---------------+---------------+
+              |               |               |
+         Onboarding     L12: Least       L3: Auto Memory
+         (first run)    Privilege         Guardian
+                        Profiles          (scan MEMORY.md)
+              |               |               |
+              +---------------+---------------+
+                              |
                          USER REQUEST
                               |
                     +---------+---------+
