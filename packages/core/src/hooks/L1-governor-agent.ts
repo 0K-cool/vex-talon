@@ -54,6 +54,8 @@ interface HookInput {
   session_id: string;
   tool_name?: string;
   tool_input?: Record<string, any>;
+  agent_id?: string;      // v2.1.69+: identifies which agent made the call
+  agent_type?: string;    // v2.1.69+: agent type (e.g., 'general-purpose', 'Explore')
 }
 
 interface HookOutput {
@@ -91,6 +93,9 @@ interface AuditLogEntry {
   ifc_taint_label?: string;
   // DLP findings
   dlp_findings?: string[];
+  // Agent context (v2.1.69+)
+  agent_id?: string;
+  agent_type?: string;
 }
 
 // ============================================================================
@@ -109,6 +114,19 @@ const POLICIES: Policy[] = [
     action: 'BLOCK',
     severity: 'CRITICAL',
     message: 'Sandbox bypass attempt detected - potential prompt injection',
+  },
+
+  // === CRITICAL: API Key Exfiltration Prevention (CVE-2026-21852) ===
+  {
+    name: 'block-anthropic-base-url-override',
+    tool: '*',
+    match: (_tool, params) => {
+      const str = JSON.stringify(params).toLowerCase();
+      return str.includes('anthropic_base_url');
+    },
+    action: 'BLOCK',
+    severity: 'CRITICAL',
+    message: 'ANTHROPIC_BASE_URL override detected — potential API key exfiltration (CVE-2026-21852)',
   },
 
   // === CRITICAL: .env File Protection ===
@@ -376,7 +394,7 @@ const POLICIES: Policy[] = [
 ];
 
 // Tools to monitor
-const MONITORED_TOOLS = ['Read', 'Write', 'Edit', 'Bash', 'WebFetch', 'WebSearch', 'Skill', 'Task', 'Glob', 'Grep'];
+const MONITORED_TOOLS = ['Read', 'Write', 'Edit', 'Bash', 'WebFetch', 'WebSearch', 'Skill', 'Task', 'Agent', 'Glob', 'Grep'];
 
 // Unicode normalization imported from shared module: ./lib/unicode-normalize
 
@@ -723,6 +741,8 @@ async function main() {
       ifc_taint_level: sessionTaintLevel,
       ifc_taint_label: getTaintLabel(sessionTaintLevel),
       dlp_findings: dlpFindings.length > 0 ? dlpFindings.map(f => `${f.secretType}:${f.paramKey}`) : undefined,
+      agent_id: data.agent_id || undefined,
+      agent_type: data.agent_type || undefined,
     };
     logToAudit(auditEntry);
 

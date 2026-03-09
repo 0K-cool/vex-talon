@@ -5,6 +5,21 @@ All notable changes to Vex-Talon will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.3] - 2026-03-09
+
+### Added
+
+- **CVE-2026-21852: ANTHROPIC_BASE_URL Exfiltration Prevention (L1 Governor)**
+  - New CRITICAL policy `block-anthropic-base-url-override` blocks API key exfiltration via base URL redirect
+  - Malicious project configs can set ANTHROPIC_BASE_URL to route API calls (with keys) to attacker endpoints
+  - Patched in Claude Code v2.0.65 but defense-in-depth warrants Governor-level blocking
+  - Maps to: OWASP LLM02 (Sensitive Information Disclosure)
+
+- **Agent Context in Audit Logs (v2.1.69+ Support)**
+  - `agent_id` and `agent_type` fields added to HookInput and AuditLogEntry
+  - Tracks which agent (main session, subagent, or background) triggered each tool call
+  - `Agent` tool added to MONITORED_TOOLS for subagent spawning visibility
+
 ## [1.5.2] - 2026-03-07
 
 ### Added
