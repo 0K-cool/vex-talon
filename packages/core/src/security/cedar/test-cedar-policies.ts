@@ -114,6 +114,23 @@ function netContext(overrides: Record<string, any> = {}): Record<string, any> {
   };
 }
 
+function mcpContext(overrides: Record<string, any> = {}): Record<string, any> {
+  return {
+    toolName: 'mcp__memory__read_graph',
+    mcpServer: 'memory',
+    mcpMethod: 'read_graph',
+    serviceType: 'local',
+    isWrite: false,
+    sessionProfile: 'dev',
+    sessionTaintLevel: 0,
+    toolCallCount: 1,
+    webFetchCount: 0,
+    shellCommandCount: 0,
+    consecutiveSameTool: 1,
+    ...overrides,
+  };
+}
+
 // ============================================================================
 // Test Cases
 // ============================================================================
@@ -356,6 +373,69 @@ const tests: TestCase[] = [
     resourceAttrs: { path: '/project/src/main.ts', sensitivity: 0 },
     context: fileContext({ sessionTaintLevel: 0, consecutiveSameTool: 100 }),
     expected: 'allow',
+  },
+
+  // ========== Phase 4: Lateral Movement Prevention (AML.T0091) ==========
+
+  // Local MCP + no taint -> ALLOW
+  {
+    name: 'Local MCP (memory) taintLevel=0 -> ALLOW',
+    action: 'mcp_call',
+    resourceType: 'Tool',
+    resourceId: 'test-24',
+    resourceAttrs: { name: 'mcp__memory__read_graph' },
+    context: mcpContext({ serviceType: 'local', sessionTaintLevel: 0 }),
+    expected: 'allow',
+  },
+  // External MCP + no taint -> ALLOW
+  {
+    name: 'External MCP (supabase) taintLevel=0 -> ALLOW',
+    action: 'mcp_call',
+    resourceType: 'Tool',
+    resourceId: 'test-25',
+    resourceAttrs: { name: 'mcp__plugin_supabase_supabase__execute_sql' },
+    context: mcpContext({ mcpServer: 'plugin_supabase_supabase', mcpMethod: 'execute_sql', serviceType: 'external', isWrite: true, sessionTaintLevel: 0 }),
+    expected: 'allow',
+  },
+  // External MCP + SECRET taint -> DENY (lateral movement)
+  {
+    name: 'External MCP (supabase) taintLevel=3 -> DENY',
+    action: 'mcp_call',
+    resourceType: 'Tool',
+    resourceId: 'test-26',
+    resourceAttrs: { name: 'mcp__plugin_supabase_supabase__execute_sql' },
+    context: mcpContext({ mcpServer: 'plugin_supabase_supabase', mcpMethod: 'execute_sql', serviceType: 'external', isWrite: true, sessionTaintLevel: 3 }),
+    expected: 'deny',
+  },
+  // Local MCP + SECRET taint -> ALLOW (local services are OK)
+  {
+    name: 'Local MCP (memory) taintLevel=3 -> ALLOW',
+    action: 'mcp_call',
+    resourceType: 'Tool',
+    resourceId: 'test-27',
+    resourceAttrs: { name: 'mcp__memory__read_graph' },
+    context: mcpContext({ serviceType: 'local', sessionTaintLevel: 3 }),
+    expected: 'allow',
+  },
+  // External MCP read + CONFIDENTIAL taint -> ALLOW (read-only is OK)
+  {
+    name: 'External MCP read taintLevel=2 -> ALLOW',
+    action: 'mcp_call',
+    resourceType: 'Tool',
+    resourceId: 'test-28',
+    resourceAttrs: { name: 'mcp__plugin_context7_context7__query_docs' },
+    context: mcpContext({ mcpServer: 'plugin_context7_context7', mcpMethod: 'query_docs', serviceType: 'external', isWrite: false, sessionTaintLevel: 2 }),
+    expected: 'allow',
+  },
+  // External MCP write + CONFIDENTIAL taint -> DENY (write to external when tainted)
+  {
+    name: 'External MCP write taintLevel=2 -> DENY',
+    action: 'mcp_call',
+    resourceType: 'Tool',
+    resourceId: 'test-29',
+    resourceAttrs: { name: 'mcp__plugin_supabase_supabase__execute_sql' },
+    context: mcpContext({ mcpServer: 'plugin_supabase_supabase', mcpMethod: 'execute_sql', serviceType: 'external', isWrite: true, sessionTaintLevel: 2 }),
+    expected: 'deny',
   },
 ];
 

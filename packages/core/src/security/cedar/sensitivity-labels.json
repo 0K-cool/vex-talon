@@ -1,6 +1,6 @@
 {
   "$schema": "Vex-Talon Sensitivity Labels for IFC",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "levels": {
     "0": { "label": "PUBLIC", "description": "Source code, documentation, research output" },
     "1": { "label": "INTERNAL", "description": "Plugin infrastructure, hooks, security configs" },
@@ -13,5 +13,18 @@
     { "pattern": "private_key", "level": 3, "label": "SECRET" },
     { "pattern": ".ssh/", "level": 3, "label": "SECRET" },
     { "pattern": ".vex-talon/security/", "level": 1, "label": "INTERNAL" }
-  ]
+  ],
+  "command_rules": [
+    { "pattern": "op read", "level": 3, "label": "SECRET", "note": "1Password CLI secret retrieval" },
+    { "pattern": "op run", "level": 3, "label": "SECRET", "note": "1Password CLI secret injection" },
+    { "pattern": "op item get", "level": 3, "label": "SECRET", "note": "1Password CLI item access" },
+    { "pattern": "secretless-ai env", "level": 3, "label": "SECRET", "note": "Secretless AI secret export" },
+    { "pattern": "vault read", "level": 3, "label": "SECRET", "note": "HashiCorp Vault secret access" },
+    { "pattern": "kubectl get secret", "level": 3, "label": "SECRET", "note": "Kubernetes secret access" }
+  ],
+  "mcp_service_classification": {
+    "_note": "Used by Cedar evaluator for lateral movement prevention (AML.T0091). Unknown servers default to external.",
+    "local": ["memory", "filesystem", "playwright"],
+    "external": ["plugin_supabase_supabase", "plugin_context7_context7", "shadcn", "exa"]
+  }
 }

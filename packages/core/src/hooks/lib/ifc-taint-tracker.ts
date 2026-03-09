@@ -208,7 +208,7 @@ export function recordFileRead(sessionId: string, filePath: string): TaintState 
  * Record a generic tool call with trajectory tracking.
  * Call this for all non-Read tool invocations to maintain accurate counters.
  */
-export function recordToolCall(sessionId: string, toolName?: string): TaintState {
+export function recordToolCall(sessionId: string, toolName?: string, params?: Record<string, any>): TaintState {
   const state = loadTaintState(sessionId);
   state.tool_call_count++;
 
@@ -221,9 +221,18 @@ export function recordToolCall(sessionId: string, toolName?: string): TaintState
       case 'Edit':
         state.trajectory.file_writes++;
         break;
-      case 'Bash':
+      case 'Bash': {
         state.trajectory.shell_commands++;
+        // Command-based taint escalation (AML.T0091 Lateral Movement prevention)
+        // Accessing credential managers escalates taint to SECRET
+        if (params?.command) {
+          const cmd = params.command;
+          if (isCredentialCommand(cmd)) {
+            escalateTaint(state, 3, `command:${cmd.substring(0, 60)}`);
+          }
+        }
         break;
+      }
       case 'WebFetch':
         state.trajectory.web_fetches++;
         break;
@@ -240,6 +249,35 @@ export function recordToolCall(sessionId: string, toolName?: string): TaintState
 
   saveTaintState(state);
   return state;
+}
+
+/**
+ * Detect commands that access credential stores or secret managers.
+ * These escalate session taint to SECRET (level 3).
+ */
+function isCredentialCommand(command: string): boolean {
+  const patterns = [
+    /\bop\s+(read|run|get|item\s+get)\b/,       // 1Password CLI
+    /\bsecretless-ai\s+env\b/,                   // Secretless AI
+    /\baws\s+secretsmanager\b/,                   // AWS Secrets Manager
+    /\bvault\s+(read|kv\s+get)\b/,               // HashiCorp Vault
+    /\bgcloud\s+secrets\s+versions\s+access\b/,  // GCP Secret Manager
+    /\baz\s+keyvault\s+secret\s+show\b/,         // Azure Key Vault
+    /\bkubectl\s+get\s+secret\b/,                // K8s secrets
+  ];
+  return patterns.some(p => p.test(command));
+}
+
+/**
+ * Escalate taint level (Bell-LaPadula: only goes up, never down).
+ */
+function escalateTaint(state: TaintState, level: number, source: string): void {
+  if (level > state.taint_level) {
+    state.tainted = true;
+    state.taint_level = level;
+    state.taint_source = source;
+    state.taint_timestamp = new Date().toISOString();
+  }
 }
 
 // ============================================================================

@@ -685,7 +685,7 @@ async function main() {
       const filePath = String(normalizedParams.file_path || '');
       taintState = recordFileRead(data.session_id, filePath);
     } else {
-      taintState = recordToolCall(data.session_id, data.tool_name);
+      taintState = recordToolCall(data.session_id, data.tool_name, normalizedParams);
     }
     // ========== END IFC TAINT TRACKING ==========
 

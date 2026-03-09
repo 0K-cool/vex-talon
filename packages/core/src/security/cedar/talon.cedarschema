@@ -107,4 +107,23 @@ namespace Talon {
             "consecutiveSameTool": Long
         }
     };
+
+    // MCP tool invocations (Phase 4: Lateral Movement prevention)
+    action "mcp_call" in [Action::"tool_use"] appliesTo {
+        principal: [Agent],
+        resource: [Tool],
+        context: {
+            "toolName": String,
+            "mcpServer": String,          // e.g., "supabase", "memory", "playwright"
+            "mcpMethod": String,           // e.g., "execute_sql", "read_graph"
+            "serviceType": String,         // "local" | "external"
+            "isWrite": Bool,               // true if tool modifies state
+            "sessionProfile": String,
+            "sessionTaintLevel": Long,
+            "toolCallCount": Long,
+            "webFetchCount": Long,
+            "shellCommandCount": Long,
+            "consecutiveSameTool": Long
+        }
+    };
 }

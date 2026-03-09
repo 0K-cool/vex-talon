@@ -5,6 +5,31 @@ All notable changes to Vex-Talon will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-03-09
+
+### Added
+
+- **Lateral Movement Prevention — Cedar Phase 4 (AML.T0091 / AML.TA0015)**
+  - New Cedar policy `lateral-movement.cedar` with 2 forbid rules:
+    - `forbid-mcp-external-when-secret-taint`: Block ALL external MCP calls when session taint >= SECRET
+    - `forbid-mcp-write-when-confidential-taint`: Block external MCP WRITES when taint >= CONFIDENTIAL
+  - New Cedar action `mcp_call` in schema with service context (`mcpServer`, `mcpMethod`, `serviceType`, `isWrite`)
+  - MCP service classification in Cedar evaluator (local vs external, default-external for unknown)
+  - Command-based taint escalation in IFC tracker: `op read/run`, `secretless-ai env`, `vault read`,
+    `kubectl get secret`, `aws secretsmanager`, `az keyvault`, `gcloud secrets` → SECRET taint
+  - Sensitivity labels v2.0.0: added `command_rules` and `mcp_service_classification` sections
+  - 6 new Cedar test cases (23 → 29 total), all passing
+  - Maps to: MITRE ATLAS AML.T0091, AML.TA0015, OWASP LLM02, OWASP Agentic ASI05
+
+### Changed
+
+- Cedar policies: 7 → 8 files (added `lateral-movement.cedar`)
+- Cedar test suite: 23 → 29 tests
+- Governor passes tool parameters to IFC taint tracker for command analysis
+- Shared libraries: `ifc-taint-tracker.ts` now exports `recordToolCall(sessionId, toolName, params?)`
+
+---
+
 ## [1.5.3] - 2026-03-09
 
 ### Added

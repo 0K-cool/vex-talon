@@ -193,9 +193,66 @@ function mapToolCallToCedarAction(
         context: { toolName, url: params.url || '', ...baseContext },
       };
 
-    default:
+    default: {
+      // MCP tools: mcp__<server>__<method>
+      if (toolName.startsWith('mcp__')) {
+        const mcpMapping = parseMcpToolName(toolName);
+        if (mcpMapping) {
+          return {
+            action: 'Talon::Action::"mcp_call"',
+            resourceType: 'Talon::Tool',
+            context: {
+              toolName,
+              mcpServer: mcpMapping.server,
+              mcpMethod: mcpMapping.method,
+              serviceType: mcpMapping.serviceType,
+              isWrite: mcpMapping.isWrite,
+              ...baseContext,
+            },
+          };
+        }
+      }
       return null;
+    }
   }
+}
+
+/**
+ * MCP service classification for lateral movement prevention (AML.T0091).
+ * Local services: run on localhost, no external network.
+ * External services: communicate with cloud APIs or remote endpoints.
+ * Users can extend via sensitivity-labels.json mcp_service_classification.
+ *
+ * Default-external: unknown services default to external (safe default).
+ */
+const MCP_SERVICE_CLASSIFICATION: Record<string, { type: 'local' | 'external'; writePatterns: string[] }> = {
+  // Common local MCP servers
+  'memory': { type: 'local', writePatterns: ['create_entities', 'create_relations', 'add_observations', 'delete_entities', 'delete_observations', 'delete_relations'] },
+  'filesystem': { type: 'local', writePatterns: ['write_file', 'create_directory', 'move_file'] },
+  'playwright': { type: 'local', writePatterns: ['browser_click', 'browser_fill_form', 'browser_type', 'browser_navigate'] },
+  // Common external MCP servers
+  'plugin_supabase_supabase': { type: 'external', writePatterns: ['execute_sql', 'apply_migration', 'deploy_edge_function', 'create_project', 'create_branch'] },
+  'plugin_context7_context7': { type: 'external', writePatterns: [] },
+  'shadcn': { type: 'external', writePatterns: [] },
+  'exa': { type: 'external', writePatterns: [] },
+};
+
+/**
+ * Parse MCP tool name into server, method, and security classification.
+ */
+function parseMcpToolName(toolName: string): { server: string; method: string; serviceType: string; isWrite: boolean } | null {
+  // Format: mcp__<server>__<method>
+  const parts = toolName.replace(/^mcp__/, '').split('__');
+  if (parts.length < 2) return null;
+
+  const server = parts.slice(0, -1).join('__'); // Handle servers with __ in name
+  const method = parts[parts.length - 1];
+
+  const classification = MCP_SERVICE_CLASSIFICATION[server];
+  const serviceType = classification?.type || 'external'; // Default to external (safe default)
+  const isWrite = classification?.writePatterns.includes(method) ?? false;
+
+  return { server, method, serviceType, isWrite };
 }
 
 /**
