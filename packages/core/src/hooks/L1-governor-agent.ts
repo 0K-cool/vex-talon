@@ -104,10 +104,13 @@ interface AuditLogEntry {
 
 const POLICIES: Policy[] = [
   // === CRITICAL: Sandbox Bypass Prevention ===
+  // Exclude read-only tools to prevent false positives when searching/reading docs
   {
     name: 'block-sandbox-disable',
     tool: '*',
-    match: (_tool, params) => {
+    match: (tool, params) => {
+      const READ_ONLY_TOOLS = new Set(['Grep', 'Glob', 'Read', 'LS', 'NotebookRead']);
+      if (READ_ONLY_TOOLS.has(tool)) return false;
       const str = JSON.stringify(params).toLowerCase();
       return str.includes(SANDBOX_BYPASS_PATTERN.toLowerCase());
     },
