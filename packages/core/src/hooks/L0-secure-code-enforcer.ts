@@ -94,6 +94,8 @@ const CODE_EXTENSIONS: Record<string, string> = {
   '.php': 'php',
   '.java': 'java',
   '.sql': 'sql',
+  '.yml': 'yaml',
+  '.yaml': 'yaml',
 };
 
 // Skip paths for security infrastructure (false positive prevention)
@@ -232,6 +234,21 @@ const CRYPTO_PATTERNS = {
   ],
 };
 
+
+// GitHub Actions CI/CD Injection Patterns (CRITICAL)
+// ${{ github.event.* }} expressions in workflow YAML are injectable
+const CI_INJECTION_PATTERNS = {
+  expressions: [
+    /\$\{\{\s*github\.event\.issue\.title/,
+    /\$\{\{\s*github\.event\.issue\.body/,
+    /\$\{\{\s*github\.event\.pull_request\.title/,
+    /\$\{\{\s*github\.event\.pull_request\.body/,
+    /\$\{\{\s*github\.event\.comment\.body/,
+    /\$\{\{\s*github\.head_ref/,
+    /\$\{\{\s*github\.event\.commits\[/,
+  ],
+};
+
 // Unicode normalization imported from shared module: ./lib/unicode-normalize
 
 // ============================================================================
@@ -336,6 +353,19 @@ function classifyCode(content: string, _filePath: string, language: string): Cla
       triggers.push('Weak cryptography detected');
       updateRisk('MEDIUM');
       break;
+    }
+  }
+
+
+  // Check CI/CD Injection (CRITICAL) — GitHub Actions expression injection
+  // Only check YAML files (workflow definitions)
+  if (language === 'yaml') {
+    for (const pattern of CI_INJECTION_PATTERNS.expressions) {
+      if (pattern.test(normalizedContent)) {
+        triggers.push('GitHub Actions expression injection — use env: variable instead of inline ${{ }} expression');
+        updateRisk('CRITICAL');
+        break;
+      }
     }
   }
 

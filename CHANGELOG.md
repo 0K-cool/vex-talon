@@ -5,6 +5,19 @@ All notable changes to Vex-Talon will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1] - 2026-03-17
+
+### Added
+
+- **GitHub Actions CI Injection Detection — L0 Secure Code Enforcer**
+  - 7 CRITICAL patterns detecting `${{ github.event.* }}` expression injection in YAML workflows
+  - `.yml`/`.yaml` added to code extensions for language detection
+  - YAML-only check: CI patterns only scanned in workflow files
+  - Maps to: OWASP A03:2021 (Injection), CWE-78 (OS Command Injection via CI)
+  - Ported from PAI v3.8.1 (March 9, 2026)
+
+---
+
 ## [1.7.0] - 2026-03-17
 
 ### Added
