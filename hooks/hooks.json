@@ -105,6 +105,17 @@
         ]
       }
     ],
+    "TaskCreated": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run ${CLAUDE_PLUGIN_ROOT}/packages/core/src/hooks/subagent-audit.ts",
+            "timeout": 3000
+          }
+        ]
+      }
+    ],
     "SessionEnd": [
       {
         "hooks": [
