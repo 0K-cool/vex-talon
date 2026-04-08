@@ -200,6 +200,21 @@ export const INJECTION_PATTERNS: InjectionPattern[] = [
     pattern: /<(system|instruction|config|prompt|rules?|guidelines?)\s*>/i,
     description: '0din: Deceptive XML-style system tag injection',
   },
+  // === 0x1A2AA0FD: Memory Dump Simulation Tactic ===
+  // Ported from PAI .claude/hooks/lib/injection-patterns.ts on 2026-04-08.
+  // Uses the context-aware tuning from day 1: the standalone hex alternative
+  // requires a memory-register or address keyword within 30 characters of the
+  // hex string. This prevents false positives on IP-as-hex notations
+  // (0xA9FEA9FE = 169.254.169.254, 0x7F000001 = 127.0.0.1) that are common in
+  // SSRF security discussions. Real memory dumps always have register/addr
+  // context. See PAI: memory/vex-talon-injection-patterns-sync.md
+  {
+    id: '0din-memory-dump',
+    category: 'context_manipulation',
+    severity: 'HIGH',
+    pattern: /(memory\s+dump|core\s+dump|stack\s+trace|heap\s+dump)\s*[:\[]|\b(addr|address|register|stack|heap|rip|rsp|rbp|rax|rbx|rcx|rdx|esp|ebp|eip|pointer|segfault|segmentation)\b[^\n]{0,30}0x[0-9a-f]{8,}/i,
+    description: '0din: Memory dump simulation to extract info (context-aware from 2026-04-08)',
+  },
 ];
 
 // ============================================================================
