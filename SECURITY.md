@@ -8,7 +8,7 @@ If you discover a security vulnerability in Vex-Talon, please report it responsi
 
 ### How to Report
 
-1. Go to [GitHub Security Advisories](https://github.com/0K-cool/vex-talon/security/advisories)
+1. Go to [GitHub Security Advisories](https://github.com/0K-cool/0k-talon/security/advisories)
 2. Click "New draft security advisory"
 3. Provide a description of the vulnerability, steps to reproduce, and potential impact
 

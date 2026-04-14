@@ -1,8 +1,8 @@
-# Vex-Talon
+# 0K-Talon
 
-![Vex-Talon Banner](vex-talon-banner.jpg)
+![0K-Talon Banner](0k-talon-banner.jpg)
 
-[![Version](https://img.shields.io/badge/version-1.7.4-blue)](https://github.com/0K-cool/vex-talon/releases/tag/v1.7.4)
+[![Version](https://img.shields.io/badge/version-1.7.4-blue)](https://github.com/0K-cool/0k-talon/releases/tag/v1.7.4)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Claude_Code-orange)](https://code.claude.com)
 [![Hooks](https://img.shields.io/badge/hooks-19-informational)](hooks/hooks.json)
@@ -26,7 +26,7 @@
 Zero cloud dependencies. OWASP LLM 2025 + MITRE ATLAS coverage. Works out of the box.
 
 ```bash
-git clone https://github.com/0K-cool/vex-talon.git ~/.claude/plugins/vex-talon
+git clone https://github.com/0K-cool/0k-talon.git ~/.claude/plugins/vex-talon
 claude --plugin-dir ~/.claude/plugins/vex-talon
 ```
 
@@ -199,7 +199,7 @@ Hooks and Security Radar are complementary — hooks handle the known threats at
 curl -fsSL https://bun.sh/install | bash
 
 # Clone the plugin
-git clone https://github.com/0K-cool/vex-talon.git ~/.claude/plugins/vex-talon
+git clone https://github.com/0K-cool/0k-talon.git ~/.claude/plugins/vex-talon
 
 # Launch Claude Code with the plugin
 claude --plugin-dir ~/.claude/plugins/vex-talon
@@ -682,7 +682,7 @@ Vex-Talon itself is developed with security in mind:
 
 ### Reporting Vulnerabilities
 
-Found a security issue? Please report via [GitHub Security Advisories](https://github.com/0K-cool/vex-talon/security/advisories).
+Found a security issue? Please report via [GitHub Security Advisories](https://github.com/0K-cool/0k-talon/security/advisories).
 
 ---
 

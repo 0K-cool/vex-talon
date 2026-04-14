@@ -1,4 +1,4 @@
-# Contributing to Vex-Talon
+# Contributing to 0K-Talon
 
 Thanks for your interest in improving Claude Code security.
 
@@ -6,13 +6,13 @@ Thanks for your interest in improving Claude Code security.
 
 ### Reporting Bugs
 
-- Open a [GitHub issue](https://github.com/0K-cool/vex-talon/issues) with steps to reproduce
+- Open a [GitHub issue](https://github.com/0K-cool/0k-talon/issues) with steps to reproduce
 - Include your OS, Bun version, and Claude Code version
 - For security vulnerabilities, see [SECURITY.md](SECURITY.md) instead
 
 ### Suggesting Features
 
-- Open a [GitHub issue](https://github.com/0K-cool/vex-talon/issues) describing the feature
+- Open a [GitHub issue](https://github.com/0K-cool/0k-talon/issues) describing the feature
 - Explain the security problem it solves and which OWASP/ATLAS framework mapping applies (if any)
 
 ### Submitting Pull Requests
@@ -41,7 +41,7 @@ Include test cases for any new patterns.
 ```bash
 # Requirements: Bun, pnpm 9+, Node 20+
 
-git clone https://github.com/0K-cool/vex-talon.git
+git clone https://github.com/0K-cool/0k-talon.git
 cd vex-talon
 pnpm install
 pnpm build

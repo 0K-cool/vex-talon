@@ -101,7 +101,7 @@ if [ "$FIRST_RUN" = true ]; then
   user_msg ""
   user_msg "  Profile: ${PROFILE} (all tools enabled)"
   user_msg ""
-  user_msg "  Docs: https://github.com/0K-cool/vex-talon#readme"
+  user_msg "  Docs: https://github.com/0K-cool/0k-talon#readme"
   user_msg "==================================================="
   user_msg ""
 
