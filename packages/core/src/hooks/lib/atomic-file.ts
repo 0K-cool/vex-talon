@@ -1,5 +1,5 @@
 /**
- * Atomic File Operations for Vex-Talon Security Hooks
+ * Atomic File Operations for 0K-Talon Security Hooks
  *
  * Purpose: Prevent race conditions when multiple processes access state files.
  * Pattern: Write to temp file, then atomic rename.

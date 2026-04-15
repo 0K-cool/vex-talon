@@ -9,14 +9,14 @@
  * NON-BLOCKING — alerts only, never prevents output from returning.
  * Regex-based scanning (no LLM calls) for speed.
  *
- * Logs to: ~/.vex-talon/logs/subagent-dlp.jsonl
+ * Logs to: ~/.0k-talon/logs/subagent-dlp.jsonl
  *
  * Maps to:
  * - OWASP LLM02 (Sensitive Information Disclosure)
  * - OWASP Agentic ASI03 (Identity & Privilege Abuse)
  * - MITRE ATLAS AML.T0096 (AI Service API)
  *
- * @version 1.0.0 (vex-talon)
+ * @version 1.0.0 (0k-talon)
  * @date 2026-04-13
  */
 

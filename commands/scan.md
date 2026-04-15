@@ -1,6 +1,6 @@
 ---
 name: scan
-description: Run Vex-Talon security scan on files, directories, or staged changes
+description: Run 0K-Talon security scan on files, directories, or staged changes
 arguments:
   - name: target
     description: File path, directory, or "staged" for git staged changes (default: current directory)
@@ -13,7 +13,7 @@ arguments:
     required: false
 ---
 
-# Vex-Talon Security Scan
+# 0K-Talon Security Scan
 
 Run the 20-layer defense-in-depth security scan manually.
 
@@ -55,7 +55,7 @@ Run the 20-layer defense-in-depth security scan manually.
 
 ## Execution
 
-When the user runs `/vex-talon:scan`, execute the following:
+When the user runs `/0k-talon:scan`, execute the following:
 
 ### 1. Parse Arguments
 
@@ -157,22 +157,22 @@ MITRE ATLAS:       {{ atlas_techniques }} techniques
 
 **Scan current directory:**
 ```
-/vex-talon:scan
+/0k-talon:scan
 ```
 
 **Scan staged changes before commit:**
 ```
-/vex-talon:scan staged
+/0k-talon:scan staged
 ```
 
 **Scan specific file with only injection detection:**
 ```
-/vex-talon:scan src/api/handler.ts L4
+/0k-talon:scan src/api/handler.ts L4
 ```
 
 **Scan with high severity threshold:**
 ```
-/vex-talon:scan . all HIGH
+/0k-talon:scan . all HIGH
 ```
 
 ## Integration
@@ -186,4 +186,4 @@ This command uses the same detection patterns as the automatic hooks, allowing m
 The patterns are loaded from:
 - `packages/core/src/lib/injection-patterns.ts` (89 injection patterns)
 - `packages/core/src/lib/code-patterns.ts` (55 code security patterns)
-- External configs in `.vex-talon/configs/`
+- External configs in `.0k-talon/configs/`

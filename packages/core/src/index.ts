@@ -1,7 +1,7 @@
 /**
- * @vex-talon/core - Security hooks and policies
+ * @0k-talon/core - Security hooks and policies
  *
- * This package contains the 20-layer defense-in-depth architecture for Vex-Talon.
+ * This package contains the 20-layer defense-in-depth architecture for 0K-Talon.
  *
  * PORTED LAYERS (13 hooks):
  * - L0:   Secure Code Enforcer    PreToolUse     BLOCK     Blocks CRITICAL vulnerabilities

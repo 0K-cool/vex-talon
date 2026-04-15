@@ -1,16 +1,16 @@
 #!/usr/bin/env bun
 
 /**
- * Vex-Talon Security Report Generator - Stop Hook (Full v2)
+ * 0K-Talon Security Report Generator - Stop Hook (Full v2)
  *
  * Ported from PAI Security Report Generator (SessionEnd Hook Enhanced v2)
- * to Vex-Talon plugin architecture.
+ * to 0K-Talon plugin architecture.
  *
  * Purpose: Generate an interactive HTML security report at the end of each session
  *          summarizing Governor violations, injection scans, and security events.
  *
  * Pattern: Stop Hook (runs when session ends)
- * Output: ~/.vex-talon/reports/security-report-{timestamp}.html
+ * Output: ~/.0k-talon/reports/security-report-{timestamp}.html
  *
  * Data Sources:
  * - L0-secure-code-enforcer-audit.jsonl
@@ -41,10 +41,10 @@
  * - MITRE ATLAS + OWASP LLM 2025 + OWASP Agentic 2026 mapping
  * - Haiku-powered executive summary
  *
- * Date: February 4, 2026 (Ported from PAI to Vex-Talon)
+ * Date: February 4, 2026 (Ported from PAI to 0K-Talon)
  * Credits: Inspired by fr0gger/nova-claude-code-protector report generator
  *
- * @version 1.0.0 (vex-talon full port)
+ * @version 1.0.0 (0k-talon full port)
  */
 
 import {
@@ -730,7 +730,7 @@ interface ReportData {
 }
 
 // ============================================================================
-// Configuration (Vex-Talon paths)
+// Configuration (0K-Talon paths)
 // ============================================================================
 
 const REPORTS_DIR = join(TALON_DIR, 'reports');
@@ -1137,7 +1137,7 @@ function sortBySeverity<T>(events: T[]): T[] {
 }
 
 // ============================================================================
-// Vex-Talon Analysis (Haiku-powered Executive Summary)
+// 0K-Talon Analysis (Haiku-powered Executive Summary)
 // ============================================================================
 
 async function generateVexAnalysis(data: ReportData): Promise<string> {
@@ -1253,11 +1253,11 @@ Write:`;
       return result.trim() || 'No analysis generated';
     } catch (cliError) {
       console.error('Haiku CLI error:', cliError);
-      return `Vex-Talon Analysis unavailable: CLI error`;
+      return `0K-Talon Analysis unavailable: CLI error`;
     }
   } catch (error) {
-    console.error('Error generating Vex-Talon analysis:', error);
-    return `Vex-Talon Analysis unavailable: ${error instanceof Error ? error.message : 'Unknown error'}`;
+    console.error('Error generating 0K-Talon analysis:', error);
+    return `0K-Talon Analysis unavailable: ${error instanceof Error ? error.message : 'Unknown error'}`;
   }
 }
 
@@ -1349,7 +1349,7 @@ function generateHTML(data: ReportData): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vex-Talon Security Report - ${data.sessionId.substring(0, 8)}</title>
+  <title>0K-Talon Security Report - ${data.sessionId.substring(0, 8)}</title>
   <style>
     :root {
       --bg-primary: #0d1117;
@@ -1611,7 +1611,7 @@ function generateHTML(data: ReportData): string {
       <div class="header-top">
         <div class="header-title">
           <span class="logo">\ud83e\udd96\u26a1</span>
-          <h1>Vex-Talon Security Report</h1>
+          <h1>0K-Talon Security Report</h1>
         </div>
         <div class="status-badge status-${data.summary.overallStatus.toLowerCase()}">
           <span>${status.emoji}</span>
@@ -1680,13 +1680,13 @@ function generateHTML(data: ReportData): string {
       </div>
     </div>
 
-    <!-- Vex-Talon Analysis (AI-Synthesized Executive Summary) -->
+    <!-- 0K-Talon Analysis (AI-Synthesized Executive Summary) -->
     ${data.vexAnalysis ? `
     <div class="vex-analysis-container" style="margin: 20px 0; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.05)); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; overflow: hidden;">
       <div class="vex-analysis-header" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(139, 92, 246, 0.15); cursor: pointer;" onclick="this.parentElement.classList.toggle('collapsed')">
         <div style="display: flex; align-items: center; gap: 10px;">
           <span style="font-size: 20px;">\ud83d\udee1\ufe0f</span>
-          <span style="font-weight: 600; color: var(--text-primary);">Vex-Talon Analysis</span>
+          <span style="font-weight: 600; color: var(--text-primary);">0K-Talon Analysis</span>
           <span style="font-size: 11px; color: var(--text-muted); background: var(--bg-tertiary); padding: 2px 8px; border-radius: 10px;">AI-Synthesized</span>
         </div>
         <span class="vex-analysis-toggle" style="color: var(--text-muted); transition: transform 0.2s;">\u25bc</span>
@@ -1922,7 +1922,7 @@ function generateHTML(data: ReportData): string {
       <div class="atlas-header">
         <h3>\ud83c\udfaf Defense-in-Depth vs AI Threat Landscape</h3>
         <p style="color: var(--text-secondary); margin-top: 8px;">
-          Vex-Talon security layers mapped to <a href="https://atlas.mitre.org" target="_blank" style="color: var(--accent-blue);">MITRE ATLAS</a>,
+          0K-Talon security layers mapped to <a href="https://atlas.mitre.org" target="_blank" style="color: var(--accent-blue);">MITRE ATLAS</a>,
           <a href="https://owasp.org/www-project-top-10-for-large-language-model-applications/" target="_blank" style="color: var(--accent-blue);">OWASP LLM Top 10 2025</a>,
           and <a href="https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/" target="_blank" style="color: var(--accent-blue);">OWASP Agentic 2026</a>
         </p>
@@ -1933,9 +1933,9 @@ function generateHTML(data: ReportData): string {
     </div>
 
     <footer>
-      <p>Generated by <a href="https://github.com/0K-cool/0k-talon" style="color: var(--accent-blue); text-decoration: none;">Vex-Talon</a> Security Report v3 | MITRE ATLAS + OWASP LLM 2025 + OWASP Agentic 2026</p>
+      <p>Generated by <a href="https://github.com/0K-cool/0k-talon" style="color: var(--accent-blue); text-decoration: none;">0K-Talon</a> Security Report v3 | MITRE ATLAS + OWASP LLM 2025 + OWASP Agentic 2026</p>
       <p>100% Local Processing | Zero External APIs | Defense-in-Depth Architecture</p>
-      <p>Vex-Talon \ud83e\udd96\u26a1 - Defense-in-Depth Security for Claude Code | Inspired by NOVA Claude Code Protector</p>
+      <p>0K-Talon \ud83e\udd96\u26a1 - Defense-in-Depth Security for Claude Code | Inspired by NOVA Claude Code Protector</p>
     </footer>
   </div>
 
@@ -3016,7 +3016,7 @@ function generateATLASMappingHTML(): string {
     </div>
     <div class="coverage-note" style="margin-top: 16px; padding: 12px 16px; background: rgba(110, 118, 129, 0.1); border-radius: 8px; border-left: 3px solid var(--accent-blue);">
       <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
-        <strong>* Architectural Note:</strong> Vex-Talon uses Claude API (not self-hosted models), making ${architecturalGaps.length} OWASP items not applicable:
+        <strong>* Architectural Note:</strong> 0K-Talon uses Claude API (not self-hosted models), making ${architecturalGaps.length} OWASP items not applicable:
       </div>
       <div style="display: flex; gap: 16px; flex-wrap: wrap;">
         ${architecturalGaps.map(gap => `
@@ -3306,7 +3306,7 @@ async function main() {
     // Calculate OWASP Agentic coverage based on active layers
     calculateAgenticCoverage();
 
-    // Read stop hook input (Vex-Talon Stop hook format)
+    // Read stop hook input (0K-Talon Stop hook format)
     let rawInput = '';
     try {
       rawInput = await Promise.race([
@@ -3352,13 +3352,13 @@ async function main() {
       process.exit(0);
     }
 
-    // Generate Vex-Talon Analysis (AI-powered executive summary)
-    console.error('TALON: Generating Vex-Talon Analysis (via claude CLI)...');
+    // Generate 0K-Talon Analysis (AI-powered executive summary)
+    console.error('TALON: Generating 0K-Talon Analysis (via claude CLI)...');
     try {
       reportData.vexAnalysis = await generateVexAnalysis(reportData);
-      console.error('TALON: Vex-Talon Analysis generated');
+      console.error('TALON: 0K-Talon Analysis generated');
     } catch (analysisError) {
-      console.error(`TALON: Vex-Talon Analysis unavailable: ${analysisError}`);
+      console.error(`TALON: 0K-Talon Analysis unavailable: ${analysisError}`);
       reportData.vexAnalysis = undefined;
     }
 

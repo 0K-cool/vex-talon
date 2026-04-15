@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Vex-Talon Unified Security Config Loader
+ * 0K-Talon Unified Security Config Loader
  * @version 0.1.0
  */
 
@@ -72,19 +72,19 @@ const configCache = new Map<string, { config: unknown; loadedAt: number; fileMti
 const CACHE_TTL_MS = 60000;
 
 function getConfigBasePath(): string {
-  const customPath = process.env.VEX_TALON_CONFIG_PATH;
+  const customPath = process.env.OK_TALON_CONFIG_PATH;
   if (customPath) {
     // Validate: must be absolute, no traversal, under HOME or CWD
     const resolved = resolve(customPath);
     const home = process.env.HOME || '';
     const cwd = process.cwd();
     if (resolved.includes('..') || (!resolved.startsWith(home) && !resolved.startsWith(cwd))) {
-      console.error(`[ConfigLoader] VEX_TALON_CONFIG_PATH rejected: must be under HOME or CWD. Using default.`);
+      console.error(`[ConfigLoader] OK_TALON_CONFIG_PATH rejected: must be under HOME or CWD. Using default.`);
     } else {
       return resolved;
     }
   }
-  const projectPath = join(process.cwd(), '.vex-talon', 'configs');
+  const projectPath = join(process.cwd(), '.0k-talon', 'configs');
   if (existsSync(projectPath)) return projectPath;
   return join(dirname(__dirname), 'configs');
 }
@@ -144,14 +144,14 @@ export function compilePattern(pattern: string, flags = 'gi'): RegExp {
 
 export function loadInjectionConfig(): InjectionConfig {
   return loadConfig('injection/patterns.json', {
-    metadata: { version: '0.1.0', lastUpdated: '2026-02-03', description: 'Vex-Talon defaults' },
+    metadata: { version: '0.1.0', lastUpdated: '2026-02-03', description: '0K-Talon defaults' },
     patterns: [],
   });
 }
 
 export function loadCodeEnforcerConfig(): CodeEnforcerConfig {
   return loadConfig('code-enforcer/patterns.json', {
-    metadata: { version: '0.1.0', lastUpdated: '2026-02-03', description: 'Vex-Talon defaults' },
+    metadata: { version: '0.1.0', lastUpdated: '2026-02-03', description: '0K-Talon defaults' },
     patterns: {
       sqlInjection: [], commandInjection: [], secretPatterns: [], pathTraversal: [],
       unsafeDeserialization: [], promptInjection: [], xssVectors: [], weakCrypto: [], authPatterns: [],
@@ -161,7 +161,7 @@ export function loadCodeEnforcerConfig(): CodeEnforcerConfig {
 
 export function loadSupplyChainConfig(): SupplyChainConfig {
   return loadConfig('supply-chain/config.json', {
-    metadata: { version: '0.1.0', lastUpdated: '2026-02-03', description: 'Vex-Talon defaults' },
+    metadata: { version: '0.1.0', lastUpdated: '2026-02-03', description: '0K-Talon defaults' },
     patterns: {
       maliciousPackages: [],
       trustedRegistries: ['registry.npmjs.org', 'pypi.org', 'crates.io'],

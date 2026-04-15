@@ -11,7 +11,7 @@
  * Provides behavioral defense - alerts the model to security issues
  * so it can self-correct or warn the user.
  *
- * Vex-Talon v0.1.0
+ * 0K-Talon v0.1.0
  */
 
 import { extname, basename } from 'path';

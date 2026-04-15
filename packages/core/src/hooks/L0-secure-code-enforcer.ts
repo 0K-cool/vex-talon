@@ -3,7 +3,7 @@
 /**
  * L0: Secure Code Enforcer - PreToolUse Hook
  *
- * Part of Vex-Talon 20-layer defense-in-depth architecture.
+ * Part of 0K-Talon 20-layer defense-in-depth architecture.
  *
  * Purpose: Enforce secure coding practices BEFORE writing security-sensitive code.
  *          BLOCKS CRITICAL vulnerabilities (SQL injection, command injection, secrets).
@@ -21,7 +21,7 @@
  * - OWASP LLM02 (Insecure Output Handling)
  * - MITRE ATLAS AML.T0048 (Adversarial Example)
  *
- * @version 0.1.0 (vex-talon)
+ * @version 0.1.0 (0k-talon)
  * @date 2026-02-04
  */
 
@@ -102,7 +102,7 @@ const CODE_EXTENSIONS: Record<string, string> = {
 const SKIP_PATHS = [
   '/hooks/',
   '/node_modules/',
-  '/.vex-talon/',
+  '/.0k-talon/',
   '/security/',
   '/tests/',
   '/test/',

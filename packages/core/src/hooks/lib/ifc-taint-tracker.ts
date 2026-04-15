@@ -1,5 +1,5 @@
 /**
- * IFC Taint Tracker for Vex-Talon Governor (L1)
+ * IFC Taint Tracker for 0K-Talon Governor (L1)
  *
  * Bell-LaPadula model: "No write-down"
  * When agent reads sensitive data, session becomes tainted.
@@ -13,7 +13,7 @@
  * - OWASP LLM02 (Sensitive Information Disclosure)
  * - MITRE ATLAS AML.T0024 (Exfiltration via Cyber Means)
  *
- * @version 0.1.0 (vex-talon)
+ * @version 0.1.0 (0k-talon)
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';

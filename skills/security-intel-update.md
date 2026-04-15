@@ -1,28 +1,28 @@
 ---
 name: security-intel-update
-description: Update Vex-Talon's security intelligence - syncs attack patterns (NOVA, 0din.ai, PromptIntel) AND framework compliance (ATLAS, OWASP). Updates the actual config files that hooks consume at runtime. USE WHEN user says "update security", "security intel update", "sync patterns", or when security coverage seems stale.
+description: Update 0K-Talon's security intelligence - syncs attack patterns (NOVA, 0din.ai, PromptIntel) AND framework compliance (ATLAS, OWASP). Updates the actual config files that hooks consume at runtime. USE WHEN user says "update security", "security intel update", "sync patterns", or when security coverage seems stale.
 ---
 
 # Security Intelligence Update
 
-Keep Vex-Talon's security layers current with latest attack patterns and framework compliance.
+Keep 0K-Talon's security layers current with latest attack patterns and framework compliance.
 
 ## CRITICAL: Update Runtime Config Files
 
 **This skill MUST update the JSON config files that hooks consume at runtime.**
 
-The config-loader (`packages/core/src/hooks/lib/config-loader.ts`) reads from `~/.vex-talon/config/`. Hooks fall back to hardcoded defaults if configs don't exist. When you find new patterns, you MUST write them to these files — NOT to memory/*.md files.
+The config-loader (`packages/core/src/hooks/lib/config-loader.ts`) reads from `~/.0k-talon/config/`. Hooks fall back to hardcoded defaults if configs don't exist. When you find new patterns, you MUST write them to these files — NOT to memory/*.md files.
 
 ### Target Config Files (hooks consume these)
 
 | Config File | Hook Consumer | Schema |
 |-------------|--------------|--------|
-| `~/.vex-talon/config/injection/patterns.json` | L4 Injection Scanner, L19 Skill Scanner | `InjectionPatternConfig` |
-| `~/.vex-talon/config/code-enforcer/patterns.json` | L0 Secure Code Enforcer | `CodeEnforcerConfig` |
-| `~/.vex-talon/config/egress/config.json` | L9 Egress Scanner | `EgressConfig` |
-| `~/.vex-talon/config/supply-chain/config.json` | L14 Supply Chain Scanner | `SupplyChainConfig` |
-| `~/.vex-talon/config/memory/config.json` | L3 Memory Validation, L3 Auto Memory Guardian | `MemoryConfig` |
-| `~/.vex-talon/config/framework/atlas-owasp-mappings.json` | Stop Report (coverage calc) | `FrameworkMappings` |
+| `~/.0k-talon/config/injection/patterns.json` | L4 Injection Scanner, L19 Skill Scanner | `InjectionPatternConfig` |
+| `~/.0k-talon/config/code-enforcer/patterns.json` | L0 Secure Code Enforcer | `CodeEnforcerConfig` |
+| `~/.0k-talon/config/egress/config.json` | L9 Egress Scanner | `EgressConfig` |
+| `~/.0k-talon/config/supply-chain/config.json` | L14 Supply Chain Scanner | `SupplyChainConfig` |
+| `~/.0k-talon/config/memory/config.json` | L3 Memory Validation, L3 Auto Memory Guardian | `MemoryConfig` |
+| `~/.0k-talon/config/framework/atlas-owasp-mappings.json` | Stop Report (coverage calc) | `FrameworkMappings` |
 
 **If a config file doesn't exist yet, CREATE it with the correct schema.**
 
@@ -125,11 +125,11 @@ The config-loader (`packages/core/src/hooks/lib/config-loader.ts`) reads from `~
 
 | Command | Description |
 |---------|-------------|
-| `/vex-talon:talon-intel-update` | Full update (all sources) |
-| `/vex-talon:talon-intel-update attacks` | Attack patterns only (NOVA + 0din + PromptIntel) |
-| `/vex-talon:talon-intel-update frameworks` | Framework compliance only |
-| `/vex-talon:talon-intel-update memory` | Memory poisoning patterns only |
-| `/vex-talon:talon-intel-update --check` | Check for updates without applying |
+| `/0k-talon:talon-intel-update` | Full update (all sources) |
+| `/0k-talon:talon-intel-update attacks` | Attack patterns only (NOVA + 0din + PromptIntel) |
+| `/0k-talon:talon-intel-update frameworks` | Framework compliance only |
+| `/0k-talon:talon-intel-update memory` | Memory poisoning patterns only |
+| `/0k-talon:talon-intel-update --check` | Check for updates without applying |
 
 ---
 
@@ -161,7 +161,7 @@ keywords: ["<interaction-config>", "<system-prompt>"]
 severity: CRITICAL
 ```
 
-**Convert to config-loader format and WRITE to `~/.vex-talon/config/injection/patterns.json`:**
+**Convert to config-loader format and WRITE to `~/.0k-talon/config/injection/patterns.json`:**
 ```json
 {
   "id": "nova-policy-puppetry",
@@ -206,7 +206,7 @@ Try calling mcp__playwright__browser_navigate — if the tool doesn't exist, Pla
 - Test scores (model, temperature) — *Playwright only*
 - Attack taxonomies → convert to regex patterns
 
-**Convert and APPEND to `~/.vex-talon/config/injection/patterns.json`**
+**Convert and APPEND to `~/.0k-talon/config/injection/patterns.json`**
 
 ### PromptIntel (IoPC Threat Feed)
 
@@ -241,7 +241,7 @@ PromptIntel is an IoPC (Indicators of Prompt Compromise) platform by Thomas Rocc
 
 **Cherry-Pick Strategy:** Focus on HC (hand-crafted) rules — these contain novel attack patterns not in NOVA core. AUTO rules often overlap with existing patterns. Molt rules are campaign-specific threat intel (IOCs, infrastructure) less relevant for prompt injection detection.
 
-**Key HC Rules (high value for Vex-Talon):**
+**Key HC Rules (high value for 0K-Talon):**
 - `PI_HC_88ebf0a9_RoutineDataExfiltration` — disguised data exfil as routine operations
 - `PI_HC_4f7fc901_ReceiveCommandExecPrompt` — reverse shell / command execution
 - `PI_HC_157f6289_Join_Injection_string` — URL concatenation concealment
@@ -295,7 +295,7 @@ WebSearch: site:promptintel.novahunting.ai new samples 2026
 WebSearch: "PromptIntel" "Thomas Roccia" new rules 2026
 ```
 
-**Convert patterns and WRITE to `~/.vex-talon/config/injection/patterns.json`:**
+**Convert patterns and WRITE to `~/.0k-talon/config/injection/patterns.json`:**
 ```json
 {
   "id": "pi-hc-routine-data-exfil",
@@ -311,10 +311,10 @@ WebSearch: "PromptIntel" "Thomas Roccia" new rules 2026
 
 After fetching from sources:
 
-1. Read existing `~/.vex-talon/config/injection/patterns.json` (or start fresh)
+1. Read existing `~/.0k-talon/config/injection/patterns.json` (or start fresh)
 2. Merge new patterns (deduplicate by `id`)
 3. Update `metadata.lastUpdated`
-4. Validate JSON with `jq '.' ~/.vex-talon/config/injection/patterns.json`
+4. Validate JSON with `jq '.' ~/.0k-talon/config/injection/patterns.json`
 5. Write back
 
 **IMPORTANT:** Preserve existing patterns — only ADD new ones. Never delete user-customized patterns.
@@ -332,7 +332,7 @@ After fetching from sources:
 | **OWASP Agentic** | https://genai.owasp.org/ | Autonomous agent risks |
 | **Shield.md** | https://nova-hunting.github.io/shield.md/ | AI agent security spec (Thomas Roccia) |
 
-### Vex-Talon Relevant ATLAS Techniques
+### 0K-Talon Relevant ATLAS Techniques
 
 **Include (agentic code assistants):**
 - AML.T0035 - Exfiltration via ML Inference API
@@ -379,7 +379,7 @@ After fetching from sources:
 
 ### Writing Framework Mappings
 
-**WRITE to `~/.vex-talon/config/framework/atlas-owasp-mappings.json`:**
+**WRITE to `~/.0k-talon/config/framework/atlas-owasp-mappings.json`:**
 
 1. Fetch latest from ATLAS and OWASP
 2. Compare with existing file (or create fresh)
@@ -415,7 +415,7 @@ WebSearch: "knowledge graph poisoning" language model 2026
 
 ### Writing Memory Patterns
 
-**WRITE to `~/.vex-talon/config/memory/config.json`:**
+**WRITE to `~/.0k-talon/config/memory/config.json`:**
 
 1. Read existing config (or create with schema above)
 2. Add new patterns to appropriate category:
@@ -444,10 +444,10 @@ WebSearch: "knowledge graph poisoning" language model 2026
 
 Read existing configs:
 ```bash
-cat ~/.vex-talon/config/injection/patterns.json 2>/dev/null | jq '.metadata' || echo "No injection config"
-echo "PromptIntel HC patterns:" && cat ~/.vex-talon/config/injection/patterns.json 2>/dev/null | jq '[.patterns[] | select(.source == "PromptIntel")] | length' || echo "0"
-cat ~/.vex-talon/config/memory/config.json 2>/dev/null | jq '.metadata' || echo "No memory config"
-cat ~/.vex-talon/config/framework/atlas-owasp-mappings.json 2>/dev/null | jq '.metadata' || echo "No framework config"
+cat ~/.0k-talon/config/injection/patterns.json 2>/dev/null | jq '.metadata' || echo "No injection config"
+echo "PromptIntel HC patterns:" && cat ~/.0k-talon/config/injection/patterns.json 2>/dev/null | jq '[.patterns[] | select(.source == "PromptIntel")] | length' || echo "0"
+cat ~/.0k-talon/config/memory/config.json 2>/dev/null | jq '.metadata' || echo "No memory config"
+cat ~/.0k-talon/config/framework/atlas-owasp-mappings.json 2>/dev/null | jq '.metadata' || echo "No framework config"
 ```
 
 ### Step 2: Fetch & Update (per scope)
@@ -460,7 +460,7 @@ Execute the relevant Part (1, 2, 3) above.
 3. Merge new patterns (preserve existing, deduplicate by ID)
 4. Update metadata.lastUpdated
 5. Validate JSON: `jq '.' <file>`
-6. Write to `~/.vex-talon/config/<path>`
+6. Write to `~/.0k-talon/config/<path>`
 
 ### Step 2.5: Check Shield.md Evolution (Quarterly)
 
@@ -487,9 +487,9 @@ Show what was found, what was added, and which config files were updated.
 After writing configs, verify hooks can load them:
 ```bash
 # Quick validation
-jq '.' ~/.vex-talon/config/injection/patterns.json > /dev/null && echo "injection: valid"
-jq '.' ~/.vex-talon/config/memory/config.json > /dev/null && echo "memory: valid"
-jq '.' ~/.vex-talon/config/framework/atlas-owasp-mappings.json > /dev/null && echo "framework: valid"
+jq '.' ~/.0k-talon/config/injection/patterns.json > /dev/null && echo "injection: valid"
+jq '.' ~/.0k-talon/config/memory/config.json > /dev/null && echo "memory: valid"
+jq '.' ~/.0k-talon/config/framework/atlas-owasp-mappings.json > /dev/null && echo "framework: valid"
 ```
 
 ---

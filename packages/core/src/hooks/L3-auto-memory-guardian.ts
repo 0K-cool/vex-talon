@@ -3,7 +3,7 @@
 /**
  * L3: Auto Memory Guardian - SessionStart Hook
  *
- * Part of Vex-Talon 20-layer defense-in-depth architecture.
+ * Part of 0K-Talon 20-layer defense-in-depth architecture.
  * Extends L3 Memory Validation to cover Claude Code's built-in auto memory.
  *
  * Purpose: Scan MEMORY.md files at session start for injection patterns
@@ -23,7 +23,7 @@
  * - MITRE ATLAS AML.T0064 (Data Poisoning)
  * - OWASP LLM 2025 LLM04 (Data and Model Poisoning)
  *
- * @version 0.1.0 (vex-talon)
+ * @version 0.1.0 (0k-talon)
  * @date 2026-02-05
  */
 
@@ -58,7 +58,7 @@ interface CompiledPattern extends PatternDef {
 }
 
 // ---------------------------------------------------------------------------
-// Config Loading (reads from ~/.vex-talon/config/memory/config.json)
+// Config Loading (reads from ~/.0k-talon/config/memory/config.json)
 // Updated by /talon-intel-update skill
 // ---------------------------------------------------------------------------
 

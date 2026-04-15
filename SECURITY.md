@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in Vex-Talon, please report it responsibly.
+If you discover a security vulnerability in 0K-Talon, please report it responsibly.
 
 **Do NOT open a public GitHub issue for security vulnerabilities.**
 

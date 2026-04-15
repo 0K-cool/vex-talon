@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug or false positive in Vex-Talon
+about: Report a bug or false positive in 0K-Talon
 title: "[Bug] "
 labels: bug
 ---
@@ -11,7 +11,7 @@ A clear description of the bug.
 
 ## Steps to Reproduce
 
-1. Install vex-talon
+1. Install 0k-talon
 2. Run Claude Code with...
 3. Trigger hook by...
 4. See error...
@@ -29,9 +29,9 @@ What actually happened. Include any console output or error messages.
 - **OS:** (macOS / Linux)
 - **Bun version:** (`bun --version`)
 - **Claude Code version:** (`claude --version`)
-- **Vex-Talon version:** 1.0.0
+- **0K-Talon version:** 1.0.0
 - **Affected layer:** (e.g., L4 Injection Scanner)
 
 ## Additional Context
 
-Any other context, screenshots, or log entries from `~/.vex-talon/logs/`.
+Any other context, screenshots, or log entries from `~/.0k-talon/logs/`.

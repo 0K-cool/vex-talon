@@ -1,5 +1,5 @@
 /**
- * @vex-talon/db - Log Ingestion
+ * @0k-talon/db - Log Ingestion
  *
  * Ingest security events from JSONL audit logs into the database.
  */

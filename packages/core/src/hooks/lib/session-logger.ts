@@ -8,7 +8,7 @@
  *   import { logInfo, logWarn } from './lib/session-logger';
  *   logInfo('SkillScanner', 'All 41 skills cached');
  *
- * @version 1.0.0 (vex-talon)
+ * @version 1.0.0 (0k-talon)
  * @date 2026-02-27
  */
 

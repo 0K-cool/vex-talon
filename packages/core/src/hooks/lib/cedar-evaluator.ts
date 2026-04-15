@@ -1,5 +1,5 @@
 /**
- * Cedar Policy Evaluator for Vex-Talon Governor (L1)
+ * Cedar Policy Evaluator for 0K-Talon Governor (L1)
  *
  * Evaluates tool calls against Cedar policies using @cedar-policy/cedar-wasm.
  * Hybrid model: Cedar evaluates alongside YAML — Cedar forbid overrides YAML allow.
@@ -13,7 +13,7 @@
  * - OWASP LLM02 (Sensitive Information Disclosure)
  * - MITRE ATLAS AML.T0054 (LLM Jailbreak)
  *
- * @version 0.1.0 (vex-talon)
+ * @version 0.1.0 (0k-talon)
  */
 
 import { readFileSync, readdirSync, existsSync } from 'fs';
@@ -270,7 +270,7 @@ function extractBranch(command: string): string {
 function getFileSensitivity(filePath: string): number {
   if (filePath.includes('.env') || filePath.includes('.ssh') || filePath.includes('credentials')) return 3; // SECRET
   if (filePath.includes('security') || filePath.includes('policies')) return 2; // CONFIDENTIAL
-  if (filePath.includes('.vex-talon') || filePath.includes('hooks')) return 1; // INTERNAL
+  if (filePath.includes('.0k-talon') || filePath.includes('hooks')) return 1; // INTERNAL
   return 0; // PUBLIC
 }
 

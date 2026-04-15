@@ -1,5 +1,5 @@
 {
-  "$schema": "Vex-Talon Sensitivity Labels for IFC",
+  "$schema": "0K-Talon Sensitivity Labels for IFC",
   "version": "2.0.0",
   "levels": {
     "0": { "label": "PUBLIC", "description": "Source code, documentation, research output" },
@@ -12,7 +12,7 @@
     { "pattern": "credentials", "level": 3, "label": "SECRET" },
     { "pattern": "private_key", "level": 3, "label": "SECRET" },
     { "pattern": ".ssh/", "level": 3, "label": "SECRET" },
-    { "pattern": ".vex-talon/security/", "level": 1, "label": "INTERNAL" }
+    { "pattern": ".0k-talon/security/", "level": 1, "label": "INTERNAL" }
   ],
   "command_rules": [
     { "pattern": "op read", "level": 3, "label": "SECRET", "note": "1Password CLI secret retrieval" },

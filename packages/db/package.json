@@ -1,7 +1,7 @@
 {
-  "name": "@vex-talon/db",
+  "name": "@0k-talon/db",
   "version": "0.1.0",
-  "description": "Database layer for Vex-Talon security dashboard",
+  "description": "Database layer for 0K-Talon security dashboard",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {

@@ -1,7 +1,7 @@
 {
-  "name": "@vex-talon/core",
-  "version": "1.7.4",
-  "description": "Security hooks and policies for Vex-Talon",
+  "name": "@0k-talon/core",
+  "version": "1.7.5",
+  "description": "Security hooks and policies for 0K-Talon",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {

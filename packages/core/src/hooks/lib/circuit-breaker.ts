@@ -1,5 +1,5 @@
 /**
- * Vex-Talon Circuit Breaker
+ * 0K-Talon Circuit Breaker
  *
  * Provides resilience for hooks by tracking failures and preventing
  * cascading failures during outages or performance issues.

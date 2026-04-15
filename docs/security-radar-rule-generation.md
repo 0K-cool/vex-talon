@@ -1,6 +1,6 @@
 # Security Radar Rule Generation Workflow
 
-**Purpose:** When Security Radar detects a novel risk, draft detection rule(s) for automated enforcement in Vex-Talon's config system.
+**Purpose:** When Security Radar detects a novel risk, draft detection rule(s) for automated enforcement in 0K-Talon's config system.
 **Trigger:** AI detects a security risk during any work that has no existing pattern coverage.
 **Approval:** All generated rules require user approval before applying.
 
@@ -12,13 +12,13 @@ Determine which config target(s) the rule belongs in:
 
 | Risk Type | Config Target | Default Location |
 |-----------|--------------|-----------------|
-| Prompt injection pattern | Injection Patterns | `~/.vex-talon/config/injection/patterns.json` |
-| Data exfiltration vector | Egress Config | `~/.vex-talon/config/egress/config.json` |
-| Vulnerable code pattern | Code Enforcer | `~/.vex-talon/config/code-enforcer/patterns.json` |
-| Malicious package | Supply Chain | `~/.vex-talon/config/supply-chain/config.json` |
-| XSS / output injection | Output Sanitizer | `~/.vex-talon/config/output-sanitizer/patterns.json` |
-| Image-based attack | Image Safety | `~/.vex-talon/config/image-safety/config.json` |
-| Skill injection | Skill Scanner | `~/.vex-talon/config/skill-scanner/config.json` |
+| Prompt injection pattern | Injection Patterns | `~/.0k-talon/config/injection/patterns.json` |
+| Data exfiltration vector | Egress Config | `~/.0k-talon/config/egress/config.json` |
+| Vulnerable code pattern | Code Enforcer | `~/.0k-talon/config/code-enforcer/patterns.json` |
+| Malicious package | Supply Chain | `~/.0k-talon/config/supply-chain/config.json` |
+| XSS / output injection | Output Sanitizer | `~/.0k-talon/config/output-sanitizer/patterns.json` |
+| Image-based attack | Image Safety | `~/.0k-talon/config/image-safety/config.json` |
+| Skill injection | Skill Scanner | `~/.0k-talon/config/skill-scanner/config.json` |
 
 A single risk may require rules in multiple configs.
 

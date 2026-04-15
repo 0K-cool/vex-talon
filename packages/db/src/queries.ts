@@ -1,5 +1,5 @@
 /**
- * @vex-talon/db - Database Queries
+ * @0k-talon/db - Database Queries
  *
  * Typed query functions for security events and metrics.
  */

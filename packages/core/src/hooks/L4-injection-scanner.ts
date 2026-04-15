@@ -3,7 +3,7 @@
 /**
  * L4: Injection Scanner - PostToolUse Hook
  *
- * Part of Vex-Talon 20-layer defense-in-depth architecture.
+ * Part of 0K-Talon 20-layer defense-in-depth architecture.
  *
  * Purpose: Scan tool outputs (Read, WebFetch, Bash) for prompt injection
  *          patterns AFTER tool execution.
@@ -21,7 +21,7 @@
  * - OWASP LLM01 (Prompt Injection)
  * - MITRE ATLAS AML.T0051 (LLM Prompt Injection)
  *
- * @version 0.1.0 (vex-talon)
+ * @version 0.1.0 (0k-talon)
  * @date 2026-02-04
  */
 

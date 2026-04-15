@@ -3,7 +3,7 @@
 /**
  * L14: Supply Chain Scanner - PostToolUse Hook
  *
- * Part of Vex-Talon 20-layer defense-in-depth architecture.
+ * Part of 0K-Talon 20-layer defense-in-depth architecture.
  *
  * Purpose: Monitor package installations for known malicious packages.
  * Pattern: Sidecar Pattern (monitoring after tool execution)
@@ -12,7 +12,7 @@
  * - OWASP LLM03 (Supply Chain Vulnerabilities)
  * - MITRE ATLAS AML.T0047 (ML Supply Chain Compromise)
  *
- * @version 0.1.0 (vex-talon)
+ * @version 0.1.0 (0k-talon)
  * @date 2026-02-04
  */
 

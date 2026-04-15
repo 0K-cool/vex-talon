@@ -1,5 +1,5 @@
 {
-  "description": "Vex-Talon: 20-layer defense-in-depth security for Claude Code",
+  "description": "0K-Talon: 20-layer defense-in-depth security for Claude Code",
   "hooks": {
     "PreToolUse": [
       {

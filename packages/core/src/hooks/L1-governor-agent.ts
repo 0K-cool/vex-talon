@@ -13,7 +13,7 @@
  * - Sensitive file reads → blocked file paths
  * - Destructive operations → neutralized
  *
- * Vex-Talon v0.1.0
+ * 0K-Talon v0.1.0
  */
 
 import { join, basename } from 'path';
@@ -743,7 +743,7 @@ async function main() {
         console.error(`\n🔒 [Governor L1] BLOCKED by '${activeProfile.name}' profile`);
         console.error(`    Tool: ${data.tool_name}`);
         console.error(`    Reason: ${toolCheck.reason}`);
-        console.error(`    Change profile: VEX_TALON_PROFILE=dev claude\n`);
+        console.error(`    Change profile: OK_TALON_PROFILE=dev claude\n`);
 
         // Log the profile violation
         logToAudit({

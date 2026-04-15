@@ -1,8 +1,8 @@
 /**
- * Vex-Talon Config Loader
+ * 0K-Talon Config Loader
  *
  * Loads security configurations from external JSON files with bundled defaults.
- * Part of the vex-talon plugin - portable security for Claude Code.
+ * Part of the 0k-talon plugin - portable security for Claude Code.
  *
  * @version 0.1.0
  * @date 2026-02-04

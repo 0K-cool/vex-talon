@@ -3,7 +3,7 @@ name: security-scan
 description: Run comprehensive security analysis on code files for vulnerabilities, injection patterns, and policy violations
 ---
 
-# Vex-Talon Security Scan Skill
+# 0K-Talon Security Scan Skill
 
 Analyze code for security vulnerabilities using the 20-layer defense-in-depth architecture.
 

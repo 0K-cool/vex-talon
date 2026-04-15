@@ -1,10 +1,10 @@
 /**
- * Portable Path Resolution for Vex-Talon Hooks
+ * Portable Path Resolution for 0K-Talon Hooks
  *
  * Purpose: Provide consistent paths regardless of installation location.
- * Vex-Talon can be installed:
- * - Globally: ~/.vex-talon/
- * - Per-project: ./vex-talon/ or ./.claude-plugin/vex-talon/
+ * 0K-Talon can be installed:
+ * - Globally: ~/.0k-talon/
+ * - Per-project: ./0k-talon/ or ./.claude-plugin/0k-talon/
  * - Via environment: TALON_DIR=/custom/path
  *
  * @version 0.1.0
@@ -58,12 +58,12 @@ function isValidTalonDir(dir: string): boolean {
 // ============================================================================
 
 /**
- * Detect the Vex-Talon installation directory.
+ * Detect the 0K-Talon installation directory.
  * Priority:
  * 1. TALON_DIR environment variable (validated)
- * 2. ~/.vex-talon (global installation)
- * 3. ./vex-talon (project-local)
- * 4. Fallback to ~/.vex-talon (create if needed)
+ * 2. ~/.0k-talon (global installation)
+ * 3. ./0k-talon (project-local)
+ * 4. Fallback to ~/.0k-talon (create if needed)
  */
 function detectTalonDir(): string {
   // 1. Check environment variable (with validation)
@@ -77,7 +77,7 @@ function detectTalonDir(): string {
   }
 
   // 2. Check global installation
-  const globalDir = join(homedir(), '.vex-talon');
+  const globalDir = join(homedir(), '.0k-talon');
   if (existsSync(globalDir)) {
     return globalDir;
   }
@@ -85,9 +85,9 @@ function detectTalonDir(): string {
   // 3. Check project-local installation
   const cwd = process.cwd();
   const projectDirs = [
-    join(cwd, '.vex-talon'),
-    join(cwd, 'vex-talon'),
-    join(cwd, '.claude-plugin', 'vex-talon'),
+    join(cwd, '.0k-talon'),
+    join(cwd, '0k-talon'),
+    join(cwd, '.claude-plugin', '0k-talon'),
   ];
   for (const dir of projectDirs) {
     if (existsSync(dir)) {

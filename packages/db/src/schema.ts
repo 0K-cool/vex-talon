@@ -1,5 +1,5 @@
 /**
- * @vex-talon/db - Database Schema
+ * @0k-talon/db - Database Schema
  *
  * SQLite schema for security events, metrics, and layer coverage.
  */

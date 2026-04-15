@@ -3,7 +3,7 @@
 /**
  * L19: Skill Scanner - PreToolUse Hook
  *
- * Part of Vex-Talon 20-layer defense-in-depth architecture.
+ * Part of 0K-Talon 20-layer defense-in-depth architecture.
  *
  * Purpose: Scan skills at invocation for injection patterns and dangerous commands.
  * Pattern: Sidecar Pattern (monitoring before tool execution)
@@ -19,7 +19,7 @@
  * - OWASP LLM01 (Prompt Injection)
  * - OWASP Agentic ASI04 (Dependency Chain Attack)
  *
- * @version 0.1.0 (vex-talon)
+ * @version 0.1.0 (0k-talon)
  * @date 2026-02-04
  */
 

@@ -1,5 +1,5 @@
 /**
- * Vex-Talon Hook Libraries
+ * 0K-Talon Hook Libraries
  *
  * Shared utilities for security hooks.
  */

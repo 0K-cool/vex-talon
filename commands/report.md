@@ -10,7 +10,7 @@ arguments:
     required: false
 ---
 
-# Vex-Talon Security Report Generator
+# 0K-Talon Security Report Generator
 
 Generate a comprehensive security assessment report for the current project.
 
@@ -81,10 +81,10 @@ Prioritized list of security improvements:
 
 ## Execution
 
-When user runs `/vex-talon:report`:
+When user runs `/0k-talon:report`:
 
 1. **Collect Data**
-   - Read event logs from `.vex-talon/logs/`
+   - Read event logs from `.0k-talon/logs/`
    - Scan current codebase for active issues
    - Load layer configuration
 
@@ -102,15 +102,15 @@ When user runs `/vex-talon:report`:
 
 **Generate markdown report:**
 ```
-/vex-talon:report
+/0k-talon:report
 ```
 
 **Generate JSON for CI/CD integration:**
 ```
-/vex-talon:report json ./security-report.json
+/0k-talon:report json ./security-report.json
 ```
 
 **Generate HTML for stakeholder review:**
 ```
-/vex-talon:report html ./reports/security-assessment.html
+/0k-talon:report html ./reports/security-assessment.html
 ```

@@ -1,5 +1,5 @@
 /**
- * @vex-talon/core - Security Hooks
+ * @0k-talon/core - Security Hooks
  *
  * Claude Code hooks for the 20-layer defense-in-depth architecture (L0-L19).
  *
@@ -231,7 +231,7 @@ export function getSessionEndHooks(): LayerDefinition[] {
 }
 
 /**
- * Generate settings.json hook configuration for Vex-Talon
+ * Generate settings.json hook configuration for 0K-Talon
  */
 export function generateHooksConfig(basePath: string = './packages/core/src/hooks'): object {
   const preToolUseHooks = getPreToolUseHooks().map(l => ({

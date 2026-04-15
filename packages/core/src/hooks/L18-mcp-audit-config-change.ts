@@ -30,7 +30,7 @@
  * - MITRE ATLAS AML.T0051 (LLM Prompt Injection)
  * - MITRE ATLAS AML.T0053 (LLM Plugin Compromise)
  *
- * @version 1.0.0 (vex-talon)
+ * @version 1.0.0 (0k-talon)
  * @date 2026-02-27
  */
 

@@ -1,6 +1,6 @@
 {
-  "name": "vex-talon",
-  "version": "1.7.4",
+  "name": "0k-talon",
+  "version": "1.7.5",
   "private": true,
   "description": "Claude Code security plugin - 20-layer defense-in-depth for AI coding agents",
   "author": "Kelvin Lomboy",

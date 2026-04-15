@@ -45,13 +45,13 @@ importers:
 
   packages/dashboard:
     dependencies:
-      '@vex-talon/core':
+      '@0k-talon/core':
         specifier: workspace:*
         version: link:../core
-      '@vex-talon/db':
+      '@0k-talon/db':
         specifier: workspace:*
         version: link:../db
-      '@vex-talon/ui':
+      '@0k-talon/ui':
         specifier: workspace:*
         version: link:../ui
       next:

@@ -3,7 +3,7 @@
 /**
  * L3: Memory Validation - PreToolUse Hook
  *
- * Part of Vex-Talon 20-layer defense-in-depth architecture.
+ * Part of 0K-Talon 20-layer defense-in-depth architecture.
  *
  * Purpose: Detect memory poisoning attempts in MCP Memory Server operations.
  * Pattern: Sidecar Pattern (monitoring before tool execution)
@@ -22,7 +22,7 @@
  * - OWASP Agentic 2026 ASI06 (Memory and Context Manipulation)
  * - MITRE ATLAS AML.T0064 (Data Poisoning)
  *
- * @version 0.1.0 (vex-talon)
+ * @version 0.1.0 (0k-talon)
  * @date 2026-02-04
  */
 

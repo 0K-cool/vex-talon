@@ -1,5 +1,5 @@
 /**
- * @vex-talon/db - Database layer for security dashboard
+ * @0k-talon/db - Database layer for security dashboard
  *
  * SQLite-based storage for security events, metrics, and coverage data.
  *

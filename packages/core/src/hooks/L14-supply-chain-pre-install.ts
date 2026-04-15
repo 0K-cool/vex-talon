@@ -3,7 +3,7 @@
 /**
  * L14: Supply Chain Pre-Install Scanner - PreToolUse Hook
  *
- * Part of Vex-Talon 20-layer defense-in-depth architecture.
+ * Part of 0K-Talon 20-layer defense-in-depth architecture.
  *
  * Purpose: BLOCK malicious packages BEFORE installation.
  * Pattern: Sidecar Pattern (monitoring before tool execution)
@@ -20,7 +20,7 @@
  * - OWASP LLM03 (Supply Chain Vulnerabilities)
  * - MITRE ATLAS AML.T0047 (ML Supply Chain Compromise)
  *
- * @version 0.1.0 (vex-talon)
+ * @version 0.1.0 (0k-talon)
  * @date 2026-02-04
  */
 

@@ -3,7 +3,7 @@
 /**
  * L7: Image Safety Scanner - PostToolUse Hook
  *
- * Part of Vex-Talon 20-layer defense-in-depth architecture.
+ * Part of 0K-Talon 20-layer defense-in-depth architecture.
  *
  * Purpose: Scan images for visual prompt injection and steganography.
  * Pattern: Sidecar Pattern (monitoring after tool execution)
@@ -18,7 +18,7 @@
  * - OWASP LLM01 (Prompt Injection via images)
  * - MITRE ATLAS AML.T0048 (Adversarial Example)
  *
- * @version 0.1.0 (vex-talon)
+ * @version 0.1.0 (0k-talon)
  * @date 2026-02-04
  */
 

@@ -3,7 +3,7 @@
 /**
  * L5: Output Sanitizer - PostToolUse Hook
  *
- * Part of Vex-Talon 20-layer defense-in-depth architecture.
+ * Part of 0K-Talon 20-layer defense-in-depth architecture.
  *
  * Purpose: Scan web and terminal files for unsafe output patterns after write.
  * Pattern: Sidecar Pattern (monitoring after tool execution)
@@ -17,7 +17,7 @@
  * - OWASP LLM05 (Improper Output Handling)
  * - Terminal DiLLMa (SAGAI 2025 case study #6)
  *
- * @version 0.2.0 (vex-talon)
+ * @version 0.2.0 (0k-talon)
  * @date 2026-02-11
  */
 

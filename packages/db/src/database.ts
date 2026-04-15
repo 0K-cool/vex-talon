@@ -1,5 +1,5 @@
 /**
- * @vex-talon/db - Database Connection
+ * @0k-talon/db - Database Connection
  */
 
 import Database from 'better-sqlite3';
@@ -13,19 +13,19 @@ export { _CREATE_TABLES as CREATE_TABLES, _SEED_LAYERS as SEED_LAYERS };
 let db: Database.Database | null = null;
 
 export function getDbPath(): string {
-  const customPath = process.env.VEX_TALON_DB_PATH;
+  const customPath = process.env.OK_TALON_DB_PATH;
   if (customPath) {
     // Validate custom path: must be absolute, no traversal, under HOME or CWD
     const resolved = require('path').resolve(customPath);
     const home = process.env.HOME || '';
     const cwd = process.cwd();
     if (resolved.includes('..') || (!resolved.startsWith(home) && !resolved.startsWith(cwd))) {
-      console.error(`[vex-talon/db] VEX_TALON_DB_PATH rejected: must be under HOME or CWD. Using default.`);
+      console.error(`[0k-talon/db] OK_TALON_DB_PATH rejected: must be under HOME or CWD. Using default.`);
     } else {
       return resolved;
     }
   }
-  const dataDir = join(process.cwd(), '.vex-talon', 'data');
+  const dataDir = join(process.cwd(), '.0k-talon', 'data');
   if (!existsSync(dataDir)) mkdirSync(dataDir, { recursive: true });
   return join(dataDir, 'security.db');
 }

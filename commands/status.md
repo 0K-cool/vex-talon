@@ -1,9 +1,9 @@
 ---
 name: status
-description: Show Vex-Talon security layer status and recent activity
+description: Show 0K-Talon security layer status and recent activity
 ---
 
-# Vex-Talon Status
+# 0K-Talon Status
 
 Display the current status of all 20 security layers and recent activity.
 
@@ -58,10 +58,10 @@ RECENT ACTIVITY (Last 24h)
 
 QUICK ACTIONS
 ───────────────────────────────────────────────────────────────
-/vex-talon:status          Refresh this status dashboard
-/vex-talon:intel-update    Update threat patterns and frameworks
-/vex-talon:report          Generate detailed security report
-/vex-talon:scan            Run security scan
+/0k-talon:status          Refresh this status dashboard
+/0k-talon:intel-update    Update threat patterns and frameworks
+/0k-talon:report          Generate detailed security report
+/0k-talon:scan            Run security scan
 
 ═══════════════════════════════════════════════════════════════
 ```
@@ -75,5 +75,5 @@ QUICK ACTIONS
 
 ## Related Commands
 
-- `/vex-talon:scan` - Run security scan
-- `/vex-talon:report` - Generate detailed report
+- `/0k-talon:scan` - Run security scan
+- `/0k-talon:report` - Generate detailed report

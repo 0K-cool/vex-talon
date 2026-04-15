@@ -5,13 +5,13 @@
  *
  * Purpose: Initialize session with appropriate permission profile
  * Pattern: Configuration Hook (runs once at session start)
- * Action: Sets VEX_TALON_PROFILE environment context
+ * Action: Sets OK_TALON_PROFILE environment context
  * OWASP: LLM02 (Sensitive Information Disclosure)
  *
  * Profiles restrict what tools can be used and what paths can be accessed.
  * The L1 Governor Agent reads the active profile and enforces restrictions.
  *
- * Vex-Talon v0.1.0
+ * 0K-Talon v0.1.0
  */
 
 import { join } from 'path';
@@ -140,7 +140,7 @@ function saveActiveProfile(profile: Profile): void {
 }
 
 function getProfileFromEnv(): string {
-  return process.env.VEX_TALON_PROFILE || process.env.VEX_PROFILE || 'dev';
+  return process.env.OK_TALON_PROFILE || process.env.VEX_PROFILE || 'dev';
 }
 
 // ============================================================================
@@ -191,7 +191,7 @@ async function main() {
         console.error(`    Blocked tools: ${profile.tools.blocked.join(', ')}`);
       }
 
-      console.error(`    Change profile: VEX_TALON_PROFILE=dev claude\n`);
+      console.error(`    Change profile: OK_TALON_PROFILE=dev claude\n`);
 
       const restrictions: string[] = [];
       if (profile.tools.mode === 'allowlist' && profile.tools.allowed) {

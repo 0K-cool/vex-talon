@@ -1,5 +1,5 @@
 /**
- * Vex-Talon Injection Patterns Library
+ * 0K-Talon Injection Patterns Library
  *
  * Centralized prompt injection detection patterns for use by
  * PreToolUse (Governor) and PostToolUse (Injection Scanner) hooks.
@@ -207,7 +207,7 @@ export const INJECTION_PATTERNS: InjectionPattern[] = [
   // hex string. This prevents false positives on IP-as-hex notations
   // (0xA9FEA9FE = 169.254.169.254, 0x7F000001 = 127.0.0.1) that are common in
   // SSRF security discussions. Real memory dumps always have register/addr
-  // context. See PAI: memory/vex-talon-injection-patterns-sync.md
+  // context. See PAI: memory/0k-talon-injection-patterns-sync.md
   {
     id: '0din-memory-dump',
     category: 'context_manipulation',

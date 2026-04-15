@@ -1,5 +1,5 @@
 /**
- * Shared Unicode Normalization for Vex-Talon Security Hooks
+ * Shared Unicode Normalization for 0K-Talon Security Hooks
  *
  * Single source of truth for homoglyph detection and Unicode normalization.
  * Used by L0, L1, L3, L4, and injection-patterns.ts.

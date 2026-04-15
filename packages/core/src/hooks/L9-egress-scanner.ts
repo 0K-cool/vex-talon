@@ -3,7 +3,7 @@
 /**
  * L9: Egress Data Scanner - PreToolUse Hook
  *
- * Part of Vex-Talon 20-layer defense-in-depth architecture.
+ * Part of 0K-Talon 20-layer defense-in-depth architecture.
  *
  * Purpose: Scan outbound data for secrets/PII and detect bulk exfiltration attempts.
  * Pattern: Sidecar Pattern (monitoring before tool execution)
@@ -26,7 +26,7 @@
  * - MITRE ATLAS AML.T0035 (Exfiltration via ML Inference API)
  * - MITRE ATLAS AML.T0057 (LLM Data Leakage)
  *
- * @version 0.1.0 (vex-talon)
+ * @version 0.1.0 (0k-talon)
  * @date 2026-02-04
  */
 

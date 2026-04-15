@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * Vex-Talon Cedar Policy Test Suite
+ * 0K-Talon Cedar Policy Test Suite
  *
  * Validates all Cedar policies (Phase 1-3) against the Talon schema.
  * Run: bun run packages/core/src/security/cedar/test-cedar-policies.ts
@@ -446,7 +446,7 @@ const tests: TestCase[] = [
 let passed = 0;
 let failed = 0;
 
-console.log(`\nVex-Talon Cedar Policy Test Suite`);
+console.log(`\n0K-Talon Cedar Policy Test Suite`);
 console.log(`Schema: ${join(CEDAR_DIR, 'talon.cedarschema')}`);
 console.log(`Policies: ${policyFiles.join(', ')}`);
 console.log(`Tests: ${tests.length}\n`);

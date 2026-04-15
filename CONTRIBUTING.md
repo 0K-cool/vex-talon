@@ -42,7 +42,7 @@ Include test cases for any new patterns.
 # Requirements: Bun, pnpm 9+, Node 20+
 
 git clone https://github.com/0K-cool/0k-talon.git
-cd vex-talon
+cd 0k-talon
 pnpm install
 pnpm build
 pnpm test

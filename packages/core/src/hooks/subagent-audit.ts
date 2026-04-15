@@ -15,7 +15,7 @@
  * - OWASP ASI03 (Identity & Privilege Abuse)
  * - MITRE ATLAS AML.T0096 (AI Service API)
  *
- * @version 1.0.0 (vex-talon)
+ * @version 1.0.0 (0k-talon)
  * @date 2026-04-02
  */
 

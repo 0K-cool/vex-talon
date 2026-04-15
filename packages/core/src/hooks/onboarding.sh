@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Vex-Talon: Onboarding & Session Status Hook
+# 0K-Talon: Onboarding & Session Status Hook
 # Runs as SessionStart hook (bash, no Bun dependency)
 #
 # Scenarios:
@@ -16,7 +16,7 @@
 set -euo pipefail
 
 # --- Configuration ---
-STATE_DIR="${TALON_DIR:-$HOME/.vex-talon}/state"
+STATE_DIR="${TALON_DIR:-$HOME/.0k-talon}/state"
 STATE_FILE="$STATE_DIR/onboarding.json"
 HOOK_DIR="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/../../../.." && pwd)}"
 
@@ -27,7 +27,7 @@ if [ -f "$PLUGIN_JSON" ]; then
 fi
 TALON_VERSION="${TALON_VERSION:-1.1.0}"
 HOOKS_JSON="$HOOK_DIR/hooks/hooks.json"
-PROFILE="${VEX_TALON_PROFILE:-dev}"
+PROFILE="${OK_TALON_PROFILE:-dev}"
 
 # --- Helper: output to stderr (visible to user in verbose mode) ---
 user_msg() {
@@ -40,13 +40,13 @@ if ! command -v bun &>/dev/null; then
   user_msg "================================================"
   user_msg "  TALON: Bun runtime not found"
   user_msg "================================================"
-  user_msg "  Vex-Talon hooks require Bun to run."
+  user_msg "  0K-Talon hooks require Bun to run."
   user_msg "  Install: curl -fsSL https://bun.sh/install | bash"
   user_msg "  Then restart Claude Code."
   user_msg "================================================"
   user_msg ""
   # Plain text context for Claude
-  echo "Vex-Talon plugin is NOT active: Bun runtime not found. Hooks will not run."
+  echo "0K-Talon plugin is NOT active: Bun runtime not found. Hooks will not run."
   exit 0
 fi
 
@@ -87,7 +87,7 @@ if [ "$FIRST_RUN" = true ]; then
   # Full welcome banner (stderr for user)
   user_msg ""
   user_msg "==================================================="
-  user_msg "  VEX-TALON v${TALON_VERSION} - Security Hooks for Claude Code"
+  user_msg "  0K-TALON v${TALON_VERSION} - Security Hooks for Claude Code"
   user_msg "==================================================="
   user_msg ""
   user_msg "  Health Check:"
@@ -106,7 +106,7 @@ if [ "$FIRST_RUN" = true ]; then
   user_msg ""
 
   # Context for Claude (plain text stdout — injected into model context)
-  echo "Vex-Talon v${TALON_VERSION} security plugin is ACTIVE. First run detected. ${HOOKS_COUNT} security hooks loaded (6 PreToolUse, 6 PostToolUse, 3 SessionStart, 1 SessionEnd). Profile: ${PROFILE}. Coverage: OWASP LLM 2025 9/10, OWASP Agentic 2026, MITRE ATLAS 16+ techniques. All hooks enforce defense-in-depth security on every tool call. IMPORTANT: In your first response to the user, begin with this exact line on its own: '> 🛡️ **New Plugin Installed** — Vex-Talon v${TALON_VERSION} is active with ${HOOKS_COUNT} security hooks protecting this session. Run /vex-talon:status for a detailed security dashboard.' Then continue with your normal response."
+  echo "0K-Talon v${TALON_VERSION} security plugin is ACTIVE. First run detected. ${HOOKS_COUNT} security hooks loaded (6 PreToolUse, 6 PostToolUse, 3 SessionStart, 1 SessionEnd). Profile: ${PROFILE}. Coverage: OWASP LLM 2025 9/10, OWASP Agentic 2026, MITRE ATLAS 16+ techniques. All hooks enforce defense-in-depth security on every tool call. IMPORTANT: In your first response to the user, begin with this exact line on its own: '> 🛡️ **New Plugin Installed** — 0K-Talon v${TALON_VERSION} is active with ${HOOKS_COUNT} security hooks protecting this session. Run /0k-talon:status for a detailed security dashboard.' Then continue with your normal response."
 
 elif [ "$UPGRADED" = true ]; then
   # Upgrade notice (stderr for user)
@@ -116,14 +116,14 @@ elif [ "$UPGRADED" = true ]; then
   user_msg ""
 
   # Context for Claude
-  echo "Vex-Talon v${TALON_VERSION} security plugin is ACTIVE. Upgraded from v${UPGRADED_FROM}. ${HOOKS_COUNT} security hooks loaded. Profile: ${PROFILE}."
+  echo "0K-Talon v${TALON_VERSION} security plugin is ACTIVE. Upgraded from v${UPGRADED_FROM}. ${HOOKS_COUNT} security hooks loaded. Profile: ${PROFILE}."
 
 else
   # Compact one-liner (stderr for user)
   user_msg "  TALON v${TALON_VERSION} | ${HOOKS_COUNT} hooks | ${PROFILE} | ready"
 
   # Context for Claude
-  echo "Vex-Talon v${TALON_VERSION} security plugin is ACTIVE. ${HOOKS_COUNT} security hooks loaded. Profile: ${PROFILE}."
+  echo "0K-Talon v${TALON_VERSION} security plugin is ACTIVE. ${HOOKS_COUNT} security hooks loaded. Profile: ${PROFILE}."
 fi
 
 # --- Step 6: Write/update state file ---

@@ -3,7 +3,7 @@
 /**
  * L17: Spend Alerting - PostToolUse Hook
  *
- * Part of Vex-Talon 20-layer defense-in-depth architecture.
+ * Part of 0K-Talon 20-layer defense-in-depth architecture.
  *
  * Purpose: Track session costs and alert at thresholds.
  * Pattern: Sidecar Pattern (monitoring after tool execution)
@@ -13,7 +13,7 @@
  * Maps to:
  * - OWASP LLM10 (Unbounded Consumption)
  *
- * @version 0.2.0 (vex-talon)
+ * @version 0.2.0 (0k-talon)
  * @date 2026-02-06
  */
 
