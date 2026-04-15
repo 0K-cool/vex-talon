@@ -256,7 +256,7 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticNames: ['Unexpected Code Execution'],
     status: 'active',
     source: 'external',
-    setupHint: 'Install Leash kernel sandbox and set VEX_LEASH_ACTIVE=true',
+    setupHint: 'Install Leash kernel sandbox and set OK_TALON_LEASH_ACTIVE=true',
   },
   {
     layer: '12',
@@ -310,7 +310,7 @@ const ATLAS_MAPPINGS: ATLASMapping[] = [
     owaspAgenticNames: [],
     status: 'active',
     source: 'external',
-    setupHint: 'Install vex-rag plugin with RAG security module',
+    setupHint: 'Install 0k-rag plugin with RAG security module',
   },
   {
     layer: '16',
@@ -414,16 +414,16 @@ function detectLayerStatus(): void {
         break;
       case '11': // Leash Kernel Sandbox
         mapping.status = (
-          process.env.VEX_LEASH_ACTIVE === 'true' ||
+          process.env.OK_TALON_LEASH_ACTIVE === 'true' ||
           existsSync('/opt/homebrew/bin/leash') ||
-          existsSync(join(cwd, '.claude/scripts/vex-sandboxed'))
+          existsSync(join(cwd, '.claude/scripts/0k-sandboxed'))
         ) ? 'active' : 'not_installed';
         break;
       case '13': // Strawberry Hallucination Detection
         mapping.status = checkMcpServer('hallucination-detector') ? 'active' : 'not_installed';
         break;
       case '15': // RAG Security Scanner
-        mapping.status = checkMcpServer('vex-knowledge-base') ? 'active' : 'not_installed';
+        mapping.status = checkMcpServer('0k-knowledge-base') ? 'active' : 'not_installed';
         break;
       case '18': // MCP Audit (Proximity)
         mapping.status = existsSync(join(homedir(), 'tools/proximity')) ? 'active' : 'not_installed';
@@ -723,7 +723,7 @@ interface ReportData {
       low: { governor: number; injection: number; imageSafety: number; secureCode: number; linter: number; leash: number; memory: number; securityRadar: number };
     };
   };
-  vexAnalysis?: string;
+  talonAnalysis?: string;
 }
 
 // ============================================================================
@@ -1137,7 +1137,7 @@ function sortBySeverity<T>(events: T[]): T[] {
 // 0K-Talon Analysis (Haiku-powered Executive Summary)
 // ============================================================================
 
-async function generateVexAnalysis(data: ReportData): Promise<string> {
+async function generateTalonAnalysis(data: ReportData): Promise<string> {
   try {
     // Build context for Haiku
     const securitySummary = {
@@ -1678,24 +1678,24 @@ function generateHTML(data: ReportData): string {
     </div>
 
     <!-- 0K-Talon Analysis (AI-Synthesized Executive Summary) -->
-    ${data.vexAnalysis ? `
-    <div class="vex-analysis-container" style="margin: 20px 0; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.05)); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; overflow: hidden;">
-      <div class="vex-analysis-header" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(139, 92, 246, 0.15); cursor: pointer;" onclick="this.parentElement.classList.toggle('collapsed')">
+    ${data.talonAnalysis ? `
+    <div class="talon-analysis-container" style="margin: 20px 0; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.05)); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; overflow: hidden;">
+      <div class="talon-analysis-header" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(139, 92, 246, 0.15); cursor: pointer;" onclick="this.parentElement.classList.toggle('collapsed')">
         <div style="display: flex; align-items: center; gap: 10px;">
           <span style="font-size: 20px;">\ud83d\udee1\ufe0f</span>
           <span style="font-weight: 600; color: var(--text-primary);">0K-Talon Analysis</span>
           <span style="font-size: 11px; color: var(--text-muted); background: var(--bg-tertiary); padding: 2px 8px; border-radius: 10px;">AI-Synthesized</span>
         </div>
-        <span class="vex-analysis-toggle" style="color: var(--text-muted); transition: transform 0.2s;">\u25bc</span>
+        <span class="talon-analysis-toggle" style="color: var(--text-muted); transition: transform 0.2s;">\u25bc</span>
       </div>
-      <div class="vex-analysis-content" style="padding: 16px; line-height: 1.6; color: var(--text-secondary);">
-        ${escapeHtml(data.vexAnalysis).replace(/\n/g, '<br>')}
+      <div class="talon-analysis-content" style="padding: 16px; line-height: 1.6; color: var(--text-secondary);">
+        ${escapeHtml(data.talonAnalysis).replace(/\n/g, '<br>')}
       </div>
     </div>
     <style>
-      .vex-analysis-container.collapsed .vex-analysis-content { display: none; }
-      .vex-analysis-container.collapsed .vex-analysis-toggle { transform: rotate(-90deg); }
-      .vex-analysis-container:hover { border-color: rgba(139, 92, 246, 0.5); }
+      .talon-analysis-container.collapsed .talon-analysis-content { display: none; }
+      .talon-analysis-container.collapsed .talon-analysis-toggle { transform: rotate(-90deg); }
+      .talon-analysis-container:hover { border-color: rgba(139, 92, 246, 0.5); }
     </style>
     ` : ''}
 
@@ -3351,11 +3351,11 @@ async function main() {
     // Generate 0K-Talon Analysis (AI-powered executive summary)
     console.error('TALON: Generating 0K-Talon Analysis (via claude CLI)...');
     try {
-      reportData.vexAnalysis = await generateVexAnalysis(reportData);
+      reportData.talonAnalysis = await generateTalonAnalysis(reportData);
       console.error('TALON: 0K-Talon Analysis generated');
     } catch (analysisError) {
       console.error(`TALON: 0K-Talon Analysis unavailable: ${analysisError}`);
-      reportData.vexAnalysis = undefined;
+      reportData.talonAnalysis = undefined;
     }
 
     // Generate HTML

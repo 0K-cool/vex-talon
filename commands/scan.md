@@ -107,7 +107,7 @@ Output a security report with:
 
 ```
 ═══════════════════════════════════════════════════════════════
-           VEX-TALON SECURITY SCAN REPORT
+           0K-TALON SECURITY SCAN REPORT
 ═══════════════════════════════════════════════════════════════
 
 Target: {{ target }}

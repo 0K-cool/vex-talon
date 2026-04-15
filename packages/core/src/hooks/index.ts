@@ -29,7 +29,7 @@
  * L6:  Git Pre-commit          Git Hook       📄 DOCS     Pre-commit secret scanning (setup guide)
  * L8:  Evaluator Agent         Git Hook       📄 DOCS     Post-commit validation (setup guide)
  * L10: Native Sandbox          Built-in       📄 DOCS     Claude Code sandbox (reference)
- * L15: RAG Security Scanner    Pre-index      📄 DOCS     RAG poisoning (vex-rag reference)
+ * L15: RAG Security Scanner    Pre-index      📄 DOCS     RAG poisoning (0k-rag reference)
  * L16: Human Decision          Built-in       📄 DOCS     Human-in-the-loop (reference)
  *
  * OPTIONAL LAYERS (3 - require external tools):
@@ -168,7 +168,7 @@ export const LAYERS: LayerDefinition[] = [
   },
   {
     id: 'L15', name: 'RAG Security Scanner', type: 'Documentation', status: 'DOCS',
-    description: 'RAG poisoning (vex-rag)',
+    description: 'RAG poisoning (0k-rag)',
     action: 'ALERT', owaspMapping: 'LLM04, LLM08'
   },
   {
@@ -300,7 +300,7 @@ export function printArchitectureSummary(): void {
   const stats = getCoverageStats();
   console.log(`
 ╔═══════════════════════════════════════════════════════════════════╗
-║           VEX-TALON SECURITY ARCHITECTURE v${HOOK_VERSION}              ║
+║           0K-TALON SECURITY ARCHITECTURE v${HOOK_VERSION}              ║
 ╠═══════════════════════════════════════════════════════════════════╣
 ║  Ported Hooks: ${String(stats.ported).padEnd(2)} / ${stats.total}                                       ║
 ║  PreToolUse:   ${String(stats.preToolUse).padEnd(2)} (can BLOCK)                                  ║

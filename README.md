@@ -19,7 +19,7 @@
 
 **20-layer defense-in-depth security plugin for Claude Code.**
 
-*Vex (velociraptor) + Talon (claw) — sharp, fast, always watching. Defense-in-depth security that strikes before threats land. (now 0K-Talon)*
+*Sharp, fast, always watching. Defense-in-depth security that strikes before threats land.*
 
 > **This plugin is not for the faint of heart.** 0K-Talon runs 19 hooks on every tool call and config change — 6 before execution, 6 after, plus session lifecycle, config change, user prompt, subagent stop, and onboarding hooks — plus behavioral security directives loaded into the AI's reasoning context. It was built for security professionals and developers who want serious protection for their AI coding agent. If you want a lightweight linter, this isn't it. If you want defense-in-depth that maps to OWASP and MITRE frameworks, keep reading.
 
@@ -359,7 +359,7 @@ Both tools are from the [OpenA2A](https://opena2a.org/) ecosystem (open-source A
 |-------|------|----------|
 | **L11** Leash Kernel Sandbox | eBPF-based kernel sandbox with no prompt-injection bypass. For high-security and client work | [Leash](https://github.com/strongdm/leash) binary (Linux with eBPF) |
 | **L13** Strawberry Hallucination Detector | Information-theoretic hallucination detection via KL divergence. For threat intel, client deliverables | [Pythea/Strawberry](https://github.com/leochlon/pythea) + OpenAI API key |
-| **L15** RAG Security Scanner | Anti-poisoning for RAG knowledge bases: injection detection, Unicode normalization, provenance tracking | [vex-rag](https://github.com/0K-cool/vex-rag) plugin |
+| **L15** RAG Security Scanner | Anti-poisoning for RAG knowledge bases: injection detection, Unicode normalization, provenance tracking | [0k-rag](https://github.com/0K-cool/0k-rag) plugin |
 | **L18** MCP Audit | Pre-deployment security scanning for MCP servers using NOVA injection rules. **Built-in:** ConfigChange hook blocks malicious `.mcp.json` edits in real-time (no external tools needed) | Optional: [Proximity](https://github.com/fr0gger/proximity) scanner for deep static analysis |
 
 ### Static Analysis Tools (Extend L2 & L6)
@@ -678,7 +678,7 @@ rm -rf ~/.0k-talon
 - **Auditable** - Open source, review every hook
 - **Minimal deps** - Reduced supply chain surface
 - **4 rounds of security audit** - Score: 91/100
-- **Battle-tested** - Developed and tested on Vex, Kelvin's personal AI infrastructure built on Claude Code. Every hook runs in daily professional cybersecurity work before being ported to this plugin.
+- **Battle-tested** - Extensively tested in professional cybersecurity workflows before release. Every hook runs in daily pentest and IR work.
 
 ### Reporting Vulnerabilities
 

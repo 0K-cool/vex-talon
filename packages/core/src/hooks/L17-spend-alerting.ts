@@ -124,7 +124,7 @@ async function main() {
 
     saveState(state);
 
-    // Output JSON with additionalContext so Claude/Vex is aware of spend threshold
+    // Output JSON with additionalContext so the AI is aware of spend threshold
     if (triggeredThreshold) {
       console.log(JSON.stringify({
         continue: true,

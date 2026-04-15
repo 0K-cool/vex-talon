@@ -140,7 +140,7 @@ function saveActiveProfile(profile: Profile): void {
 }
 
 function getProfileFromEnv(): string {
-  return process.env.OK_TALON_PROFILE || process.env.VEX_PROFILE || 'dev';
+  return process.env.OK_TALON_PROFILE || 'dev';
 }
 
 // ============================================================================

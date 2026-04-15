@@ -537,6 +537,6 @@ jq '.' ~/.0k-talon/config/framework/atlas-owasp-mappings.json > /dev/null && ech
 ---
 
 **Version:** 2.2.0
-**Ported from:** Vex PAI security-intel-update skill v1.3.0
+**Ported from:** security-intel-update skill v1.3.0
 **Updated:** 2026-02-13
 **Changes:** Added Shield.md (Thomas Roccia) as standards tracking source — quarterly check for spec evolution, v1 milestone, community adoption

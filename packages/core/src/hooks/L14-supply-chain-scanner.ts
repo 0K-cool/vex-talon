@@ -141,7 +141,7 @@ async function main() {
     if (malicious.length > 0) {
       displayWarning(malicious);
 
-      // Output JSON with additionalContext so Claude/Vex is aware of malicious packages
+      // Output JSON with additionalContext so the AI is aware of malicious packages
       const pkgList = malicious.map(m => `${m.pkg} (${m.reason})`).join('; ');
       console.log(JSON.stringify({
         continue: true,

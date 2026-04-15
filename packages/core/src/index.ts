@@ -22,7 +22,7 @@
  * - L6:   Git Pre-commit          Git Hook                 Pre-commit secret scanning
  * - L8:   Evaluator Agent         Git Hook                 Post-commit validation
  * - L10:  Native Sandbox          Built-in                 Claude Code sandbox
- * - L15:  RAG Security Scanner    Pre-index                RAG poisoning (vex-rag)
+ * - L15:  RAG Security Scanner    Pre-index                RAG poisoning (0k-rag)
  * - L16:  Human Decision          Built-in                 Human-in-the-loop authority
  *
  * OPTIONAL LAYERS (3 - require external tools):

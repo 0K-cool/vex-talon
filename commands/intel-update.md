@@ -52,7 +52,7 @@ cat ~/.0k-talon/config/framework/atlas-owasp-mappings.json 2>/dev/null | jq '.me
 Display status:
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║           VEX-TALON SECURITY INTELLIGENCE STATUS             ║
+║           0K-TALON SECURITY INTELLIGENCE STATUS             ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  Config Files:                                               ║
 ║    injection/patterns.json:  {{ exists/missing }}             ║
@@ -88,7 +88,7 @@ Display status:
 
 ```
 ═══════════════════════════════════════════════════════════════
-        VEX-TALON SECURITY INTELLIGENCE UPDATE
+        0K-TALON SECURITY INTELLIGENCE UPDATE
 ═══════════════════════════════════════════════════════════════
 
 Date: {{ timestamp }}

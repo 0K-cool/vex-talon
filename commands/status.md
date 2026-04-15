@@ -11,7 +11,7 @@ Display the current status of all 20 security layers and recent activity.
 
 ```
 ═══════════════════════════════════════════════════════════════
-              VEX-TALON SECURITY STATUS
+              0K-TALON SECURITY STATUS
 ═══════════════════════════════════════════════════════════════
 
 PORTED LAYERS (12/20)
@@ -34,7 +34,7 @@ DOCUMENTATION LAYERS (5)
 📄 L6  Git Pre-commit          Setup guide available
 📄 L8  Evaluator Agent         Setup guide available
 📄 L10 Native Sandbox          Reference documentation
-📄 L15 RAG Security Scanner    vex-rag integration guide
+📄 L15 RAG Security Scanner    0k-rag integration guide
 📄 L16 Human Decision          Reference documentation
 
 OPTIONAL LAYERS (3)

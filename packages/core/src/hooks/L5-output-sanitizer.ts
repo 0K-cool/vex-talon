@@ -126,7 +126,7 @@ async function main() {
 
     displayWarning(findings, filePath);
 
-    // Output JSON with additionalContext so Claude/Vex is aware of XSS patterns
+    // Output JSON with additionalContext so the AI is aware of XSS patterns
     const criticalFindings = findings.filter(f => f.severity === 'CRITICAL');
     const patternNames = findings.slice(0, 3).map(f => f.name).join(', ');
 
