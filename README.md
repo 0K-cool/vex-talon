@@ -690,7 +690,7 @@ Found a security issue? Please report via [GitHub Security Advisories](https://g
 
 ## License
 
-MIT
+[MIT](LICENSE)
 
 ---
 
