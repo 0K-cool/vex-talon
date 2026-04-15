@@ -1,5 +1,5 @@
 {
-  "description": "0K-Talon: 20-layer defense-in-depth security for Claude Code",
+  "description": "0K-Talon: 21-layer defense-in-depth security for Claude Code",
   "hooks": {
     "PreToolUse": [
       {
@@ -90,6 +90,11 @@
             "type": "command",
             "command": "bun run ${CLAUDE_PLUGIN_ROOT}/packages/core/src/hooks/L3-auto-memory-guardian.ts",
             "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "bun run ${CLAUDE_PLUGIN_ROOT}/packages/core/src/hooks/L20-session-integrity.ts",
+            "timeout": 10000
           }
         ]
       }
