@@ -496,9 +496,6 @@ function calculateAgenticCoverage(): void {
 
 // Use hardcoded mappings directly (no YAML loading in plugin context)
 const ATLAS_MAPPINGS_LOADED = ATLAS_MAPPINGS;
-const MAPPINGS_METADATA = null;
-const MAPPINGS_IS_STALE = false;
-const MAPPINGS_DAYS_OLD = 0;
 const TOTAL_RELEVANT_ATLAS = 16;
 
 // ============================================================================
@@ -786,7 +783,7 @@ function readJsonlFile<T>(filePath: string, sessionId?: string): T[] {
           return null;
         }
       })
-      .filter((entry): entry is T => {
+      .filter((entry): entry is T & { timestamp?: string; session_id?: string } => {
         if (!entry) return false;
         const e = entry as any;
 
@@ -804,7 +801,7 @@ function readJsonlFile<T>(filePath: string, sessionId?: string): T[] {
         }
 
         return true;
-      });
+      }) as T[];
   } catch {
     return [];
   }
@@ -1104,9 +1101,9 @@ function escapeHtml(str: string | null | undefined): string {
 function getToolIcon(toolName: string): string {
   // Handle MCP tools (mcp__server__tool format)
   if (toolName.startsWith('mcp__')) {
-    return TOOL_ICONS.MCP;
+    return TOOL_ICONS.MCP ?? '';
   }
-  return TOOL_ICONS[toolName] || TOOL_ICONS.default;
+  return (TOOL_ICONS[toolName] || TOOL_ICONS.default) ?? '';
 }
 
 function formatDuration(ms: number): string {
@@ -2713,7 +2710,6 @@ function generateMemorySecurityEventsHTML(events: MemorySecurityEntry[]): string
     return '<div class="empty-state"><div class="emoji">\ud83e\udde0</div><p>No memory poisoning attempts detected</p></div>';
   }
 
-  const preToolUse = withFindings.filter((e) => e.hookType === 'PreToolUse');
   const postToolUse = withFindings.filter((e) => e.hookType === 'PostToolUse');
   const criticalCount = withFindings.filter((e) => e.highestSeverity === 'CRITICAL').length;
   const blocked = withFindings.filter((e) => e.action === 'BLOCK').length;

@@ -49,7 +49,7 @@ async function main() {
     const mentions: string[] = [];
     let match: RegExpExecArray | null;
     while ((match = AT_MENTION_REGEX.exec(data.prompt)) !== null) {
-      mentions.push(match[1]);
+      mentions.push(match[1] ?? '');
     }
     if (mentions.length === 0) process.exit(0);
 

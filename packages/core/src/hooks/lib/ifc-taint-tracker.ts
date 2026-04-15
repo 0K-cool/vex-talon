@@ -24,7 +24,7 @@ const STATE_FILE = join(STATE_DIR, 'session-taint.json');
 
 // Labels config: user-configured path first, bundled fallback second
 const USER_LABELS_FILE = join(TALON_DIR, 'security', 'cedar', 'sensitivity-labels.json');
-const BUNDLED_LABELS_FILE = join(import.meta.dir, '..', '..', '..', 'security', 'cedar', 'sensitivity-labels.json');
+const BUNDLED_LABELS_FILE = join(__dirname, '..', '..', '..', 'security', 'cedar', 'sensitivity-labels.json');
 
 // Cache for labels (loaded once per session)
 let labelsCache: SensitivityLabel[] | null = null;

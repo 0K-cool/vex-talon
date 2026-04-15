@@ -29,7 +29,7 @@ const SCHEMA_FILE = join(CEDAR_DIR, 'talon.cedarschema');
 const POLICIES_DIR = join(CEDAR_DIR, 'policies');
 
 // Fallback to bundled source-tree cedar dir when TALON_DIR has no cedar config
-const BUNDLED_CEDAR_DIR = join(import.meta.dir, '..', '..', '..', 'security', 'cedar');
+const BUNDLED_CEDAR_DIR = join(__dirname, '..', '..', '..', 'security', 'cedar');
 const BUNDLED_SCHEMA_FILE = join(BUNDLED_CEDAR_DIR, 'talon.cedarschema');
 const BUNDLED_POLICIES_DIR = join(BUNDLED_CEDAR_DIR, 'policies');
 
@@ -62,7 +62,7 @@ function loadCedar() {
     try {
       // Absolute path from hooks/lib up to packages/core/node_modules
       const cedarPath = join(
-        import.meta.dir,
+        __dirname,
         '..', '..', '..', // hooks/lib -> hooks -> src -> packages/core
         'node_modules',
         '@cedar-policy', 'cedar-wasm', 'nodejs', 'cedar_wasm.js'
@@ -246,7 +246,7 @@ function parseMcpToolName(toolName: string): { server: string; method: string; s
   if (parts.length < 2) return null;
 
   const server = parts.slice(0, -1).join('__'); // Handle servers with __ in name
-  const method = parts[parts.length - 1];
+  const method = parts[parts.length - 1] ?? '';
 
   const classification = MCP_SERVICE_CLASSIFICATION[server];
   const serviceType = classification?.type || 'external'; // Default to external (safe default)

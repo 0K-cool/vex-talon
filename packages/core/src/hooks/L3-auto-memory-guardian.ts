@@ -28,7 +28,7 @@
  */
 
 import { existsSync, readFileSync, renameSync } from 'fs';
-import { join, resolve } from 'path';
+import { join } from 'path';
 import { homedir } from 'os';
 import { readdirSync } from 'fs';
 import { ensureTalonDirs, getAuditLogPath, getQuarantinePath, CONFIG_DIR, secureAppendLog } from './lib/talon-paths';
@@ -217,7 +217,7 @@ function scanFile(filePath: string, patterns: CompiledPattern[]): Finding[] {
   const seenPatterns = new Set<string>(); // Dedupe per file
 
   for (let i = 0; i < lines.length; i++) {
-    const normalized = normalizeUnicode(lines[i]);
+    const normalized = normalizeUnicode(lines[i] ?? '');
 
     for (const pattern of patterns) {
       if (seenPatterns.has(pattern.id)) continue;

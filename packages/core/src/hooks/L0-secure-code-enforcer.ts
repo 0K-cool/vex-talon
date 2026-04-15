@@ -521,7 +521,7 @@ async function main() {
       // Use segment-aware matching: path must contain the skip pattern as a directory segment
       // Prevents bypass via filenames like "/tmp/hooks/evil.py"
       const segments = filePath.split('/');
-      const isSegmentMatch = segments.some(s => skipPath.startsWith('.') ? filePath.endsWith(skipPath) : `/${s}/`.includes(skipPath) || s === skipPath.replace(/\//g, ''));
+      const isSegmentMatch = segments.some((s: string) => skipPath.startsWith('.') ? filePath.endsWith(skipPath) : `/${s}/`.includes(skipPath) || s === skipPath.replace(/\//g, ''));
       if (isSegmentMatch) {
         process.exit(0);
       }
