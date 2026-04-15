@@ -184,6 +184,7 @@ Hooks and Security Radar are complementary — hooks handle the known threats at
 
 ### Requirements
 
+- **macOS** (Apple Silicon optimized). Windows support planned.
 - [Claude Code](https://claude.com/claude-code) (CLI)
 - [Bun](https://bun.sh) v1.0+ runtime — **required**, all hooks are TypeScript executed via Bun
 
