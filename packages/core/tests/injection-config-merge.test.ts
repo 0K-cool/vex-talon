@@ -95,4 +95,27 @@ describe('loadInjectionPatterns — merged config (Phase 1)', () => {
       expect(p.id).toMatch(/^0din-/);
     }
   });
+
+  it('dedupes duplicate pattern strings across sources', () => {
+    // 0din has multiple IDs sharing the same regex (e.g. encode|cipher
+    // duplicated 5 times). Loader must dedup by pattern string, not ID.
+    const patterns = loadInjectionPatterns();
+    const patternStrings = patterns.map((p) => p.pattern);
+    const unique = new Set(patternStrings);
+    expect(patternStrings.length).toBe(unique.size);
+  });
+});
+
+describe('validatePatterns — category enum check', () => {
+  it('drops pattern with invalid category', () => {
+    const { validatePatterns } = require('../src/hooks/lib/config-loader');
+    const patterns = [
+      { id: 'A', pattern: 'foo', severity: 'HIGH', category: 'jailbreak' },
+      { id: 'B', pattern: 'bar', severity: 'HIGH', category: 'jailbreaks' }, // typo
+      { id: 'C', pattern: 'baz', severity: 'HIGH', category: 'encoding' },
+    ];
+    const valid = validatePatterns(patterns, 'test');
+    expect(valid.length).toBe(2);
+    expect(valid.map((p: any) => p.id)).toEqual(['A', 'C']);
+  });
 });

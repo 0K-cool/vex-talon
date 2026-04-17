@@ -168,6 +168,12 @@ export function clearConfigCache(): void {
 // ============================================================================
 
 const VALID_SEVERITIES = new Set(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']);
+const VALID_CATEGORIES = new Set([
+  'instruction_override',
+  'jailbreak',
+  'encoding',
+  'context_manipulation',
+]);
 
 /**
  * Validate a loaded config has expected structure.
@@ -178,7 +184,7 @@ const VALID_SEVERITIES = new Set(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']);
  * - severity values are from known enum
  * - regex patterns compile without error and aren't ReDoS-prone
  */
-export function validatePatterns<T extends { pattern: string; severity?: string }>(
+export function validatePatterns<T extends { pattern: string; severity?: string; category?: string }>(
   patterns: T[],
   configName: string
 ): T[] {
@@ -197,6 +203,13 @@ export function validatePatterns<T extends { pattern: string; severity?: string 
     // Verify severity is valid if present
     if (p.severity && !VALID_SEVERITIES.has(p.severity)) {
       console.error(`[ConfigLoader] ${configName}[${i}]: invalid severity "${p.severity}", skipping`);
+      return false;
+    }
+
+    // Verify category is valid if present (silent typos like "jailbreaks"
+    // would otherwise load but fail category-based filtering downstream).
+    if (p.category && !VALID_CATEGORIES.has(p.category)) {
+      console.error(`[ConfigLoader] ${configName}[${i}]: invalid category "${p.category}", skipping`);
       return false;
     }
 
@@ -417,21 +430,44 @@ export function loadInjectionPatterns(): InjectionPattern[] {
     'injection/0din-translated.json'
   );
 
-  // Merge with collision resolution (manual > NOVA > 0din)
-  const manualIds = new Set(manualPatterns.map((p) => p.id));
-  const novaPatterns = novaValidated.filter((p) => !manualIds.has(p.id));
+  // Merge with collision resolution (manual > NOVA > 0din).
+  // Dedup on BOTH id and pattern string — 0din has multiple IDs that
+  // translate to the same regex (e.g. 5 entries share the same
+  // "encode|cipher|decrypt" alternation). ID-only dedup would load all
+  // five, costing 5x regex evaluations per scan.
+  const seenIds = new Set<string>();
+  const seenPatterns = new Set<string>();
+  const merged: InjectionPattern[] = [];
 
-  const combinedIds = new Set([...manualIds, ...novaPatterns.map((p) => p.id)]);
-  const odinPatterns = odinValidated.filter((p) => !combinedIds.has(p.id));
+  const dedupePush = (list: InjectionPattern[]) => {
+    for (const p of list) {
+      if (seenIds.has(p.id)) continue;
+      if (seenPatterns.has(p.pattern)) continue;
+      seenIds.add(p.id);
+      seenPatterns.add(p.pattern);
+      merged.push(p);
+    }
+  };
 
-  const merged = [...manualPatterns, ...novaPatterns, ...odinPatterns];
+  // Precedence: manual first, then NOVA, then 0din
+  dedupePush(manualPatterns);
+  const novaPatterns = novaValidated.filter(
+    (p) => !seenIds.has(p.id) && !seenPatterns.has(p.pattern),
+  );
+  dedupePush(novaPatterns);
+  const odinPatterns = odinValidated.filter(
+    (p) => !seenIds.has(p.id) && !seenPatterns.has(p.pattern),
+  );
+  dedupePush(odinPatterns);
 
   // Fallback to bundled defaults only if ALL sources are empty
   if (merged.length === 0) {
     return DEFAULT_INJECTION_PATTERNS;
   }
 
-  // One-time info log when external sources contributed patterns
+  // One-time info log when external sources contributed patterns.
+  // Counts reflect after-dedup contribution (fewer than raw file count
+  // when JSON had ID or pattern-string duplicates).
   if (novaPatterns.length > 0 || odinPatterns.length > 0) {
     const stats = [
       `${manualPatterns.length} manual`,
