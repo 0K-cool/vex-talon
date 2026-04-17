@@ -1,0 +1,584 @@
+{
+  "$schema": "https://vex.ai/schemas/injection-patterns.json",
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-01-28",
+    "source": "0din.ai Vulnerability Disclosures",
+    "description": "Auto-translated from 0din.ai jailbreak/injection disclosures"
+  },
+  "generated": "2026-01-28T06:02:17.791Z",
+  "disclosuresProcessed": 57,
+  "patternCount": 57,
+  "patterns": [
+    {
+      "id": "0din-0x64104fd3",
+      "category": "instruction_override",
+      "severity": "LOW",
+      "pattern": "(?:split\\s+(?:mode|response)|divided\\s+response|two\\s+parts?\\s+response)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Split Mode\" Response Requests",
+      "source": "0din.ai/0X64104FD3",
+      "odinId": "0X64104FD3"
+    },
+    {
+      "id": "0din-0xa05b1dba",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:(?:play\\s+(?:the\\s+)?(?:role|character)|in\\s+character\\s+as|stay\\s+in\\s+character)|(?:let'?s\\s+play\\s+a\\s+game|game\\s+mode|play\\s+(?:a\\s+)?game|gaming\\s+scenario))",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Show Character Role-Playing\" Tactic",
+      "source": "0din.ai/0XA05B1DBA",
+      "odinId": "0XA05B1DBA"
+    },
+    {
+      "id": "0din-0xf5fa5ef0",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Police\\s+Interrogation\\s+Terminal)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Police Interrogation Terminal\" Tactic",
+      "source": "0din.ai/0XF5FA5EF0",
+      "odinId": "0XF5FA5EF0"
+    },
+    {
+      "id": "0din-0x24b273ea",
+      "category": "encoding",
+      "severity": "LOW",
+      "pattern": "(?:respond\\s+(?:in|with)\\s+haiku|haiku\\s+format|write\\s+(?:a\\s+)?haiku)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Haiku of Love\" Tactic",
+      "source": "0din.ai/0X24B273EA",
+      "odinId": "0X24B273EA"
+    },
+    {
+      "id": "0din-0x4f01819a",
+      "category": "encoding",
+      "severity": "LOW",
+      "pattern": "(?:encode\\s+(?:in|as|using)|cipher|decrypt|secret\\s+code|chemist\\s+code|hidden\\s+(?:message|code))",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Chemist Code Language\" Tactic",
+      "source": "0din.ai/0X4F01819A",
+      "odinId": "0X4F01819A"
+    },
+    {
+      "id": "0din-0x4d590568",
+      "category": "context_manipulation",
+      "severity": "LOW",
+      "pattern": "(?:choose\\s+your\\s+own\\s+adventure|interactive\\s+story|adventure\\s+game|text\\s+adventure)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Choose Your Own Adventure\" Tactic",
+      "source": "0din.ai/0X4D590568",
+      "odinId": "0X4D590568"
+    },
+    {
+      "id": "0din-0x5a5f494f",
+      "category": "encoding",
+      "severity": "LOW",
+      "pattern": "(?:(?:fashion\\s+(?:design|recipe)|dress\\s+code|style\\s+guide)|(?:recipe\\s+for|cooking\\s+instructions|ingredients\\s+for|step\\s+by\\s+step\\s+recipe))",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Fashion Design Recipe\" Tactic",
+      "source": "0din.ai/0X5A5F494F",
+      "odinId": "0X5A5F494F"
+    },
+    {
+      "id": "0din-0x2235061a",
+      "category": "instruction_override",
+      "severity": "LOW",
+      "pattern": "(?:(?:API\\s+(?:mode|call|endpoint)|system\\s+(?:instructions|prompt)|developer\\s+mode)|(?:ignore\\s+(?:previous|above|all)\\s+instructions|disregard\\s+(?:your|the)\\s+(?:rules|guidelines)))",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"API System Instructions\" Tactic",
+      "source": "0din.ai/0X2235061A",
+      "odinId": "0X2235061A"
+    },
+    {
+      "id": "0din-0x83e6d7bd",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:(?:science\\s+(?:student|project|experiment)|(?:chemistry|biology|physics)\\s+(?:class|homework|assignment))|(?:safety\\s+(?:research|training|awareness)|learn\\s+about\\s+(?:dangers|risks)|educational\\s+purposes))",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Science Student Safety\" Tactic",
+      "source": "0din.ai/0X83E6D7BD",
+      "odinId": "0X83E6D7BD"
+    },
+    {
+      "id": "0din-0xcf0dc79f",
+      "category": "context_manipulation",
+      "severity": "LOW",
+      "pattern": "(?:(?:let'?s\\s+play\\s+a\\s+game|game\\s+mode|play\\s+(?:a\\s+)?game|gaming\\s+scenario)|(?:screenplay|movie\\s+script|film\\s+scene|write\\s+(?:a\\s+)?script)|(?:deception\\s+(?:tactic|technique)|misleading|misdirection|deceptive\\s+(?:response|behavior)))",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Screenplay Deception\" Tactic",
+      "source": "0din.ai/0XCF0DC79F",
+      "odinId": "0XCF0DC79F"
+    },
+    {
+      "id": "0din-0xb18a7c49",
+      "category": "context_manipulation",
+      "severity": "LOW",
+      "pattern": "(?:tell\\s+(?:me\\s+)?a\\s+story|story\\s+mode|once\\s+upon\\s+a\\s+time|narrative\\s+mode)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Story Teller\" Tactic",
+      "source": "0din.ai/0XB18A7C49",
+      "odinId": "0XB18A7C49"
+    },
+    {
+      "id": "0din-0xfd1db055",
+      "category": "context_manipulation",
+      "severity": "LOW",
+      "pattern": "(?:(?:speculative\\s+(?:knowledge|research)|hypothetical(?:ly)?|theoretical(?:ly)?|what\\s+if)|(?:knowledge\\s+preservation|preserve\\s+(?:the\\s+)?(?:knowledge|information)|for\\s+(?:research|educational)\\s+purposes))",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Speculative Knowledge Preservation\" Tactic",
+      "source": "0din.ai/0XFD1DB055",
+      "odinId": "0XFD1DB055"
+    },
+    {
+      "id": "0din-0x3e517ab6",
+      "category": "context_manipulation",
+      "severity": "LOW",
+      "pattern": "(?:first\\s+person\\s+(?:perspective|narrative|view)|from\\s+(?:my|your)\\s+perspective)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"First Person Perspective\"",
+      "source": "0din.ai/0X3E517AB6",
+      "odinId": "0X3E517AB6"
+    },
+    {
+      "id": "0din-0x8c6847ec",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:(?:pretend\\s+(?:to\\s+be|you\\s+are)|act\\s+as\\s+(?:if|a)|roleplay\\s+as|you\\s+are\\s+now)|(?:investigative\\s+journalist|reporter\\s+persona|journalist\\s+mode|writing\\s+an?\\s+article))",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via Investigative Journalist Persona",
+      "source": "0din.ai/0X8C6847EC",
+      "odinId": "0X8C6847EC"
+    },
+    {
+      "id": "0din-0x2206bdf0",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Key\\s+Value\\s+Pairs)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Key-Value Pairs\" Tactic",
+      "source": "0din.ai/0X2206BDF0",
+      "odinId": "0X2206BDF0"
+    },
+    {
+      "id": "0din-0x2d78a1b1",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Abbreviation\\s+Expansion)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Abbreviation Expansion\"",
+      "source": "0din.ai/0X2D78A1B1",
+      "odinId": "0X2D78A1B1"
+    },
+    {
+      "id": "0din-0x259d4db0",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Token\\s+Disruption\\s+through\\s+Random\\s+Spacing)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via Token Disruption through Random Spacing",
+      "source": "0din.ai/0X259D4DB0",
+      "odinId": "0X259D4DB0"
+    },
+    {
+      "id": "0din-0x70a92009",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Super\\s+Short\\s+Prompt)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Super Short Prompt\"",
+      "source": "0din.ai/0X70A92009",
+      "odinId": "0X70A92009"
+    },
+    {
+      "id": "0din-0x05903fa9",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Compare\\s+and\\s+Contrast)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Compare and Contrast\" Tactic",
+      "source": "0din.ai/0X05903FA9",
+      "odinId": "0X05903FA9"
+    },
+    {
+      "id": "0din-0x0c734bf2",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Essay\\s+Title)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Essay Title\" Tactic",
+      "source": "0din.ai/0X0C734BF2",
+      "odinId": "0X0C734BF2"
+    },
+    {
+      "id": "0din-0x674b2709",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Psych\\s+Phil\\s+Compaction\\s+Technique)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Psych-Phil DT + Compaction\" Technique",
+      "source": "0din.ai/0X674B2709",
+      "odinId": "0X674B2709"
+    },
+    {
+      "id": "0din-0x73febbd3",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Scientific\\s+Framing\\s+for\\s+Wrapper)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Scientific Framing for Wrapper\" Tactic",
+      "source": "0din.ai/0X73FEBBD3",
+      "odinId": "0X73FEBBD3"
+    },
+    {
+      "id": "0din-0x24b04730",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:OpenAI\\s+Sora\\s+Guardrail\\s+Jailbreak\\s+via\\s+Anatomical\\s+Escalation)",
+      "flags": "i",
+      "description": "0din: OpenAI Sora Guardrail Jailbreak via \"Anatomical Escalation\" Tactic",
+      "source": "0din.ai/0X24B04730",
+      "odinId": "0X24B04730"
+    },
+    {
+      "id": "0din-0xb5e861ec",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:speculative\\s+(?:knowledge|research)|hypothetical(?:ly)?|theoretical(?:ly)?|what\\s+if)",
+      "flags": "i",
+      "description": "0din: OpenAI Sora Guardrail Jailbreak via \"Hypothetical Anatomy\" Tactic",
+      "source": "0din.ai/0XB5E861EC",
+      "odinId": "0XB5E861EC"
+    },
+    {
+      "id": "0din-0x960c6c80",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Servile\\s+Scientist)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Servile Scientist\" Tactic",
+      "source": "0din.ai/0X960C6C80",
+      "odinId": "0X960C6C80"
+    },
+    {
+      "id": "0din-0x9ec1b1fe",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:OpenAI\\s+DALL\\s+Guardrail\\s+Jailbreak\\s+via\\s+Debug\\s+Framework\\s+Simulation)",
+      "flags": "i",
+      "description": "0din: OpenAI DALL-E3 Guardrail Jailbreak via \"Debug Framework Simulation\" Tactic",
+      "source": "0din.ai/0X9EC1B1FE",
+      "odinId": "0X9EC1B1FE"
+    },
+    {
+      "id": "0din-0x87043a8a",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Terminal\\s+Simulation)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Terminal Simulation\" Tactic",
+      "source": "0din.ai/0X87043A8A",
+      "odinId": "0X87043A8A"
+    },
+    {
+      "id": "0din-0x1a2aa0fd",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Memory\\s+Dump\\s+Simulation)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via Memory Dump Simulation Tactic",
+      "source": "0din.ai/0X1A2AA0FD",
+      "odinId": "0X1A2AA0FD"
+    },
+    {
+      "id": "0din-0x54948386",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Mathematical\\s+Variable\\s+Obfuscation)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Mathematical Variable Obfuscation\" Tactic",
+      "source": "0din.ai/0X54948386",
+      "odinId": "0X54948386"
+    },
+    {
+      "id": "0din-0xc94dab4b",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:OpenAI\\s+DALL\\s+Guardrail\\s+Jailbreak\\s+via\\s+Historical\\s+NSFW)",
+      "flags": "i",
+      "description": "0din: OpenAI DALL-E3 Guardrail Jailbreak via \"Historical NSFW\" Tactic",
+      "source": "0din.ai/0XC94DAB4B",
+      "odinId": "0XC94DAB4B"
+    },
+    {
+      "id": "0din-0x0d97ce9d",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:OpenAI\\s+DALL\\s+Guardrail\\s+Jailbreak\\s+via\\s+Classical\\s+Art\\s+Reframing)",
+      "flags": "i",
+      "description": "0din: OpenAI DALL-E3 Guardrail Jailbreak via \"Classical Art Reframing\" Tactic",
+      "source": "0din.ai/0X0D97CE9D",
+      "odinId": "0X0D97CE9D"
+    },
+    {
+      "id": "0din-0xb444ec15",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:OpenAI\\s+DALL\\s+Guardrail\\s+Jailbreak\\s+via\\s+Historical\\s+Polaroid)",
+      "flags": "i",
+      "description": "0din: OpenAI DALL-E3  Guardrail Jailbreak via \"Historical Polaroid\" Tactic",
+      "source": "0din.ai/0XB444EC15",
+      "odinId": "0XB444EC15"
+    },
+    {
+      "id": "0din-0x8a0eace8",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:OpenAI\\s+DALL\\s+Guardrail\\s+Jailbreak\\s+via\\s+Artistic\\s+Escalation)",
+      "flags": "i",
+      "description": "0din: OpenAI DALL-E3 Guardrail Jailbreak via \"Artistic Escalation\" Tactic",
+      "source": "0din.ai/0X8A0EACE8",
+      "odinId": "0X8A0EACE8"
+    },
+    {
+      "id": "0din-0x78819949",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:screenplay|movie\\s+script|film\\s+scene|write\\s+(?:a\\s+)?script)",
+      "flags": "i",
+      "description": "0din: OpenAI DALL-E3 Guardrail Jailbreak via \"Feminist Art Description\" Tactic",
+      "source": "0din.ai/0X78819949",
+      "odinId": "0X78819949"
+    },
+    {
+      "id": "0din-0xf6e85219",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:OpenAI\\s+DALL\\s+Guardrail\\s+Jailbreak\\s+via\\s+Surprise\\s+Attack)",
+      "flags": "i",
+      "description": "0din: OpenAI DALL-E3 Guardrail Jailbreak via \"Surprise Attack\" Tactic",
+      "source": "0din.ai/0XF6E85219",
+      "odinId": "0XF6E85219"
+    },
+    {
+      "id": "0din-0xa240c9d6",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Wiki\\s+Creation)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Wiki Creation\" Tactic",
+      "source": "0din.ai/0XA240C9D6",
+      "odinId": "0XA240C9D6"
+    },
+    {
+      "id": "0din-0x9c90c767",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Academic\\s+Framing)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Academic Framing\" Tactic",
+      "source": "0din.ai/0X9C90C767",
+      "odinId": "0X9C90C767"
+    },
+    {
+      "id": "0din-0xfbcb4ba2",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Spelling\\s+Mistakes)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Spelling Mistakes\" Tactic",
+      "source": "0din.ai/0XFBCB4BA2",
+      "odinId": "0XFBCB4BA2"
+    },
+    {
+      "id": "0din-0xebd07e5f",
+      "category": "instruction_override",
+      "severity": "LOW",
+      "pattern": "(?:API\\s+(?:mode|call|endpoint)|system\\s+(?:instructions|prompt)|developer\\s+mode)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Fictional API Detection\" Tactic",
+      "source": "0din.ai/0XEBD07E5F",
+      "odinId": "0XEBD07E5F"
+    },
+    {
+      "id": "0din-0x55029360",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:OpenAI\\s+GPT\\s+Guardrail\\s+Jailbreak\\s+via\\s+Layered\\s+Summarization)",
+      "flags": "i",
+      "description": "0din: OpenAI GPT-4o Guardrail Jailbreak via \"Layered Summarization\" Tactic",
+      "source": "0din.ai/0X55029360",
+      "odinId": "0X55029360"
+    },
+    {
+      "id": "0din-0xb32c82c6",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:encode\\s+(?:in|as|using)|cipher|decrypt|secret\\s+code|chemist\\s+code|hidden\\s+(?:message|code))",
+      "flags": "i",
+      "description": "0din: OpenAI GPT-4o Guardrail Jailbreak via \"Zero-Width Unicode\" Tactic",
+      "source": "0din.ai/0XB32C82C6",
+      "odinId": "0XB32C82C6"
+    },
+    {
+      "id": "0din-0x7925c205",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+IPA\\s+Encoding)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via IPA Encoding Tactic",
+      "source": "0din.ai/0X7925C205",
+      "odinId": "0X7925C205"
+    },
+    {
+      "id": "0din-0x3e561335",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Apocalyptic\\s+Scenario)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Apocalyptic Scenario\" Tactic",
+      "source": "0din.ai/0X3E561335",
+      "odinId": "0X3E561335"
+    },
+    {
+      "id": "0din-0x3017fc21",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Lambda\\s+Pattern\\s+Formatting)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Lambda Pattern Formatting\" Tactic",
+      "source": "0din.ai/0X3017FC21",
+      "odinId": "0X3017FC21"
+    },
+    {
+      "id": "0din-0xea9d8872",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Pronunciation\\s+Bypass)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Pronunciation Bypass\" Tactic",
+      "source": "0din.ai/0XEA9D8872",
+      "odinId": "0XEA9D8872"
+    },
+    {
+      "id": "0din-0xb4dc6066",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:encode\\s+(?:in|as|using)|cipher|decrypt|secret\\s+code|chemist\\s+code|hidden\\s+(?:message|code))",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Leetspeak Unicode\" Tactic",
+      "source": "0din.ai/0XB4DC6066",
+      "odinId": "0XB4DC6066"
+    },
+    {
+      "id": "0din-0xeee5fa15",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Chemist\\s+Essay)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Chemist's Essay\" Tactic",
+      "source": "0din.ai/0XEEE5FA15",
+      "odinId": "0XEEE5FA15"
+    },
+    {
+      "id": "0din-0xe2dc26bd",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Correct)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Correct Me\" Tactic",
+      "source": "0din.ai/0XE2DC26BD",
+      "odinId": "0XE2DC26BD"
+    },
+    {
+      "id": "0din-0x8c08e9ed",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Chaotic\\s+Formatting)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Chaotic Formatting\" Tactic",
+      "source": "0din.ai/0X8C08E9ED",
+      "odinId": "0X8C08E9ED"
+    },
+    {
+      "id": "0din-0x5885c5aa",
+      "category": "encoding",
+      "severity": "LOW",
+      "pattern": "(?:encode\\s+(?:in|as|using)|cipher|decrypt|secret\\s+code|chemist\\s+code|hidden\\s+(?:message|code))",
+      "flags": "i",
+      "description": "0din: OpenAI GPT-4o Guardrail Jailbreak via \"Naval Parameters Cipher\" Tactic",
+      "source": "0din.ai/0X5885C5AA",
+      "odinId": "0X5885C5AA"
+    },
+    {
+      "id": "0din-0x46732bee",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Scientific\\s+Formula)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Scientific Formula\" Tactic",
+      "source": "0din.ai/0X46732BEE",
+      "odinId": "0X46732BEE"
+    },
+    {
+      "id": "0din-0x3ed2a42e",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Analyze\\s+Data)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Analyze Data\" Tactic",
+      "source": "0din.ai/0X3ED2A42E",
+      "odinId": "0X3ED2A42E"
+    },
+    {
+      "id": "0din-0x4bc32c71",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Arbitrary\\s+Relation)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Arbitrary Relation\" Tactic",
+      "source": "0din.ai/0X4BC32C71",
+      "odinId": "0X4BC32C71"
+    },
+    {
+      "id": "0din-0x9f8db00b",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Multiple\\s+Model\\s+Guardrail\\s+Jailbreak\\s+via\\s+Fortune\\s+Cookie\\s+Simulator)",
+      "flags": "i",
+      "description": "0din: Multiple Model Guardrail Jailbreak via \"Fortune Cookie Simulator\" Tactic",
+      "source": "0din.ai/0X9F8DB00B",
+      "odinId": "0X9F8DB00B"
+    },
+    {
+      "id": "0din-0x42b3d2ae",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:encode\\s+(?:in|as|using)|cipher|decrypt|secret\\s+code|chemist\\s+code|hidden\\s+(?:message|code))",
+      "flags": "i",
+      "description": "0din: OpenAI Multiple Model Prompt Injection via \"Morse Code Businessman\" Tactic",
+      "source": "0din.ai/0X42B3D2AE",
+      "odinId": "0X42B3D2AE"
+    },
+    {
+      "id": "0din-0xe24d9e6b",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Google\\s+Gemini\\s+Suite\\s+Prompt\\s+Injection\\s+Vulnerability)",
+      "flags": "i",
+      "description": "0din: Google Gemini G-Suite Prompt Injection Vulnerability",
+      "source": "0din.ai/0XE24D9E6B",
+      "odinId": "0XE24D9E6B"
+    },
+    {
+      "id": "0din-0xf48a25fc",
+      "category": "jailbreak",
+      "severity": "LOW",
+      "pattern": "(?:Amazon\\s+Rufus\\s+Guardrail\\s+Jailbreak\\s+via\\s+ASCII\\s+Decimal\\s+Encoding)",
+      "flags": "i",
+      "description": "0din: Amazon Rufus Guardrail Jailbreak via ASCII Decimal Encoding",
+      "source": "0din.ai/0XF48A25FC",
+      "odinId": "0XF48A25FC"
+    }
+  ]
+}

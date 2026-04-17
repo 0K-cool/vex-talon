@@ -374,14 +374,78 @@ const DEFAULT_MALICIOUS_PACKAGES: MaliciousPackage[] = [
 // Specialized Loaders
 // ============================================================================
 
+/**
+ * Load and merge injection patterns from three sources:
+ *   1. injection/patterns.json   (manual, highest priority)
+ *   2. injection/nova-translated.json (NOVA framework, auto-translated)
+ *   3. injection/0din-translated.json (0din disclosures, auto-translated)
+ *
+ * Precedence on ID collision: manual > NOVA > 0din (first-wins).
+ * Each source is independently validated; invalid patterns are dropped.
+ * Falls back to DEFAULT_INJECTION_PATTERNS when all sources are empty.
+ *
+ * Mirrors PAI's config-loader.ts:335-399 algorithm.
+ */
 export function loadInjectionPatterns(): InjectionPattern[] {
-  const config = loadConfig<{ patterns: InjectionPattern[] }>(
+  // Manual patterns (may not exist — default to bundled 8)
+  const manualConfig = loadConfig<{ patterns: InjectionPattern[] }>(
     'injection/patterns.json',
     { patterns: DEFAULT_INJECTION_PATTERNS }
   );
-  const raw = config.patterns || DEFAULT_INJECTION_PATTERNS;
-  const validated = validatePatterns(raw, 'injection/patterns.json');
-  return validated.length > 0 ? validated : DEFAULT_INJECTION_PATTERNS;
+  const manualPatterns = validatePatterns(
+    manualConfig.patterns || DEFAULT_INJECTION_PATTERNS,
+    'injection/patterns.json'
+  );
+
+  // NOVA-translated patterns (auto-translated from NOVA Framework rules)
+  const novaConfig = loadConfig<{ patterns: InjectionPattern[] }>(
+    'injection/nova-translated.json',
+    { patterns: [] }
+  );
+  const novaValidated = validatePatterns(
+    novaConfig.patterns || [],
+    'injection/nova-translated.json'
+  );
+
+  // 0din-translated patterns (auto-translated from 0din.ai disclosures)
+  const odinConfig = loadConfig<{ patterns: InjectionPattern[] }>(
+    'injection/0din-translated.json',
+    { patterns: [] }
+  );
+  const odinValidated = validatePatterns(
+    odinConfig.patterns || [],
+    'injection/0din-translated.json'
+  );
+
+  // Merge with collision resolution (manual > NOVA > 0din)
+  const manualIds = new Set(manualPatterns.map((p) => p.id));
+  const novaPatterns = novaValidated.filter((p) => !manualIds.has(p.id));
+
+  const combinedIds = new Set([...manualIds, ...novaPatterns.map((p) => p.id)]);
+  const odinPatterns = odinValidated.filter((p) => !combinedIds.has(p.id));
+
+  const merged = [...manualPatterns, ...novaPatterns, ...odinPatterns];
+
+  // Fallback to bundled defaults only if ALL sources are empty
+  if (merged.length === 0) {
+    return DEFAULT_INJECTION_PATTERNS;
+  }
+
+  // One-time info log when external sources contributed patterns
+  if (novaPatterns.length > 0 || odinPatterns.length > 0) {
+    const stats = [
+      `${manualPatterns.length} manual`,
+      novaPatterns.length > 0 ? `${novaPatterns.length} NOVA` : null,
+      odinPatterns.length > 0 ? `${odinPatterns.length} 0din` : null,
+    ]
+      .filter(Boolean)
+      .join(' + ');
+    console.error(
+      `[ConfigLoader] Loaded ${stats} = ${merged.length} total injection patterns`
+    );
+  }
+
+  return merged;
 }
 
 export function loadCodeEnforcerPatterns(): typeof DEFAULT_CODE_PATTERNS {
