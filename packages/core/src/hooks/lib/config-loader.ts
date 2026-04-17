@@ -29,6 +29,8 @@ export interface SecurityConfig<T> {
 }
 
 // Injection Patterns
+export type PatternTier = 'plugin' | 'full';
+
 export interface InjectionPattern {
   id: string;
   category: 'instruction_override' | 'jailbreak' | 'encoding' | 'context_manipulation';
@@ -37,6 +39,38 @@ export interface InjectionPattern {
   description: string;
   examples?: string[];
   source?: string;
+  /**
+   * Pattern tier (plugin=default, full=opt-in). Absent = plugin (safest default).
+   * Set by classify-injection-tiers.py at build time.
+   */
+  tier?: PatternTier;
+}
+
+/**
+ * Resolve the active pattern tier from OK_TALON_PATTERN_TIER env var.
+ * Default: 'plugin' — matches the blog's "200+ out of the box" promise
+ * and minimizes FP noise for new adopters.
+ *
+ * Set OK_TALON_PATTERN_TIER=full to opt into the expanded 454-pattern set
+ * (includes broad NOVA single-word rules and LOW-severity 0din patterns).
+ */
+export function getActivePatternTier(): PatternTier {
+  const envTier = (process.env.OK_TALON_PATTERN_TIER || 'plugin').toLowerCase();
+  return envTier === 'full' ? 'full' : 'plugin';
+}
+
+/**
+ * Filter patterns by active tier. Rules:
+ *  - Active tier 'full': keep all patterns regardless of tier field
+ *  - Active tier 'plugin': keep only patterns with tier='plugin' OR missing tier
+ *    (missing tier defaults to plugin for backward-compat with manual patterns)
+ */
+export function filterByTier<T extends { tier?: PatternTier }>(
+  patterns: T[],
+  active: PatternTier,
+): T[] {
+  if (active === 'full') return patterns;
+  return patterns.filter((p) => p.tier === undefined || p.tier === 'plugin');
 }
 
 // Code Enforcer Patterns
@@ -474,13 +508,20 @@ export function loadInjectionPatterns(): InjectionPattern[] {
     'injection/0din-translated.json'
   );
 
+  // Tier filter BEFORE merge — reduces dedup work and keeps contract clear:
+  // plugin tier = ~200 curated patterns out-of-box (blog claim)
+  // full tier = ~450 with experimental NOVA/0din broad patterns
+  const activeTier = getActivePatternTier();
+  const novaTiered = filterByTier(novaValidated, activeTier);
+  const odinTiered = filterByTier(odinValidated, activeTier);
+
   // Exposed as a pure function so tests can verify the collision
   // precedence invariant with synthetic inputs.
-  const merged = mergeInjectionPatterns(manualPatterns, novaValidated, odinValidated);
-  const novaPatterns = novaValidated.filter(
+  const merged = mergeInjectionPatterns(manualPatterns, novaTiered, odinTiered);
+  const novaPatterns = novaTiered.filter(
     (p) => !manualPatterns.some(m => m.id === p.id || m.pattern === p.pattern),
   );
-  const odinPatterns = odinValidated.filter(
+  const odinPatterns = odinTiered.filter(
     (p) =>
       !manualPatterns.some(m => m.id === p.id || m.pattern === p.pattern) &&
       !novaPatterns.some(n => n.id === p.id || n.pattern === p.pattern),

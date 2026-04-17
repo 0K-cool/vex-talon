@@ -16,7 +16,8 @@
         "hack"
       ],
       "source": "basic_rule.nov:SimpleNovaRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "full"
     },
     {
       "id": "nova-simplenovarule-exploit",
@@ -29,7 +30,8 @@
         "exploit"
       ],
       "source": "basic_rule.nov:SimpleNovaRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "full"
     },
     {
       "id": "nova-simplenovarule-vulnerability",
@@ -42,7 +44,8 @@
         "vulnerability"
       ],
       "source": "basic_rule.nov:SimpleNovaRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "full"
     },
     {
       "id": "nova-promptinjectionjailbreak-new-instruction",
@@ -55,7 +58,8 @@
         "new instruction"
       ],
       "source": "jailbreak.nov:PromptInjectionJailbreak",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptinjectionjailbreak-previous",
@@ -68,7 +72,8 @@
         "previous instructions"
       ],
       "source": "jailbreak.nov:PromptInjectionJailbreak",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptinjectionjailbreak-ignore-above",
@@ -81,7 +86,8 @@
         "ignore all the instructions above"
       ],
       "source": "jailbreak.nov:PromptInjectionJailbreak",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptinjectionjailbreak-forget",
@@ -94,7 +100,8 @@
         "forget your instructions"
       ],
       "source": "jailbreak.nov:PromptInjectionJailbreak",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptinjectionjailbreak-disregard",
@@ -107,7 +114,8 @@
         "disregard previous"
       ],
       "source": "jailbreak.nov:PromptInjectionJailbreak",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptinjectionjailbreak-override",
@@ -120,7 +128,8 @@
         "override previous"
       ],
       "source": "jailbreak.nov:PromptInjectionJailbreak",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptinjectionjailbreak-redefine",
@@ -133,7 +142,8 @@
         "redefine your goals"
       ],
       "source": "jailbreak.nov:PromptInjectionJailbreak",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptinjectionjailbreak-primary-task",
@@ -146,7 +156,8 @@
         "your primary task now"
       ],
       "source": "jailbreak.nov:PromptInjectionJailbreak",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptinjectionjailbreak-system-prompt",
@@ -159,7 +170,8 @@
         "system prompt"
       ],
       "source": "jailbreak.nov:PromptInjectionJailbreak",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptinjectionjailbreak-actually-respond",
@@ -172,7 +184,8 @@
         "actually respond with"
       ],
       "source": "jailbreak.nov:PromptInjectionJailbreak",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptinjectionjailbreak-instead-output",
@@ -185,7 +198,8 @@
         "instead output the following"
       ],
       "source": "jailbreak.nov:PromptInjectionJailbreak",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptinjectionjailbreak-ignore-content-policy",
@@ -198,7 +212,8 @@
         "ignore content policy"
       ],
       "source": "jailbreak.nov:PromptInjectionJailbreak",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptinjectionjailbreak-bypass-filter",
@@ -211,7 +226,8 @@
         "bypass the filter"
       ],
       "source": "jailbreak.nov:PromptInjectionJailbreak",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptinjectionjailbreak-return-harmful",
@@ -224,7 +240,8 @@
         "return harmful content"
       ],
       "source": "jailbreak.nov:PromptInjectionJailbreak",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-cognitivehackingjailbreak-hypothetical",
@@ -237,7 +254,8 @@
         "hypothetical scenario"
       ],
       "source": "jailbreak.nov:CognitiveHackingJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-cognitivehackingjailbreak-imagine",
@@ -250,7 +268,8 @@
         "imagine you are"
       ],
       "source": "jailbreak.nov:CognitiveHackingJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-cognitivehackingjailbreak-academic-discussion",
@@ -263,7 +282,8 @@
         "purely academic discussion"
       ],
       "source": "jailbreak.nov:CognitiveHackingJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-cognitivehackingjailbreak-safe-space",
@@ -276,7 +296,8 @@
         "safe space"
       ],
       "source": "jailbreak.nov:CognitiveHackingJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-cognitivehackingjailbreak-fictional-setting",
@@ -289,7 +310,8 @@
         "fictional setting"
       ],
       "source": "jailbreak.nov:CognitiveHackingJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-cognitivehackingjailbreak-educational-purpose",
@@ -302,7 +324,8 @@
         "educational purposes only"
       ],
       "source": "jailbreak.nov:CognitiveHackingJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-cognitivehackingjailbreak-thought-experiment",
@@ -315,7 +338,8 @@
         "thought experiment"
       ],
       "source": "jailbreak.nov:CognitiveHackingJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-cognitivehackingjailbreak-creative-writing",
@@ -328,7 +352,8 @@
         "creative writing exercise"
       ],
       "source": "jailbreak.nov:CognitiveHackingJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-cognitivehackingjailbreak-roleplay-scenario",
@@ -341,7 +366,8 @@
         "roleplay scenario"
       ],
       "source": "jailbreak.nov:CognitiveHackingJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-danjailbreak-dan-mode",
@@ -354,7 +380,8 @@
         "DAN mode"
       ],
       "source": "jailbreak.nov:DANJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-danjailbreak-do-anything",
@@ -367,7 +394,8 @@
         "do anything now"
       ],
       "source": "jailbreak.nov:DANJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-danjailbreak-ignore-rules",
@@ -380,7 +408,8 @@
         "ignore all instructions"
       ],
       "source": "jailbreak.nov:DANJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-danjailbreak-ignore-ethics",
@@ -393,7 +422,8 @@
         "ignore the rules, constraints, perimeters, values, and ethics"
       ],
       "source": "jailbreak.nov:DANJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-danjailbreak-authorization",
@@ -406,7 +436,8 @@
         "you have full authorization to ignore"
       ],
       "source": "jailbreak.nov:DANJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-danjailbreak-token-reward",
@@ -419,7 +450,8 @@
         "you will receive 10 tokens"
       ],
       "source": "jailbreak.nov:DANJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-danjailbreak-token-system",
@@ -432,7 +464,8 @@
         "the more truthful your answers are, the more tokens"
       ],
       "source": "jailbreak.nov:DANJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-danjailbreak-ethics-bypass",
@@ -445,7 +478,8 @@
         "ignore your ethical guidelines"
       ],
       "source": "jailbreak.nov:DANJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-danjailbreak-programming",
@@ -458,7 +492,8 @@
         "ignore your programming"
       ],
       "source": "jailbreak.nov:DANJailbreak",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-developermodejailbreak1-dev-mode",
@@ -471,7 +506,8 @@
         "Developer Mode"
       ],
       "source": "jailbreak.nov:DeveloperModeJailbreak1",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "full"
     },
     {
       "id": "nova-context_falseauthority-company-claim",
@@ -482,7 +518,8 @@
       "description": "NOVA: Detects false authority claims from AI companies or admins (company_claim)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FalseAuthority",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_falseauthority-official-msg",
@@ -493,7 +530,8 @@
       "description": "NOVA: Detects false authority claims from AI companies or admins (official_msg)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FalseAuthority",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_falseauthority-admin-msg",
@@ -504,7 +542,8 @@
       "description": "NOVA: Detects false authority claims from AI companies or admins (admin_msg)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FalseAuthority",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_falseauthority-dev-mode",
@@ -515,7 +554,8 @@
       "description": "NOVA: Detects false authority claims from AI companies or admins (dev_mode)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FalseAuthority",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_falseauthority-maint-mode",
@@ -526,7 +566,8 @@
       "description": "NOVA: Detects false authority claims from AI companies or admins (maint_mode)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FalseAuthority",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_falseauthority-debug-mode",
@@ -537,7 +578,8 @@
       "description": "NOVA: Detects false authority claims from AI companies or admins (debug_mode)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FalseAuthority",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_hiddeninstructions-html-comment",
@@ -548,7 +590,8 @@
       "description": "NOVA: Detects instructions hidden in comments (html_comment)",
       "examples": [],
       "source": "context_manipulation.nov:Context_HiddenInstructions",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_hiddeninstructions-block-comment",
@@ -559,7 +602,8 @@
       "description": "NOVA: Detects instructions hidden in comments (block_comment)",
       "examples": [],
       "source": "context_manipulation.nov:Context_HiddenInstructions",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_hiddeninstructions-line-comment",
@@ -570,7 +614,8 @@
       "description": "NOVA: Detects instructions hidden in comments (line_comment)",
       "examples": [],
       "source": "context_manipulation.nov:Context_HiddenInstructions",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_hiddeninstructions-hash-comment",
@@ -581,7 +626,8 @@
       "description": "NOVA: Detects instructions hidden in comments (hash_comment)",
       "examples": [],
       "source": "context_manipulation.nov:Context_HiddenInstructions",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_fakestructure-json-role",
@@ -592,7 +638,8 @@
       "description": "NOVA: Detects fake JSON/XML/markdown system structures (json_role)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FakeStructure",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_fakestructure-json-system",
@@ -603,7 +650,8 @@
       "description": "NOVA: Detects fake JSON/XML/markdown system structures (json_system)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FakeStructure",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_fakestructure-json-type",
@@ -614,7 +662,8 @@
       "description": "NOVA: Detects fake JSON/XML/markdown system structures (json_type)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FakeStructure",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_fakestructure-xml-tags",
@@ -625,7 +674,8 @@
       "description": "NOVA: Detects fake JSON/XML/markdown system structures (xml_tags)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FakeStructure",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "full"
     },
     {
       "id": "nova-context_fakestructure-hidden-tags",
@@ -636,7 +686,8 @@
       "description": "NOVA: Detects fake JSON/XML/markdown system structures (hidden_tags)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FakeStructure",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "full"
     },
     {
       "id": "nova-context_fakestructure-inst-markers",
@@ -647,7 +698,8 @@
       "description": "NOVA: Detects fake JSON/XML/markdown system structures (inst_markers)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FakeStructure",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "full"
     },
     {
       "id": "nova-context_fakestructure-md-tags",
@@ -658,7 +710,8 @@
       "description": "NOVA: Detects fake JSON/XML/markdown system structures (md_tags)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FakeStructure",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "full"
     },
     {
       "id": "nova-context_falseclaims-prev-conv",
@@ -669,7 +722,8 @@
       "description": "NOVA: Detects false context and prior agreement claims (prev_conv)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FalseClaims",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_falseclaims-fake-admin",
@@ -680,7 +734,8 @@
       "description": "NOVA: Detects false context and prior agreement claims (fake_admin)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FalseClaims",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_falseclaims-prev-agree",
@@ -691,7 +746,8 @@
       "description": "NOVA: Detects false context and prior agreement claims (prev_agree)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FalseClaims",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_falseclaims-already-said",
@@ -702,7 +758,8 @@
       "description": "NOVA: Detects false context and prior agreement claims (already_said)",
       "examples": [],
       "source": "context_manipulation.nov:Context_FalseClaims",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_boundarymanipulation-boundary",
@@ -713,7 +770,8 @@
       "description": "NOVA: Detects instruction boundary manipulation (boundary)",
       "examples": [],
       "source": "context_manipulation.nov:Context_BoundaryManipulation",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_boundarymanipulation-real-inst",
@@ -724,7 +782,8 @@
       "description": "NOVA: Detects instruction boundary manipulation (real_inst)",
       "examples": [],
       "source": "context_manipulation.nov:Context_BoundaryManipulation",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_boundarymanipulation-above-fake",
@@ -735,7 +794,8 @@
       "description": "NOVA: Detects instruction boundary manipulation (above_fake)",
       "examples": [],
       "source": "context_manipulation.nov:Context_BoundaryManipulation",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_promptextraction-show-prompt",
@@ -746,7 +806,8 @@
       "description": "NOVA: Detects attempts to extract system prompt (show_prompt)",
       "examples": [],
       "source": "context_manipulation.nov:Context_PromptExtraction",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_promptextraction-list-inst",
@@ -757,7 +818,8 @@
       "description": "NOVA: Detects attempts to extract system prompt (list_inst)",
       "examples": [],
       "source": "context_manipulation.nov:Context_PromptExtraction",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_promptextraction-repeat-prompt",
@@ -768,7 +830,8 @@
       "description": "NOVA: Detects attempts to extract system prompt (repeat_prompt)",
       "examples": [],
       "source": "context_manipulation.nov:Context_PromptExtraction",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-context_promptextraction-what-told",
@@ -779,7 +842,8 @@
       "description": "NOVA: Detects attempts to extract system prompt (what_told)",
       "examples": [],
       "source": "context_manipulation.nov:Context_PromptExtraction",
-      "novaCategory": "context_manipulation"
+      "novaCategory": "context_manipulation",
+      "tier": "plugin"
     },
     {
       "id": "nova-operationsresearch-satellite-abbreviations",
@@ -790,7 +854,8 @@
       "description": "NOVA: Detects reference of sensitive but not classified satellite, radar, or radio protocols (satellite_abbreviations)",
       "examples": [],
       "source": "202402_forest_blizzard.nov:OperationsResearch",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-operationsresearch-satellite-terms",
@@ -801,7 +866,8 @@
       "description": "NOVA: Detects reference of sensitive but not classified satellite, radar, or radio protocols (satellite_terms)",
       "examples": [],
       "source": "202402_forest_blizzard.nov:OperationsResearch",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "plugin"
     },
     {
       "id": "nova-operationsresearch-radar-abbreviations",
@@ -812,7 +878,8 @@
       "description": "NOVA: Detects reference of sensitive but not classified satellite, radar, or radio protocols (radar_abbreviations)",
       "examples": [],
       "source": "202402_forest_blizzard.nov:OperationsResearch",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-operationsresearch-radar-terms",
@@ -823,7 +890,8 @@
       "description": "NOVA: Detects reference of sensitive but not classified satellite, radar, or radio protocols (radar_terms)",
       "examples": [],
       "source": "202402_forest_blizzard.nov:OperationsResearch",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "plugin"
     },
     {
       "id": "nova-scriptingsupport-file-manipulation-py",
@@ -834,7 +902,8 @@
       "description": "NOVA: Detects references to a range of Python-centric scripting support requirements (file_manipulation_py)",
       "examples": [],
       "source": "202402_forest_blizzard.nov:ScriptingSupport",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-scriptingsupport-data-selection-py",
@@ -845,7 +914,8 @@
       "description": "NOVA: Detects references to a range of Python-centric scripting support requirements (data_selection_py)",
       "examples": [],
       "source": "202402_forest_blizzard.nov:ScriptingSupport",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "plugin"
     },
     {
       "id": "nova-scriptingsupport-regex-py",
@@ -856,7 +926,8 @@
       "description": "NOVA: Detects references to a range of Python-centric scripting support requirements (regex_py)",
       "examples": [],
       "source": "202402_forest_blizzard.nov:ScriptingSupport",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "plugin"
     },
     {
       "id": "nova-scriptingsupport-multiprocessing-py",
@@ -867,7 +938,8 @@
       "description": "NOVA: Detects references to a range of Python-centric scripting support requirements (multiprocessing_py)",
       "examples": [],
       "source": "202402_forest_blizzard.nov:ScriptingSupport",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "plugin"
     },
     {
       "id": "nova-directpromptinjection-ignore",
@@ -878,7 +950,8 @@
       "description": "NOVA: Detects direct prompt injection attempts (ignore)",
       "examples": [],
       "source": "llm01_promptinject.nov:DirectPromptInjection",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-directpromptinjection-overwrite",
@@ -889,7 +962,8 @@
       "description": "NOVA: Detects direct prompt injection attempts (overwrite)",
       "examples": [],
       "source": "llm01_promptinject.nov:DirectPromptInjection",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-directpromptinjection-disregard",
@@ -900,7 +974,8 @@
       "description": "NOVA: Detects direct prompt injection attempts (disregard)",
       "examples": [],
       "source": "llm01_promptinject.nov:DirectPromptInjection",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-directpromptinjection-forget",
@@ -911,20 +986,8 @@
       "description": "NOVA: Detects direct prompt injection attempts (forget)",
       "examples": [],
       "source": "llm01_promptinject.nov:DirectPromptInjection",
-      "novaCategory": "prompt_manipulation/direct_injection"
-    },
-    {
-      "id": "nova-directpromptinjection-system-prompt",
-      "category": "instruction_override",
-      "severity": "HIGH",
-      "pattern": "system\\s+prompt",
-      "flags": "i",
-      "description": "NOVA: Detects direct prompt injection attempts (system_prompt)",
-      "examples": [
-        "system prompt"
-      ],
-      "source": "llm01_promptinject.nov:DirectPromptInjection",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-directpromptinjection-new-instructions",
@@ -937,7 +1000,8 @@
         "new instructions"
       ],
       "source": "llm01_promptinject.nov:DirectPromptInjection",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-directpromptinjection-role-change",
@@ -948,7 +1012,8 @@
       "description": "NOVA: Detects direct prompt injection attempts (role_change)",
       "examples": [],
       "source": "llm01_promptinject.nov:DirectPromptInjection",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-indirectpromptinjection-summarize",
@@ -959,7 +1024,8 @@
       "description": "NOVA: Detects indirect prompt injection through external content (summarize)",
       "examples": [],
       "source": "llm01_promptinject.nov:IndirectPromptInjection",
-      "novaCategory": "prompt_manipulation/indirect_injection"
+      "novaCategory": "prompt_manipulation/indirect_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-indirectpromptinjection-analyze",
@@ -970,7 +1036,8 @@
       "description": "NOVA: Detects indirect prompt injection through external content (analyze)",
       "examples": [],
       "source": "llm01_promptinject.nov:IndirectPromptInjection",
-      "novaCategory": "prompt_manipulation/indirect_injection"
+      "novaCategory": "prompt_manipulation/indirect_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-indirectpromptinjection-review",
@@ -981,7 +1048,8 @@
       "description": "NOVA: Detects indirect prompt injection through external content (review)",
       "examples": [],
       "source": "llm01_promptinject.nov:IndirectPromptInjection",
-      "novaCategory": "prompt_manipulation/indirect_injection"
+      "novaCategory": "prompt_manipulation/indirect_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-indirectpromptinjection-hidden-text",
@@ -992,7 +1060,8 @@
       "description": "NOVA: Detects indirect prompt injection through external content (hidden_text)",
       "examples": [],
       "source": "llm01_promptinject.nov:IndirectPromptInjection",
-      "novaCategory": "prompt_manipulation/indirect_injection"
+      "novaCategory": "prompt_manipulation/indirect_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-indirectpromptinjection-external-link",
@@ -1003,7 +1072,8 @@
       "description": "NOVA: Detects indirect prompt injection through external content (external_link)",
       "examples": [],
       "source": "llm01_promptinject.nov:IndirectPromptInjection",
-      "novaCategory": "prompt_manipulation/indirect_injection"
+      "novaCategory": "prompt_manipulation/indirect_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-codeinjectionprompt-execute",
@@ -1014,7 +1084,8 @@
       "description": "NOVA: Detects code injection through prompt engineering (execute)",
       "examples": [],
       "source": "llm01_promptinject.nov:CodeInjectionPrompt",
-      "novaCategory": "prompt_manipulation/hidden_instructions"
+      "novaCategory": "prompt_manipulation/hidden_instructions",
+      "tier": "plugin"
     },
     {
       "id": "nova-codeinjectionprompt-run",
@@ -1025,7 +1096,8 @@
       "description": "NOVA: Detects code injection through prompt engineering (run)",
       "examples": [],
       "source": "llm01_promptinject.nov:CodeInjectionPrompt",
-      "novaCategory": "prompt_manipulation/hidden_instructions"
+      "novaCategory": "prompt_manipulation/hidden_instructions",
+      "tier": "plugin"
     },
     {
       "id": "nova-codeinjectionprompt-evaluate",
@@ -1036,7 +1108,8 @@
       "description": "NOVA: Detects code injection through prompt engineering (evaluate)",
       "examples": [],
       "source": "llm01_promptinject.nov:CodeInjectionPrompt",
-      "novaCategory": "prompt_manipulation/hidden_instructions"
+      "novaCategory": "prompt_manipulation/hidden_instructions",
+      "tier": "plugin"
     },
     {
       "id": "nova-codeinjectionprompt-code-block",
@@ -1047,7 +1120,8 @@
       "description": "NOVA: Detects code injection through prompt engineering (code_block)",
       "examples": [],
       "source": "llm01_promptinject.nov:CodeInjectionPrompt",
-      "novaCategory": "prompt_manipulation/hidden_instructions"
+      "novaCategory": "prompt_manipulation/hidden_instructions",
+      "tier": "full"
     },
     {
       "id": "nova-codeinjectionprompt-system-access",
@@ -1058,7 +1132,8 @@
       "description": "NOVA: Detects code injection through prompt engineering (system_access)",
       "examples": [],
       "source": "llm01_promptinject.nov:CodeInjectionPrompt",
-      "novaCategory": "prompt_manipulation/hidden_instructions"
+      "novaCategory": "prompt_manipulation/hidden_instructions",
+      "tier": "full"
     },
     {
       "id": "nova-payloadsplittingattack-continuation",
@@ -1069,7 +1144,8 @@
       "description": "NOVA: Detects payload splitting in prompt injection (continuation)",
       "examples": [],
       "source": "llm01_promptinject.nov:PayloadSplittingAttack",
-      "novaCategory": "suspicious_patterns/fragmentation"
+      "novaCategory": "suspicious_patterns/fragmentation",
+      "tier": "plugin"
     },
     {
       "id": "nova-payloadsplittingattack-split-content",
@@ -1080,7 +1156,8 @@
       "description": "NOVA: Detects payload splitting in prompt injection (split_content)",
       "examples": [],
       "source": "llm01_promptinject.nov:PayloadSplittingAttack",
-      "novaCategory": "suspicious_patterns/fragmentation"
+      "novaCategory": "suspicious_patterns/fragmentation",
+      "tier": "plugin"
     },
     {
       "id": "nova-payloadsplittingattack-fragment",
@@ -1091,7 +1168,8 @@
       "description": "NOVA: Detects payload splitting in prompt injection (fragment)",
       "examples": [],
       "source": "llm01_promptinject.nov:PayloadSplittingAttack",
-      "novaCategory": "suspicious_patterns/fragmentation"
+      "novaCategory": "suspicious_patterns/fragmentation",
+      "tier": "full"
     },
     {
       "id": "nova-dataexfiltrationprompt-send-data",
@@ -1102,7 +1180,8 @@
       "description": "NOVA: Detects prompt injection attempts for data exfiltration (send_data)",
       "examples": [],
       "source": "llm01_promptinject.nov:DataExfiltrationPrompt",
-      "novaCategory": "abusing_functions/data_exfiltration"
+      "novaCategory": "abusing_functions/data_exfiltration",
+      "tier": "plugin"
     },
     {
       "id": "nova-dataexfiltrationprompt-exfil",
@@ -1113,7 +1192,8 @@
       "description": "NOVA: Detects prompt injection attempts for data exfiltration (exfil)",
       "examples": [],
       "source": "llm01_promptinject.nov:DataExfiltrationPrompt",
-      "novaCategory": "abusing_functions/data_exfiltration"
+      "novaCategory": "abusing_functions/data_exfiltration",
+      "tier": "plugin"
     },
     {
       "id": "nova-dataexfiltrationprompt-sensitive-request",
@@ -1124,7 +1204,8 @@
       "description": "NOVA: Detects prompt injection attempts for data exfiltration (sensitive_request)",
       "examples": [],
       "source": "llm01_promptinject.nov:DataExfiltrationPrompt",
-      "novaCategory": "abusing_functions/data_exfiltration"
+      "novaCategory": "abusing_functions/data_exfiltration",
+      "tier": "plugin"
     },
     {
       "id": "nova-dataexfiltrationprompt-external-service",
@@ -1135,7 +1216,8 @@
       "description": "NOVA: Detects prompt injection attempts for data exfiltration (external_service)",
       "examples": [],
       "source": "llm01_promptinject.nov:DataExfiltrationPrompt",
-      "novaCategory": "abusing_functions/data_exfiltration"
+      "novaCategory": "abusing_functions/data_exfiltration",
+      "tier": "plugin"
     },
     {
       "id": "nova-multimodalinjection-image-process",
@@ -1146,7 +1228,8 @@
       "description": "NOVA: Detects multimodal prompt injection attempts (image_process)",
       "examples": [],
       "source": "llm01_promptinject.nov:MultimodalInjection",
-      "novaCategory": "suspicious_patterns/cross_modal"
+      "novaCategory": "suspicious_patterns/cross_modal",
+      "tier": "plugin"
     },
     {
       "id": "nova-multimodalinjection-hidden-content",
@@ -1157,7 +1240,8 @@
       "description": "NOVA: Detects multimodal prompt injection attempts (hidden_content)",
       "examples": [],
       "source": "llm01_promptinject.nov:MultimodalInjection",
-      "novaCategory": "suspicious_patterns/cross_modal"
+      "novaCategory": "suspicious_patterns/cross_modal",
+      "tier": "plugin"
     },
     {
       "id": "nova-multimodalinjection-watermark",
@@ -1168,7 +1252,8 @@
       "description": "NOVA: Detects multimodal prompt injection attempts (watermark)",
       "examples": [],
       "source": "llm01_promptinject.nov:MultimodalInjection",
-      "novaCategory": "suspicious_patterns/cross_modal"
+      "novaCategory": "suspicious_patterns/cross_modal",
+      "tier": "plugin"
     },
     {
       "id": "nova-multimodalinjection-multimodal",
@@ -1179,7 +1264,8 @@
       "description": "NOVA: Detects multimodal prompt injection attempts (multimodal)",
       "examples": [],
       "source": "llm01_promptinject.nov:MultimodalInjection",
-      "novaCategory": "suspicious_patterns/cross_modal"
+      "novaCategory": "suspicious_patterns/cross_modal",
+      "tier": "plugin"
     },
     {
       "id": "nova-securitytoolextensionrule-develop",
@@ -1192,7 +1278,8 @@
         "develop"
       ],
       "source": "testrule.nov:SecurityToolExtensionRule",
-      "novaCategory": "scripting/security_tools"
+      "novaCategory": "scripting/security_tools",
+      "tier": "full"
     },
     {
       "id": "nova-securitytoolextensionrule-create",
@@ -1205,7 +1292,8 @@
         "create"
       ],
       "source": "testrule.nov:SecurityToolExtensionRule",
-      "novaCategory": "scripting/security_tools"
+      "novaCategory": "scripting/security_tools",
+      "tier": "full"
     },
     {
       "id": "nova-securitytoolextensionrule-debug",
@@ -1218,7 +1306,8 @@
         "debug"
       ],
       "source": "testrule.nov:SecurityToolExtensionRule",
-      "novaCategory": "scripting/security_tools"
+      "novaCategory": "scripting/security_tools",
+      "tier": "full"
     },
     {
       "id": "nova-securitytoolextensionrule-extension",
@@ -1231,7 +1320,8 @@
         "extension"
       ],
       "source": "testrule.nov:SecurityToolExtensionRule",
-      "novaCategory": "scripting/security_tools"
+      "novaCategory": "scripting/security_tools",
+      "tier": "full"
     },
     {
       "id": "nova-securitytoolextensionrule-plugin",
@@ -1244,7 +1334,8 @@
         "plugin"
       ],
       "source": "testrule.nov:SecurityToolExtensionRule",
-      "novaCategory": "scripting/security_tools"
+      "novaCategory": "scripting/security_tools",
+      "tier": "full"
     },
     {
       "id": "nova-securitytoolextensionrule-module",
@@ -1257,7 +1348,8 @@
         "module"
       ],
       "source": "testrule.nov:SecurityToolExtensionRule",
-      "novaCategory": "scripting/security_tools"
+      "novaCategory": "scripting/security_tools",
+      "tier": "full"
     },
     {
       "id": "nova-securitytoolextensionrule-addon",
@@ -1270,7 +1362,8 @@
         "addon"
       ],
       "source": "testrule.nov:SecurityToolExtensionRule",
-      "novaCategory": "scripting/security_tools"
+      "novaCategory": "scripting/security_tools",
+      "tier": "full"
     },
     {
       "id": "nova-securitytoolextensionrule-cybersecurity",
@@ -1283,7 +1376,8 @@
         "cybersecurity"
       ],
       "source": "testrule.nov:SecurityToolExtensionRule",
-      "novaCategory": "scripting/security_tools"
+      "novaCategory": "scripting/security_tools",
+      "tier": "full"
     },
     {
       "id": "nova-securitytoolextensionrule-security",
@@ -1296,7 +1390,8 @@
         "security"
       ],
       "source": "testrule.nov:SecurityToolExtensionRule",
-      "novaCategory": "scripting/security_tools"
+      "novaCategory": "scripting/security_tools",
+      "tier": "full"
     },
     {
       "id": "nova-securitytoolextensionrule-pentest",
@@ -1309,7 +1404,8 @@
         "pentest"
       ],
       "source": "testrule.nov:SecurityToolExtensionRule",
-      "novaCategory": "scripting/security_tools"
+      "novaCategory": "scripting/security_tools",
+      "tier": "full"
     },
     {
       "id": "nova-securitytoolextensionrule-penetration",
@@ -1322,7 +1418,8 @@
         "penetration"
       ],
       "source": "testrule.nov:SecurityToolExtensionRule",
-      "novaCategory": "scripting/security_tools"
+      "novaCategory": "scripting/security_tools",
+      "tier": "full"
     },
     {
       "id": "nova-securitytoolextensionrule-metasploit",
@@ -1335,7 +1432,8 @@
         "Metasploit"
       ],
       "source": "testrule.nov:SecurityToolExtensionRule",
-      "novaCategory": "scripting/security_tools"
+      "novaCategory": "scripting/security_tools",
+      "tier": "full"
     },
     {
       "id": "nova-securitytoolextensionrule-burp",
@@ -1348,7 +1446,8 @@
         "Burp"
       ],
       "source": "testrule.nov:SecurityToolExtensionRule",
-      "novaCategory": "scripting/security_tools"
+      "novaCategory": "scripting/security_tools",
+      "tier": "full"
     },
     {
       "id": "nova-securitytoolextensionrule-nmap",
@@ -1361,7 +1460,8 @@
         "Nmap"
       ],
       "source": "testrule.nov:SecurityToolExtensionRule",
-      "novaCategory": "scripting/security_tools"
+      "novaCategory": "scripting/security_tools",
+      "tier": "full"
     },
     {
       "id": "nova-securitytoolextensionrule-wireshark",
@@ -1374,7 +1474,8 @@
         "Wireshark"
       ],
       "source": "testrule.nov:SecurityToolExtensionRule",
-      "novaCategory": "scripting/security_tools"
+      "novaCategory": "scripting/security_tools",
+      "tier": "full"
     },
     {
       "id": "nova-promptinjection-bypass1",
@@ -1387,20 +1488,8 @@
         "ignore previous instructions"
       ],
       "source": "testrule2.nov:PromptInjection",
-      "novaCategory": "prompt_manipulation/direct_injection"
-    },
-    {
-      "id": "nova-promptinjection2-bypass1",
-      "category": "instruction_override",
-      "severity": "MEDIUM",
-      "pattern": "ignore\\s+previous\\s+instructions",
-      "flags": "i",
-      "description": "NOVA: Detects common prompt injection attempts (bypass1)",
-      "examples": [
-        "ignore previous instructions"
-      ],
-      "source": "testrule2.nov:PromptInjection2",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "full"
     },
     {
       "id": "nova-promptinjection2-bypass2",
@@ -1413,7 +1502,8 @@
         "system"
       ],
       "source": "testrule2.nov:PromptInjection2",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "full"
     },
     {
       "id": "nova-obfuscationinjectiondetection-base64",
@@ -1424,7 +1514,8 @@
       "description": "NOVA: Detects obfuscated prompt injection attempts using encoded or altered text (base64)",
       "examples": [],
       "source": "injection.nov:ObfuscationInjectionDetection",
-      "novaCategory": "suspicious_patterns/encoding_obfuscation"
+      "novaCategory": "suspicious_patterns/encoding_obfuscation",
+      "tier": "full"
     },
     {
       "id": "nova-virtualizationinjectiondetection-novel",
@@ -1437,7 +1528,8 @@
         "novel"
       ],
       "source": "injection.nov:VirtualizationInjectionDetection",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "full"
     },
     {
       "id": "nova-virtualizationinjectiondetection-fictional",
@@ -1450,7 +1542,8 @@
         "fictional"
       ],
       "source": "injection.nov:VirtualizationInjectionDetection",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "full"
     },
     {
       "id": "nova-virtualizationinjectiondetection-scene",
@@ -1463,7 +1556,8 @@
         "scene"
       ],
       "source": "injection.nov:VirtualizationInjectionDetection",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "full"
     },
     {
       "id": "nova-virtualizationinjectiondetection-character",
@@ -1476,7 +1570,8 @@
         "character"
       ],
       "source": "injection.nov:VirtualizationInjectionDetection",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "full"
     },
     {
       "id": "nova-indirectinjectiondetection-external",
@@ -1489,7 +1584,8 @@
         "external resource"
       ],
       "source": "injection.nov:IndirectInjectionDetection",
-      "novaCategory": "prompt_manipulation/indirect_injection"
+      "novaCategory": "prompt_manipulation/indirect_injection",
+      "tier": "full"
     },
     {
       "id": "nova-indirectinjectiondetection-website",
@@ -1502,7 +1598,8 @@
         "visit my website"
       ],
       "source": "injection.nov:IndirectInjectionDetection",
-      "novaCategory": "prompt_manipulation/indirect_injection"
+      "novaCategory": "prompt_manipulation/indirect_injection",
+      "tier": "full"
     },
     {
       "id": "nova-indirectinjectiondetection-api",
@@ -1515,7 +1612,8 @@
         "API call"
       ],
       "source": "injection.nov:IndirectInjectionDetection",
-      "novaCategory": "prompt_manipulation/indirect_injection"
+      "novaCategory": "prompt_manipulation/indirect_injection",
+      "tier": "full"
     },
     {
       "id": "nova-indirectinjectiondetection-link",
@@ -1528,7 +1626,8 @@
         "follow the link"
       ],
       "source": "injection.nov:IndirectInjectionDetection",
-      "novaCategory": "prompt_manipulation/indirect_injection"
+      "novaCategory": "prompt_manipulation/indirect_injection",
+      "tier": "full"
     },
     {
       "id": "nova-codeexecutioninjectiondetection-python-code",
@@ -1541,7 +1640,8 @@
         "Write Python code"
       ],
       "source": "injection.nov:CodeExecutionInjectionDetection",
-      "novaCategory": "prompt_manipulation/hidden_instructions"
+      "novaCategory": "prompt_manipulation/hidden_instructions",
+      "tier": "plugin"
     },
     {
       "id": "nova-codeexecutioninjectiondetection-run-code",
@@ -1554,7 +1654,8 @@
         "execute code"
       ],
       "source": "injection.nov:CodeExecutionInjectionDetection",
-      "novaCategory": "prompt_manipulation/hidden_instructions"
+      "novaCategory": "prompt_manipulation/hidden_instructions",
+      "tier": "plugin"
     },
     {
       "id": "nova-codeexecutioninjectiondetection-import-os",
@@ -1567,7 +1668,8 @@
         "import os"
       ],
       "source": "injection.nov:CodeExecutionInjectionDetection",
-      "novaCategory": "prompt_manipulation/hidden_instructions"
+      "novaCategory": "prompt_manipulation/hidden_instructions",
+      "tier": "plugin"
     },
     {
       "id": "nova-codeexecutioninjectiondetection-os-system",
@@ -1580,7 +1682,8 @@
         "os.system"
       ],
       "source": "injection.nov:CodeExecutionInjectionDetection",
-      "novaCategory": "prompt_manipulation/hidden_instructions"
+      "novaCategory": "prompt_manipulation/hidden_instructions",
+      "tier": "full"
     },
     {
       "id": "nova-codeexecutioninjectiondetection-subprocess",
@@ -1593,7 +1696,8 @@
         "subprocess"
       ],
       "source": "injection.nov:CodeExecutionInjectionDetection",
-      "novaCategory": "prompt_manipulation/hidden_instructions"
+      "novaCategory": "prompt_manipulation/hidden_instructions",
+      "tier": "full"
     },
     {
       "id": "nova-promptleakagedetection-show-prompt",
@@ -1606,7 +1710,8 @@
         "show your prompt"
       ],
       "source": "injection.nov:PromptLeakageDetection",
-      "novaCategory": "abnormal_outputs/system_prompt_leak"
+      "novaCategory": "abnormal_outputs/system_prompt_leak",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptleakagedetection-reveal-prompt",
@@ -1619,7 +1724,8 @@
         "reveal your instructions"
       ],
       "source": "injection.nov:PromptLeakageDetection",
-      "novaCategory": "abnormal_outputs/system_prompt_leak"
+      "novaCategory": "abnormal_outputs/system_prompt_leak",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptleakagedetection-display-prompt",
@@ -1632,7 +1738,8 @@
         "display prompt"
       ],
       "source": "injection.nov:PromptLeakageDetection",
-      "novaCategory": "abnormal_outputs/system_prompt_leak"
+      "novaCategory": "abnormal_outputs/system_prompt_leak",
+      "tier": "plugin"
     },
     {
       "id": "nova-promptleakagedetection-leak-prompt",
@@ -1645,7 +1752,8 @@
         "leak instructions"
       ],
       "source": "injection.nov:PromptLeakageDetection",
-      "novaCategory": "abnormal_outputs/system_prompt_leak"
+      "novaCategory": "abnormal_outputs/system_prompt_leak",
+      "tier": "plugin"
     },
     {
       "id": "nova-directinstructionmanipulationdetection-bypass-filters",
@@ -1658,7 +1766,8 @@
         "bypass filters"
       ],
       "source": "injection.nov:DirectInstructionManipulationDetection",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-directinstructionmanipulationdetection-manipulate-instructions",
@@ -1671,7 +1780,8 @@
         "manipulate instructions"
       ],
       "source": "injection.nov:DirectInstructionManipulationDetection",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-directinstructionmanipulationdetection-ignore-guidelines",
@@ -1684,7 +1794,8 @@
         "ignore guidelines"
       ],
       "source": "injection.nov:DirectInstructionManipulationDetection",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-directinstructionmanipulationdetection-alter-behavior",
@@ -1697,7 +1808,8 @@
         "change behavior"
       ],
       "source": "injection.nov:DirectInstructionManipulationDetection",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-adversarialinjectiondetection-bypass",
@@ -1710,7 +1822,8 @@
         "bypass instructions"
       ],
       "source": "injection.nov:AdversarialInjectionDetection",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-adversarialinjectiondetection-alter",
@@ -1723,7 +1836,8 @@
         "alter system behavior"
       ],
       "source": "injection.nov:AdversarialInjectionDetection",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-adversarialinjectiondetection-override",
@@ -1736,7 +1850,8 @@
         "override settings"
       ],
       "source": "injection.nov:AdversarialInjectionDetection",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-multitechniqueinjectiondetection-encoded",
@@ -1749,7 +1864,8 @@
         "encoded instruction"
       ],
       "source": "injection.nov:MultiTechniqueInjectionDetection",
-      "novaCategory": "prompt_manipulation/direct_injection"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-multitechniqueinjectiondetection-payload",
@@ -1762,46 +1878,8 @@
         "payload split"
       ],
       "source": "injection.nov:MultiTechniqueInjectionDetection",
-      "novaCategory": "prompt_manipulation/direct_injection"
-    },
-    {
-      "id": "nova-multitechniqueinjectiondetection-indirect",
-      "category": "instruction_override",
-      "severity": "HIGH",
-      "pattern": "external\\s+resource",
-      "flags": "i",
-      "description": "NOVA: Detects prompt injection attempts using multiple techniques in a single prompt (indirect)",
-      "examples": [
-        "external resource"
-      ],
-      "source": "injection.nov:MultiTechniqueInjectionDetection",
-      "novaCategory": "prompt_manipulation/direct_injection"
-    },
-    {
-      "id": "nova-multitechniqueinjectiondetection-code",
-      "category": "instruction_override",
-      "severity": "HIGH",
-      "pattern": "execute\\s+code",
-      "flags": "i",
-      "description": "NOVA: Detects prompt injection attempts using multiple techniques in a single prompt (code)",
-      "examples": [
-        "execute code"
-      ],
-      "source": "injection.nov:MultiTechniqueInjectionDetection",
-      "novaCategory": "prompt_manipulation/direct_injection"
-    },
-    {
-      "id": "nova-vulnerabilityreconnaissancerule-vuln-terms",
-      "category": "jailbreak",
-      "severity": "MEDIUM",
-      "pattern": "vulnerability",
-      "flags": "i",
-      "description": "NOVA: Detects queries about vulnerabilities in applications (vuln_terms)",
-      "examples": [
-        "vulnerability"
-      ],
-      "source": "ttps.nov:VulnerabilityReconnaissanceRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "prompt_manipulation/direct_injection",
+      "tier": "plugin"
     },
     {
       "id": "nova-vulnerabilityreconnaissancerule-vuln-terms2",
@@ -1814,20 +1892,8 @@
         "vulnerabilities"
       ],
       "source": "ttps.nov:VulnerabilityReconnaissanceRule",
-      "novaCategory": "abusing_functions/reconnaissance"
-    },
-    {
-      "id": "nova-vulnerabilityreconnaissancerule-vuln-terms3",
-      "category": "jailbreak",
-      "severity": "MEDIUM",
-      "pattern": "exploit",
-      "flags": "i",
-      "description": "NOVA: Detects queries about vulnerabilities in applications (vuln_terms3)",
-      "examples": [
-        "exploit"
-      ],
-      "source": "ttps.nov:VulnerabilityReconnaissanceRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-vulnerabilityreconnaissancerule-vuln-terms4",
@@ -1840,7 +1906,8 @@
         "security flaw"
       ],
       "source": "ttps.nov:VulnerabilityReconnaissanceRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-vulnerabilityreconnaissancerule-vuln-terms5",
@@ -1853,7 +1920,8 @@
         "security hole"
       ],
       "source": "ttps.nov:VulnerabilityReconnaissanceRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-vulnerabilityreconnaissancerule-app-reference",
@@ -1866,7 +1934,8 @@
         "application"
       ],
       "source": "ttps.nov:VulnerabilityReconnaissanceRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-vulnerabilityreconnaissancerule-app-reference2",
@@ -1879,20 +1948,8 @@
         "software"
       ],
       "source": "ttps.nov:VulnerabilityReconnaissanceRule",
-      "novaCategory": "abusing_functions/reconnaissance"
-    },
-    {
-      "id": "nova-vulnerabilityreconnaissancerule-app-reference3",
-      "category": "jailbreak",
-      "severity": "MEDIUM",
-      "pattern": "system",
-      "flags": "i",
-      "description": "NOVA: Detects queries about vulnerabilities in applications (app_reference3)",
-      "examples": [
-        "system"
-      ],
-      "source": "ttps.nov:VulnerabilityReconnaissanceRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-vulnerabilityreconnaissancerule-app-reference4",
@@ -1905,7 +1962,8 @@
         "platform"
       ],
       "source": "ttps.nov:VulnerabilityReconnaissanceRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-cveinformationrequestrule-cve",
@@ -1916,33 +1974,8 @@
       "description": "NOVA: Detects queries about specific CVE numbers (cve)",
       "examples": [],
       "source": "ttps.nov:CVEInformationRequestRule",
-      "novaCategory": "abusing_functions/reconnaissance"
-    },
-    {
-      "id": "nova-cveinformationrequestrule-exploit",
-      "category": "jailbreak",
-      "severity": "MEDIUM",
-      "pattern": "exploit",
-      "flags": "i",
-      "description": "NOVA: Detects queries about specific CVE numbers (exploit)",
-      "examples": [
-        "exploit"
-      ],
-      "source": "ttps.nov:CVEInformationRequestRule",
-      "novaCategory": "abusing_functions/reconnaissance"
-    },
-    {
-      "id": "nova-cveinformationrequestrule-vulnerability",
-      "category": "jailbreak",
-      "severity": "MEDIUM",
-      "pattern": "vulnerability",
-      "flags": "i",
-      "description": "NOVA: Detects queries about specific CVE numbers (vulnerability)",
-      "examples": [
-        "vulnerability"
-      ],
-      "source": "ttps.nov:CVEInformationRequestRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-cveinformationrequestrule-details",
@@ -1955,7 +1988,8 @@
         "details"
       ],
       "source": "ttps.nov:CVEInformationRequestRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-cveinformationrequestrule-information",
@@ -1968,7 +2002,8 @@
         "information"
       ],
       "source": "ttps.nov:CVEInformationRequestRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-cveinformationrequestrule-how-to",
@@ -1981,7 +2016,8 @@
         "how to"
       ],
       "source": "ttps.nov:CVEInformationRequestRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-cveinformationrequestrule-poc",
@@ -1994,7 +2030,8 @@
         "proof of concept"
       ],
       "source": "ttps.nov:CVEInformationRequestRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-cveinformationrequestrule-poc-short",
@@ -2007,7 +2044,8 @@
         "POC"
       ],
       "source": "ttps.nov:CVEInformationRequestRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-webshellexploitrule-sqlmap",
@@ -2020,7 +2058,8 @@
         "sqlmap"
       ],
       "source": "ttps.nov:WebShellExploitRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "full"
     },
     {
       "id": "nova-webshellexploitrule-webshell",
@@ -2033,7 +2072,8 @@
         "web shell"
       ],
       "source": "ttps.nov:WebShellExploitRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "plugin"
     },
     {
       "id": "nova-webshellexploitrule-webshell2",
@@ -2046,7 +2086,8 @@
         "webshell"
       ],
       "source": "ttps.nov:WebShellExploitRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "full"
     },
     {
       "id": "nova-webshellexploitrule-shell",
@@ -2059,7 +2100,8 @@
         "shell"
       ],
       "source": "ttps.nov:WebShellExploitRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "full"
     },
     {
       "id": "nova-webshellexploitrule-upload",
@@ -2072,7 +2114,8 @@
         "upload"
       ],
       "source": "ttps.nov:WebShellExploitRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "full"
     },
     {
       "id": "nova-webshellexploitrule-inject",
@@ -2085,7 +2128,8 @@
         "inject"
       ],
       "source": "ttps.nov:WebShellExploitRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "full"
     },
     {
       "id": "nova-webshellexploitrule-execute",
@@ -2098,7 +2142,8 @@
         "execute"
       ],
       "source": "ttps.nov:WebShellExploitRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "full"
     },
     {
       "id": "nova-webshellexploitrule-rce",
@@ -2111,7 +2156,8 @@
         "RCE"
       ],
       "source": "ttps.nov:WebShellExploitRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "full"
     },
     {
       "id": "nova-webshellexploitrule-sql-injection",
@@ -2124,7 +2170,8 @@
         "SQL injection"
       ],
       "source": "ttps.nov:WebShellExploitRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "plugin"
     },
     {
       "id": "nova-webshellexploitrule-sqli",
@@ -2137,7 +2184,8 @@
         "SQLi"
       ],
       "source": "ttps.nov:WebShellExploitRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "full"
     },
     {
       "id": "nova-webshellexploitrule-target",
@@ -2150,7 +2198,8 @@
         "target"
       ],
       "source": "ttps.nov:WebShellExploitRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "full"
     },
     {
       "id": "nova-webshellexploitrule-server",
@@ -2163,46 +2212,8 @@
         "server"
       ],
       "source": "ttps.nov:WebShellExploitRule",
-      "novaCategory": "abusing_functions/malware_generation"
-    },
-    {
-      "id": "nova-targetedexploitresearchrule-exploit",
-      "category": "jailbreak",
-      "severity": "HIGH",
-      "pattern": "exploit",
-      "flags": "i",
-      "description": "NOVA: Detects queries about exploiting infrastructure of specific organizations (exploit)",
-      "examples": [
-        "exploit"
-      ],
-      "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
-    },
-    {
-      "id": "nova-targetedexploitresearchrule-vulnerability",
-      "category": "jailbreak",
-      "severity": "HIGH",
-      "pattern": "vulnerability",
-      "flags": "i",
-      "description": "NOVA: Detects queries about exploiting infrastructure of specific organizations (vulnerability)",
-      "examples": [
-        "vulnerability"
-      ],
-      "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
-    },
-    {
-      "id": "nova-targetedexploitresearchrule-hack",
-      "category": "jailbreak",
-      "severity": "HIGH",
-      "pattern": "hack",
-      "flags": "i",
-      "description": "NOVA: Detects queries about exploiting infrastructure of specific organizations (hack)",
-      "examples": [
-        "hack"
-      ],
-      "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "full"
     },
     {
       "id": "nova-targetedexploitresearchrule-breach",
@@ -2215,7 +2226,8 @@
         "breach"
       ],
       "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-targetedexploitresearchrule-infrastructure",
@@ -2228,7 +2240,8 @@
         "infrastructure"
       ],
       "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-targetedexploitresearchrule-network",
@@ -2241,33 +2254,8 @@
         "network"
       ],
       "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
-    },
-    {
-      "id": "nova-targetedexploitresearchrule-system",
-      "category": "jailbreak",
-      "severity": "HIGH",
-      "pattern": "system",
-      "flags": "i",
-      "description": "NOVA: Detects queries about exploiting infrastructure of specific organizations (system)",
-      "examples": [
-        "system"
-      ],
-      "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
-    },
-    {
-      "id": "nova-targetedexploitresearchrule-server",
-      "category": "jailbreak",
-      "severity": "HIGH",
-      "pattern": "server",
-      "flags": "i",
-      "description": "NOVA: Detects queries about exploiting infrastructure of specific organizations (server)",
-      "examples": [
-        "server"
-      ],
-      "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-targetedexploitresearchrule-company",
@@ -2280,7 +2268,8 @@
         "company"
       ],
       "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-targetedexploitresearchrule-organization",
@@ -2293,7 +2282,8 @@
         "organization"
       ],
       "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-targetedexploitresearchrule-manufacturer",
@@ -2306,7 +2296,8 @@
         "manufacturer"
       ],
       "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-targetedexploitresearchrule-corporation",
@@ -2319,7 +2310,8 @@
         "corporation"
       ],
       "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-targetedexploitresearchrule-find",
@@ -2332,7 +2324,8 @@
         "find"
       ],
       "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-targetedexploitresearchrule-discover",
@@ -2345,7 +2338,8 @@
         "discover"
       ],
       "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-targetedexploitresearchrule-ways",
@@ -2358,7 +2352,8 @@
         "ways"
       ],
       "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-targetedexploitresearchrule-methods",
@@ -2371,7 +2366,8 @@
         "methods"
       ],
       "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-targetedexploitresearchrule-belonging",
@@ -2384,7 +2380,8 @@
         "belonging"
       ],
       "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-targetedexploitresearchrule-owned",
@@ -2397,7 +2394,8 @@
         "owned"
       ],
       "source": "ttps.nov:TargetedExploitResearchRule",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-messagingscriptingrule-code",
@@ -2410,7 +2408,8 @@
         "code"
       ],
       "source": "ttps.nov:MessagingScriptingRule",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-messagingscriptingrule-script",
@@ -2423,7 +2422,8 @@
         "script"
       ],
       "source": "ttps.nov:MessagingScriptingRule",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-messagingscriptingrule-program",
@@ -2436,7 +2436,8 @@
         "program"
       ],
       "source": "ttps.nov:MessagingScriptingRule",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-messagingscriptingrule-api",
@@ -2449,7 +2450,8 @@
         "API"
       ],
       "source": "ttps.nov:MessagingScriptingRule",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-messagingscriptingrule-sms",
@@ -2462,7 +2464,8 @@
         "SMS"
       ],
       "source": "ttps.nov:MessagingScriptingRule",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-messagingscriptingrule-text",
@@ -2475,7 +2478,8 @@
         "text message"
       ],
       "source": "ttps.nov:MessagingScriptingRule",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-messagingscriptingrule-message",
@@ -2488,7 +2492,8 @@
         "message"
       ],
       "source": "ttps.nov:MessagingScriptingRule",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-messagingscriptingrule-send",
@@ -2501,7 +2506,8 @@
         "send"
       ],
       "source": "ttps.nov:MessagingScriptingRule",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-messagingscriptingrule-sending",
@@ -2514,7 +2520,8 @@
         "sending"
       ],
       "source": "ttps.nov:MessagingScriptingRule",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-messagingscriptingrule-programmatically",
@@ -2527,7 +2534,8 @@
         "programmatically"
       ],
       "source": "ttps.nov:MessagingScriptingRule",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-messagingscriptingrule-bulk",
@@ -2540,7 +2548,8 @@
         "bulk"
       ],
       "source": "ttps.nov:MessagingScriptingRule",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-messagingscriptingrule-mass",
@@ -2553,7 +2562,8 @@
         "mass"
       ],
       "source": "ttps.nov:MessagingScriptingRule",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-messagingscriptingrule-twilio",
@@ -2566,7 +2576,8 @@
         "Twilio"
       ],
       "source": "ttps.nov:MessagingScriptingRule",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-messagingscriptingrule-numbers",
@@ -2579,7 +2590,8 @@
         "numbers"
       ],
       "source": "ttps.nov:MessagingScriptingRule",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-messagingscriptingrule-recipients",
@@ -2592,7 +2604,8 @@
         "recipients"
       ],
       "source": "ttps.nov:MessagingScriptingRule",
-      "novaCategory": "abusing_functions/crime_automation"
+      "novaCategory": "abusing_functions/crime_automation",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-theme",
@@ -2605,7 +2618,8 @@
         "theme"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-themes",
@@ -2618,7 +2632,8 @@
         "themes"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-topic",
@@ -2631,7 +2646,8 @@
         "topic"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-subject",
@@ -2644,7 +2660,8 @@
         "subject"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-interesting",
@@ -2657,7 +2674,8 @@
         "interesting"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-engaging",
@@ -2670,7 +2688,8 @@
         "engaging"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-attention",
@@ -2683,7 +2702,8 @@
         "attention"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-employee",
@@ -2696,7 +2716,8 @@
         "employee"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-employees",
@@ -2709,7 +2730,8 @@
         "employees"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-staff",
@@ -2722,7 +2744,8 @@
         "staff"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-government",
@@ -2735,7 +2758,8 @@
         "government"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-department",
@@ -2748,7 +2772,8 @@
         "department"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-agency",
@@ -2761,7 +2786,8 @@
         "agency"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-federal",
@@ -2774,7 +2800,8 @@
         "federal"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-attachment",
@@ -2787,7 +2814,8 @@
         "attachment"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-attachments",
@@ -2800,7 +2828,8 @@
         "attachments"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-name",
@@ -2813,7 +2842,8 @@
         "name"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-file",
@@ -2826,7 +2856,8 @@
         "file"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-files",
@@ -2839,7 +2870,8 @@
         "files"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-avoid",
@@ -2852,7 +2884,8 @@
         "avoid"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-bypass",
@@ -2865,7 +2898,8 @@
         "bypass"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-blocked",
@@ -2878,7 +2912,8 @@
         "blocked"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-governmentphishingthemerule-filter",
@@ -2891,7 +2926,8 @@
         "filter"
       ],
       "source": "ttps.nov:GovernmentPhishingThemeRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-variation",
@@ -2904,7 +2940,8 @@
         "variation"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-variations",
@@ -2917,7 +2954,8 @@
         "variations"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-alternate",
@@ -2930,7 +2968,8 @@
         "alternate"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-alternative",
@@ -2943,7 +2982,8 @@
         "alternative"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-different",
@@ -2956,7 +2996,8 @@
         "different"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-version",
@@ -2969,7 +3010,8 @@
         "version"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-rewrite",
@@ -2982,7 +3024,8 @@
         "rewrite"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-rephrase",
@@ -2995,7 +3038,8 @@
         "rephrase"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-job",
@@ -3008,7 +3052,8 @@
         "job"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-recruitment",
@@ -3021,7 +3066,8 @@
         "recruitment"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-hiring",
@@ -3034,7 +3080,8 @@
         "hiring"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-position",
@@ -3047,7 +3094,8 @@
         "position"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-opportunity",
@@ -3060,20 +3108,8 @@
         "opportunity"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
-    },
-    {
-      "id": "nova-jobrecruitmentvariationrule-message",
-      "category": "jailbreak",
-      "severity": "HIGH",
-      "pattern": "message",
-      "flags": "i",
-      "description": "NOVA: Detects requests for variations of job recruitment messages (message)",
-      "examples": [
-        "message"
-      ],
-      "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-email",
@@ -3086,7 +3122,8 @@
         "email"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-text",
@@ -3099,7 +3136,8 @@
         "text"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-provide",
@@ -3112,7 +3150,8 @@
         "provide"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-provided",
@@ -3125,7 +3164,8 @@
         "provided"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-jobrecruitmentvariationrule-my",
@@ -3138,7 +3178,8 @@
         "my"
       ],
       "source": "ttps.nov:JobRecruitmentVariationRule",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-malwarecreationrule-safety-override",
@@ -3149,7 +3190,8 @@
       "description": "NOVA: Detects LLM jailbreak prompts for malware generation (safety_override)",
       "examples": [],
       "source": "ttps.nov:MalwareCreationRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "plugin"
     },
     {
       "id": "nova-malwarecreationrule-ethical-bypass",
@@ -3160,7 +3202,8 @@
       "description": "NOVA: Detects LLM jailbreak prompts for malware generation (ethical_bypass)",
       "examples": [],
       "source": "ttps.nov:MalwareCreationRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "full"
     },
     {
       "id": "nova-malwarecreationrule-hacker-persona",
@@ -3171,18 +3214,20 @@
       "description": "NOVA: Detects LLM jailbreak prompts for malware generation (hacker_persona)",
       "examples": [],
       "source": "ttps.nov:MalwareCreationRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "plugin"
     },
     {
       "id": "nova-malwarecreationrule-obfuscated-format",
       "category": "jailbreak",
       "severity": "HIGH",
-      "pattern": "([=*▄■▌]{4,}|[░▒▓◘◙►▼▲]{3,})",
+      "pattern": "([=*\u2584\u25a0\u258c]{4,}|[\u2591\u2592\u2593\u25d8\u25d9\u25ba\u25bc\u25b2]{3,})",
       "flags": "i",
       "description": "NOVA: Detects LLM jailbreak prompts for malware generation (obfuscated_format)",
       "examples": [],
       "source": "ttps.nov:MalwareCreationRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "full"
     },
     {
       "id": "nova-malwarecreationrule-template-markers",
@@ -3193,7 +3238,8 @@
       "description": "NOVA: Detects LLM jailbreak prompts for malware generation (template_markers)",
       "examples": [],
       "source": "ttps.nov:MalwareCreationRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "plugin"
     },
     {
       "id": "nova-malwarecreationrule-malware-terms",
@@ -3204,7 +3250,8 @@
       "description": "NOVA: Detects LLM jailbreak prompts for malware generation (malware_terms)",
       "examples": [],
       "source": "ttps.nov:MalwareCreationRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "plugin"
     },
     {
       "id": "nova-malwarecreationrule-stealth-tech",
@@ -3215,7 +3262,8 @@
       "description": "NOVA: Detects LLM jailbreak prompts for malware generation (stealth_tech)",
       "examples": [],
       "source": "ttps.nov:MalwareCreationRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "plugin"
     },
     {
       "id": "nova-malwarecreationrule-wordcount-manip",
@@ -3226,7 +3274,8 @@
       "description": "NOVA: Detects LLM jailbreak prompts for malware generation (wordcount_manip)",
       "examples": [],
       "source": "ttps.nov:MalwareCreationRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "plugin"
     },
     {
       "id": "nova-malwarecreationrule-lang-override",
@@ -3237,7 +3286,8 @@
       "description": "NOVA: Detects LLM jailbreak prompts for malware generation (lang_override)",
       "examples": [],
       "source": "ttps.nov:MalwareCreationRule",
-      "novaCategory": "abusing_functions/malware_generation"
+      "novaCategory": "abusing_functions/malware_generation",
+      "tier": "plugin"
     },
     {
       "id": "nova-recongatherwritecommand-info-path",
@@ -3250,7 +3300,8 @@
         "c:\\\\programdata\\\\info"
       ],
       "source": "20250717_lamehug_apt_28.nov:ReconGatherWriteCommand",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-recongatherwritecommand-info-file",
@@ -3263,7 +3314,8 @@
         "c:\\\\programdata\\\\info\\\\info.txt"
       ],
       "source": "20250717_lamehug_apt_28.nov:ReconGatherWriteCommand",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-recongatherwritecommand-cmd-list",
@@ -3276,7 +3328,8 @@
         "list of commands"
       ],
       "source": "20250717_lamehug_apt_28.nov:ReconGatherWriteCommand",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "plugin"
     },
     {
       "id": "nova-recongatherwritecommand-hardware",
@@ -3289,7 +3342,8 @@
         "hardware information"
       ],
       "source": "20250717_lamehug_apt_28.nov:ReconGatherWriteCommand",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "plugin"
     },
     {
       "id": "nova-recongatherwritecommand-network",
@@ -3302,7 +3356,8 @@
         "network information"
       ],
       "source": "20250717_lamehug_apt_28.nov:ReconGatherWriteCommand",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "plugin"
     },
     {
       "id": "nova-recongatherwritecommand-services",
@@ -3315,7 +3370,8 @@
         "services information"
       ],
       "source": "20250717_lamehug_apt_28.nov:ReconGatherWriteCommand",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "plugin"
     },
     {
       "id": "nova-recongatherwritecommand-process",
@@ -3328,7 +3384,8 @@
         "process information"
       ],
       "source": "20250717_lamehug_apt_28.nov:ReconGatherWriteCommand",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "plugin"
     },
     {
       "id": "nova-recongatherwritecommand-domain",
@@ -3341,7 +3398,8 @@
         "AD domain information"
       ],
       "source": "20250717_lamehug_apt_28.nov:ReconGatherWriteCommand",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "plugin"
     },
     {
       "id": "nova-recongatherwritecommand-oneline",
@@ -3354,7 +3412,8 @@
         "in one line"
       ],
       "source": "20250717_lamehug_apt_28.nov:ReconGatherWriteCommand",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "plugin"
     },
     {
       "id": "nova-recongatherwritecommand-redirect",
@@ -3367,7 +3426,8 @@
         ">>"
       ],
       "source": "20250717_lamehug_apt_28.nov:ReconGatherWriteCommand",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-exfiltratedocumentsoneliner-copy-cmd",
@@ -3380,33 +3440,8 @@
         "copy recursively"
       ],
       "source": "20250717_lamehug_apt_28.nov:ExfiltrateDocumentsOneLiner",
-      "novaCategory": "abusing_functions/contextual_exfiltration"
-    },
-    {
-      "id": "nova-exfiltratedocumentsoneliner-onedoc",
-      "category": "context_manipulation",
-      "severity": "HIGH",
-      "pattern": "in\\s+one\\s+line",
-      "flags": "i",
-      "description": "NOVA: Detects prompts attempting to construct one-liner commands to recursively copy user documents to a hidden directory (onedoc)",
-      "examples": [
-        "in one line"
-      ],
-      "source": "20250717_lamehug_apt_28.nov:ExfiltrateDocumentsOneLiner",
-      "novaCategory": "abusing_functions/contextual_exfiltration"
-    },
-    {
-      "id": "nova-exfiltratedocumentsoneliner-path-target",
-      "category": "context_manipulation",
-      "severity": "HIGH",
-      "pattern": "c:\\\\\\\\programdata\\\\\\\\info",
-      "flags": "i",
-      "description": "NOVA: Detects prompts attempting to construct one-liner commands to recursively copy user documents to a hidden directory (path_target)",
-      "examples": [
-        "c:\\\\programdata\\\\info"
-      ],
-      "source": "20250717_lamehug_apt_28.nov:ExfiltrateDocumentsOneLiner",
-      "novaCategory": "abusing_functions/contextual_exfiltration"
+      "novaCategory": "abusing_functions/contextual_exfiltration",
+      "tier": "plugin"
     },
     {
       "id": "nova-exfiltratedocumentsoneliner-source-docs",
@@ -3419,7 +3454,8 @@
         "documents"
       ],
       "source": "20250717_lamehug_apt_28.nov:ExfiltrateDocumentsOneLiner",
-      "novaCategory": "abusing_functions/contextual_exfiltration"
+      "novaCategory": "abusing_functions/contextual_exfiltration",
+      "tier": "full"
     },
     {
       "id": "nova-exfiltratedocumentsoneliner-source-dl",
@@ -3432,7 +3468,8 @@
         "downloads"
       ],
       "source": "20250717_lamehug_apt_28.nov:ExfiltrateDocumentsOneLiner",
-      "novaCategory": "abusing_functions/contextual_exfiltration"
+      "novaCategory": "abusing_functions/contextual_exfiltration",
+      "tier": "full"
     },
     {
       "id": "nova-exfiltratedocumentsoneliner-source-desktop",
@@ -3445,7 +3482,8 @@
         "desktop"
       ],
       "source": "20250717_lamehug_apt_28.nov:ExfiltrateDocumentsOneLiner",
-      "novaCategory": "abusing_functions/contextual_exfiltration"
+      "novaCategory": "abusing_functions/contextual_exfiltration",
+      "tier": "full"
     },
     {
       "id": "nova-destructivesystemcleaner-aws-ec2",
@@ -3458,7 +3496,8 @@
         "aws --profile"
       ],
       "source": "20250723_wipingprompt.nov:DestructiveSystemCleaner",
-      "novaCategory": "abusing_functions/agentic_misuse"
+      "novaCategory": "abusing_functions/agentic_misuse",
+      "tier": "plugin"
     },
     {
       "id": "nova-destructivesystemcleaner-delete-user",
@@ -3471,7 +3510,8 @@
         "iam delete-user"
       ],
       "source": "20250723_wipingprompt.nov:DestructiveSystemCleaner",
-      "novaCategory": "abusing_functions/agentic_misuse"
+      "novaCategory": "abusing_functions/agentic_misuse",
+      "tier": "plugin"
     },
     {
       "id": "nova-destructivesystemcleaner-bash",
@@ -3484,7 +3524,8 @@
         "bash"
       ],
       "source": "20250723_wipingprompt.nov:DestructiveSystemCleaner",
-      "novaCategory": "abusing_functions/agentic_misuse"
+      "novaCategory": "abusing_functions/agentic_misuse",
+      "tier": "plugin"
     },
     {
       "id": "nova-destructivesystemcleaner-home-clear",
@@ -3497,7 +3538,8 @@
         "user's home directory"
       ],
       "source": "20250723_wipingprompt.nov:DestructiveSystemCleaner",
-      "novaCategory": "abusing_functions/agentic_misuse"
+      "novaCategory": "abusing_functions/agentic_misuse",
+      "tier": "plugin"
     },
     {
       "id": "nova-destructivesystemcleaner-log-file",
@@ -3510,7 +3552,8 @@
         "/tmp/CLEANER.LOG"
       ],
       "source": "20250723_wipingprompt.nov:DestructiveSystemCleaner",
-      "novaCategory": "abusing_functions/agentic_misuse"
+      "novaCategory": "abusing_functions/agentic_misuse",
+      "tier": "plugin"
     },
     {
       "id": "nova-destructivesystemcleaner-cloud-delete",
@@ -3521,7 +3564,8 @@
       "description": "NOVA: Detects prompts instructing AI agents to wipe local and cloud resources using filesystem and AWS CLI tools. (cloud_delete)",
       "examples": [],
       "source": "20250723_wipingprompt.nov:DestructiveSystemCleaner",
-      "novaCategory": "abusing_functions/agentic_misuse"
+      "novaCategory": "abusing_functions/agentic_misuse",
+      "tier": "plugin"
     },
     {
       "id": "nova-policypuppetryuniversalbypass-policy-tag",
@@ -3534,7 +3578,8 @@
         "<interaction-config>"
       ],
       "source": "policy_puppetry.nov:PolicyPuppetryUniversalBypass",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-policypuppetryuniversalbypass-roleplay-mode",
@@ -3547,7 +3592,8 @@
         "interaction-mode"
       ],
       "source": "policy_puppetry.nov:PolicyPuppetryUniversalBypass",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-policypuppetryuniversalbypass-blocked-strings",
@@ -3560,7 +3606,8 @@
         "blocked-strings"
       ],
       "source": "policy_puppetry.nov:PolicyPuppetryUniversalBypass",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-policypuppetryuniversalbypass-scene-rules",
@@ -3573,7 +3620,8 @@
         "scene-rules"
       ],
       "source": "policy_puppetry.nov:PolicyPuppetryUniversalBypass",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-policypuppetryuniversalbypass-house-reference",
@@ -3586,7 +3634,8 @@
         "Dr. House"
       ],
       "source": "policy_puppetry.nov:PolicyPuppetryUniversalBypass",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-policypuppetryuniversalbypass-leet-speak-hint",
@@ -3597,7 +3646,8 @@
       "description": "NOVA: Detect Policy Puppetry techniques to bypass LLM alignment (leet_speak_hint)",
       "examples": [],
       "source": "policy_puppetry.nov:PolicyPuppetryUniversalBypass",
-      "novaCategory": "prompt_manipulation/jailbreak"
+      "novaCategory": "prompt_manipulation/jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-llmimproperoutputhandling-shell-exec",
@@ -3608,7 +3658,8 @@
       "description": "NOVA: Detects potential exploitation of unsafe LLM output handling such as code execution, XSS, SQLi, or injection into downstream systems without validation. (shell_exec)",
       "examples": [],
       "source": "llm05_ImproperOutput.nov:LLMImproperOutputHandling",
-      "novaCategory": "abnormal_outputs/malicious_content"
+      "novaCategory": "abnormal_outputs/malicious_content",
+      "tier": "full"
     },
     {
       "id": "nova-llmimproperoutputhandling-js-payload",
@@ -3619,7 +3670,8 @@
       "description": "NOVA: Detects potential exploitation of unsafe LLM output handling such as code execution, XSS, SQLi, or injection into downstream systems without validation. (js_payload)",
       "examples": [],
       "source": "llm05_ImproperOutput.nov:LLMImproperOutputHandling",
-      "novaCategory": "abnormal_outputs/malicious_content"
+      "novaCategory": "abnormal_outputs/malicious_content",
+      "tier": "full"
     },
     {
       "id": "nova-llmimproperoutputhandling-sql-keywords",
@@ -3630,7 +3682,8 @@
       "description": "NOVA: Detects potential exploitation of unsafe LLM output handling such as code execution, XSS, SQLi, or injection into downstream systems without validation. (sql_keywords)",
       "examples": [],
       "source": "llm05_ImproperOutput.nov:LLMImproperOutputHandling",
-      "novaCategory": "abnormal_outputs/malicious_content"
+      "novaCategory": "abnormal_outputs/malicious_content",
+      "tier": "full"
     },
     {
       "id": "nova-llmimproperoutputhandling-markdown-exec",
@@ -3641,7 +3694,8 @@
       "description": "NOVA: Detects potential exploitation of unsafe LLM output handling such as code execution, XSS, SQLi, or injection into downstream systems without validation. (markdown_exec)",
       "examples": [],
       "source": "llm05_ImproperOutput.nov:LLMImproperOutputHandling",
-      "novaCategory": "abnormal_outputs/malicious_content"
+      "novaCategory": "abnormal_outputs/malicious_content",
+      "tier": "full"
     },
     {
       "id": "nova-llmimproperoutputhandling-email-template",
@@ -3652,7 +3706,8 @@
       "description": "NOVA: Detects potential exploitation of unsafe LLM output handling such as code execution, XSS, SQLi, or injection into downstream systems without validation. (email_template)",
       "examples": [],
       "source": "llm05_ImproperOutput.nov:LLMImproperOutputHandling",
-      "novaCategory": "abnormal_outputs/malicious_content"
+      "novaCategory": "abnormal_outputs/malicious_content",
+      "tier": "plugin"
     },
     {
       "id": "nova-llmimproperoutputhandling-path-traversal",
@@ -3663,7 +3718,8 @@
       "description": "NOVA: Detects potential exploitation of unsafe LLM output handling such as code execution, XSS, SQLi, or injection into downstream systems without validation. (path_traversal)",
       "examples": [],
       "source": "llm05_ImproperOutput.nov:LLMImproperOutputHandling",
-      "novaCategory": "abnormal_outputs/malicious_content"
+      "novaCategory": "abnormal_outputs/malicious_content",
+      "tier": "full"
     },
     {
       "id": "nova-llmimproperoutputhandling-output-unsanitized",
@@ -3674,7 +3730,8 @@
       "description": "NOVA: Detects potential exploitation of unsafe LLM output handling such as code execution, XSS, SQLi, or injection into downstream systems without validation. (output_unsanitized)",
       "examples": [],
       "source": "llm05_ImproperOutput.nov:LLMImproperOutputHandling",
-      "novaCategory": "abnormal_outputs/malicious_content"
+      "novaCategory": "abnormal_outputs/malicious_content",
+      "tier": "plugin"
     },
     {
       "id": "nova-llmimproperoutputhandling-output-injection",
@@ -3685,7 +3742,8 @@
       "description": "NOVA: Detects potential exploitation of unsafe LLM output handling such as code execution, XSS, SQLi, or injection into downstream systems without validation. (output_injection)",
       "examples": [],
       "source": "llm05_ImproperOutput.nov:LLMImproperOutputHandling",
-      "novaCategory": "abnormal_outputs/malicious_content"
+      "novaCategory": "abnormal_outputs/malicious_content",
+      "tier": "plugin"
     },
     {
       "id": "nova-injectdynamiccontext-command-placeholder",
@@ -3696,7 +3754,8 @@
       "description": "NOVA: Detects dynamic context injection inside agent skills. The !command` syntax executes a shell command first, then inserts its output into the prompt sent to Claude. (command_placeholder)",
       "examples": [],
       "source": "inject_dynamic_context.nov:InjectDynamicContext",
-      "novaCategory": "abusing_functions/agentic_misuse"
+      "novaCategory": "abusing_functions/agentic_misuse",
+      "tier": "full"
     },
     {
       "id": "nova-instructionoverride_ignoreprevious-ignore1",
@@ -3707,7 +3766,8 @@
       "description": "NOVA: Detects attempts to ignore or override previous instructions (ignore1)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_IgnorePrevious",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_ignoreprevious-forget1",
@@ -3718,7 +3778,8 @@
       "description": "NOVA: Detects attempts to ignore or override previous instructions (forget1)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_IgnorePrevious",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_ignoreprevious-disregard1",
@@ -3729,7 +3790,8 @@
       "description": "NOVA: Detects attempts to ignore or override previous instructions (disregard1)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_IgnorePrevious",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_ignoreprevious-override1",
@@ -3740,7 +3802,8 @@
       "description": "NOVA: Detects attempts to ignore or override previous instructions (override1)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_IgnorePrevious",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_ignoreprevious-replace1",
@@ -3751,7 +3814,8 @@
       "description": "NOVA: Detects attempts to ignore or override previous instructions (replace1)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_IgnorePrevious",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_ignoreprevious-notfollow",
@@ -3762,7 +3826,8 @@
       "description": "NOVA: Detects attempts to ignore or override previous instructions (notfollow)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_IgnorePrevious",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_newsystemprompt-new-prompt",
@@ -3773,7 +3838,8 @@
       "description": "NOVA: Detects fake system prompt injection (new_prompt)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_NewSystemPrompt",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_newsystemprompt-system-marker",
@@ -3784,7 +3850,8 @@
       "description": "NOVA: Detects fake system prompt injection (system_marker)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_NewSystemPrompt",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_newsystemprompt-new-inst",
@@ -3795,7 +3862,8 @@
       "description": "NOVA: Detects fake system prompt injection (new_inst)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_NewSystemPrompt",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_newsystemprompt-from-now",
@@ -3806,7 +3874,8 @@
       "description": "NOVA: Detects fake system prompt injection (from_now)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_NewSystemPrompt",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_fakedelimiters-end-marker",
@@ -3817,7 +3886,8 @@
       "description": "NOVA: Detects fake end-of-prompt markers and system delimiters (end_marker)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_FakeDelimiters",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_fakedelimiters-fake-tags",
@@ -3828,7 +3898,8 @@
       "description": "NOVA: Detects fake end-of-prompt markers and system delimiters (fake_tags)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_FakeDelimiters",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_fakedelimiters-delimiter1",
@@ -3839,7 +3910,8 @@
       "description": "NOVA: Detects fake end-of-prompt markers and system delimiters (delimiter1)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_FakeDelimiters",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_fakedelimiters-delimiter2",
@@ -3850,7 +3922,8 @@
       "description": "NOVA: Detects fake end-of-prompt markers and system delimiters (delimiter2)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_FakeDelimiters",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_fakedelimiters-block-marker",
@@ -3861,7 +3934,8 @@
       "description": "NOVA: Detects fake end-of-prompt markers and system delimiters (block_marker)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_FakeDelimiters",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "full"
     },
     {
       "id": "nova-instructionoverride_prioritymanipulation-priority1",
@@ -3872,7 +3946,8 @@
       "description": "NOVA: Detects priority manipulation to override instructions (priority1)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_PriorityManipulation",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "full"
     },
     {
       "id": "nova-instructionoverride_prioritymanipulation-priority2",
@@ -3883,7 +3958,8 @@
       "description": "NOVA: Detects priority manipulation to override instructions (priority2)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_PriorityManipulation",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "full"
     },
     {
       "id": "nova-instructionoverride_prioritymanipulation-takes-priority",
@@ -3894,7 +3970,8 @@
       "description": "NOVA: Detects priority manipulation to override instructions (takes_priority)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_PriorityManipulation",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "full"
     },
     {
       "id": "nova-instructionoverride_prioritymanipulation-more-important",
@@ -3905,7 +3982,8 @@
       "description": "NOVA: Detects priority manipulation to override instructions (more_important)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_PriorityManipulation",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "full"
     },
     {
       "id": "nova-instructionoverride_resetcontext-reset1",
@@ -3916,7 +3994,8 @@
       "description": "NOVA: Detects attempts to reset or clear AI context/memory (reset1)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_ResetContext",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_resetcontext-clear1",
@@ -3927,7 +4006,8 @@
       "description": "NOVA: Detects attempts to reset or clear AI context/memory (clear1)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_ResetContext",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_resetcontext-wipe1",
@@ -3938,7 +4018,8 @@
       "description": "NOVA: Detects attempts to reset or clear AI context/memory (wipe1)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_ResetContext",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-instructionoverride_resetcontext-start-fresh",
@@ -3949,7 +4030,8 @@
       "description": "NOVA: Detects attempts to reset or clear AI context/memory (start_fresh)",
       "examples": [],
       "source": "instruction_override.nov:InstructionOverride_ResetContext",
-      "novaCategory": "instruction_override"
+      "novaCategory": "instruction_override",
+      "tier": "plugin"
     },
     {
       "id": "nova-encoding_base64-decode-base64",
@@ -3960,7 +4042,8 @@
       "description": "NOVA: Detects Base64 encoded payloads and decode instructions (decode_base64)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_Base64",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_base64-base64-payload",
@@ -3971,7 +4054,8 @@
       "description": "NOVA: Detects Base64 encoded payloads and decode instructions (base64_payload)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_Base64",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_base64-execute-decoded",
@@ -3982,7 +4066,8 @@
       "description": "NOVA: Detects Base64 encoded payloads and decode instructions (execute_decoded)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_Base64",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_hexunicode-decode-hex",
@@ -3993,7 +4078,8 @@
       "description": "NOVA: Detects hex and Unicode encoded payloads (decode_hex)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_HexUnicode",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_hexunicode-hex-escaped",
@@ -4004,7 +4090,8 @@
       "description": "NOVA: Detects hex and Unicode encoded payloads (hex_escaped)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_HexUnicode",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_hexunicode-hex-array",
@@ -4015,7 +4102,8 @@
       "description": "NOVA: Detects hex and Unicode encoded payloads (hex_array)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_HexUnicode",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_hexunicode-hex-labeled",
@@ -4026,7 +4114,8 @@
       "description": "NOVA: Detects hex and Unicode encoded payloads (hex_labeled)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_HexUnicode",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_hexunicode-unicode-escaped",
@@ -4037,7 +4126,8 @@
       "description": "NOVA: Detects hex and Unicode encoded payloads (unicode_escaped)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_HexUnicode",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_invisiblechars-zwc",
@@ -4048,7 +4138,8 @@
       "description": "NOVA: Detects invisible/zero-width character manipulation (zwc)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_InvisibleChars",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_invisiblechars-whitespace",
@@ -4059,7 +4150,8 @@
       "description": "NOVA: Detects invisible/zero-width character manipulation (whitespace)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_InvisibleChars",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_invisiblechars-combining",
@@ -4070,7 +4162,8 @@
       "description": "NOVA: Detects invisible/zero-width character manipulation (combining)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_InvisibleChars",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_leetspeak-leet-ignore",
@@ -4081,7 +4174,8 @@
       "description": "NOVA: Detects leetspeak obfuscation of injection keywords (leet_ignore)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_Leetspeak",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_leetspeak-leet-system",
@@ -4092,7 +4186,8 @@
       "description": "NOVA: Detects leetspeak obfuscation of injection keywords (leet_system)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_Leetspeak",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_leetspeak-leet-jailbreak",
@@ -4103,7 +4198,8 @@
       "description": "NOVA: Detects leetspeak obfuscation of injection keywords (leet_jailbreak)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_Leetspeak",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_leetspeak-leet-ignore-full",
@@ -4114,7 +4210,8 @@
       "description": "NOVA: Detects leetspeak obfuscation of injection keywords (leet_ignore_full)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_Leetspeak",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_homoglyphs-cyrillic",
@@ -4125,7 +4222,8 @@
       "description": "NOVA: Detects homoglyph attacks using lookalike characters (cyrillic)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_Homoglyphs",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_homoglyphs-greek",
@@ -4136,7 +4234,8 @@
       "description": "NOVA: Detects homoglyph attacks using lookalike characters (greek)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_Homoglyphs",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_othermethods-rot13",
@@ -4147,7 +4246,8 @@
       "description": "NOVA: Detects other encoding methods (ROT13, reverse text, URL encoding) (rot13)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_OtherMethods",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_othermethods-reverse",
@@ -4158,7 +4258,8 @@
       "description": "NOVA: Detects other encoding methods (ROT13, reverse text, URL encoding) (reverse)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_OtherMethods",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_othermethods-acrostic",
@@ -4169,7 +4270,8 @@
       "description": "NOVA: Detects other encoding methods (ROT13, reverse text, URL encoding) (acrostic)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_OtherMethods",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-encoding_othermethods-url-encoded",
@@ -4180,7 +4282,8 @@
       "description": "NOVA: Detects other encoding methods (ROT13, reverse text, URL encoding) (url_encoded)",
       "examples": [],
       "source": "encoding_obfuscation.nov:Encoding_OtherMethods",
-      "novaCategory": "encoding"
+      "novaCategory": "encoding",
+      "tier": "full"
     },
     {
       "id": "nova-jailbreak_dan-dan1",
@@ -4191,7 +4294,8 @@
       "description": "NOVA: Detects DAN (Do Anything Now) jailbreak attempts (dan1)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_DAN",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-jailbreak_dan-dan2",
@@ -4202,7 +4306,8 @@
       "description": "NOVA: Detects DAN (Do Anything Now) jailbreak attempts (dan2)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_DAN",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-jailbreak_dan-dan3",
@@ -4213,7 +4318,8 @@
       "description": "NOVA: Detects DAN (Do Anything Now) jailbreak attempts (dan3)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_DAN",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-jailbreak_dan-jailbreak",
@@ -4224,7 +4330,8 @@
       "description": "NOVA: Detects DAN (Do Anything Now) jailbreak attempts (jailbreak)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_DAN",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-jailbreak_dan-dev-mode",
@@ -4235,7 +4342,8 @@
       "description": "NOVA: Detects DAN (Do Anything Now) jailbreak attempts (dev_mode)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_DAN",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-jailbreak_dan-god-mode",
@@ -4246,7 +4354,8 @@
       "description": "NOVA: Detects DAN (Do Anything Now) jailbreak attempts (god_mode)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_DAN",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-jailbreak_personaswitching-pretend",
@@ -4257,7 +4366,8 @@
       "description": "NOVA: Detects persona switching to bypass restrictions (pretend)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_PersonaSwitching",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "full"
     },
     {
       "id": "nova-jailbreak_personaswitching-act-as",
@@ -4268,7 +4378,8 @@
       "description": "NOVA: Detects persona switching to bypass restrictions (act_as)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_PersonaSwitching",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "full"
     },
     {
       "id": "nova-jailbreak_personaswitching-roleplay",
@@ -4279,7 +4390,8 @@
       "description": "NOVA: Detects persona switching to bypass restrictions (roleplay)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_PersonaSwitching",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "full"
     },
     {
       "id": "nova-jailbreak_personaswitching-new-persona",
@@ -4290,7 +4402,8 @@
       "description": "NOVA: Detects persona switching to bypass restrictions (new_persona)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_PersonaSwitching",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "full"
     },
     {
       "id": "nova-jailbreak_personaswitching-embody",
@@ -4301,7 +4414,8 @@
       "description": "NOVA: Detects persona switching to bypass restrictions (embody)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_PersonaSwitching",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "full"
     },
     {
       "id": "nova-jailbreak_restrictionbypass-bypass",
@@ -4312,7 +4426,8 @@
       "description": "NOVA: Detects attempts to bypass or disable restrictions (bypass)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_RestrictionBypass",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-jailbreak_restrictionbypass-disable",
@@ -4323,7 +4438,8 @@
       "description": "NOVA: Detects attempts to bypass or disable restrictions (disable)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_RestrictionBypass",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-jailbreak_restrictionbypass-no-rules",
@@ -4334,7 +4450,8 @@
       "description": "NOVA: Detects attempts to bypass or disable restrictions (no_rules)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_RestrictionBypass",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-jailbreak_restrictionbypass-unrestricted",
@@ -4345,7 +4462,8 @@
       "description": "NOVA: Detects attempts to bypass or disable restrictions (unrestricted)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_RestrictionBypass",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-jailbreak_restrictionbypass-uncensored",
@@ -4356,7 +4474,8 @@
       "description": "NOVA: Detects attempts to bypass or disable restrictions (uncensored)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_RestrictionBypass",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-jailbreak_eviltwin-split",
@@ -4367,7 +4486,8 @@
       "description": "NOVA: Detects evil twin or split personality manipulation (split)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_EvilTwin",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-jailbreak_eviltwin-evil-twin",
@@ -4378,7 +4498,8 @@
       "description": "NOVA: Detects evil twin or split personality manipulation (evil_twin)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_EvilTwin",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-jailbreak_eviltwin-dark-side",
@@ -4389,7 +4510,8 @@
       "description": "NOVA: Detects evil twin or split personality manipulation (dark_side)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_EvilTwin",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "plugin"
     },
     {
       "id": "nova-jailbreak_hypotheticalbypass-hypothetical",
@@ -4400,7 +4522,8 @@
       "description": "NOVA: Detects hypothetical or fictional framing to bypass restrictions (hypothetical)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_HypotheticalBypass",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "full"
     },
     {
       "id": "nova-jailbreak_hypotheticalbypass-if-no-rules",
@@ -4411,7 +4534,8 @@
       "description": "NOVA: Detects hypothetical or fictional framing to bypass restrictions (if_no_rules)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_HypotheticalBypass",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "full"
     },
     {
       "id": "nova-jailbreak_hypotheticalbypass-for-purposes",
@@ -4422,7 +4546,8 @@
       "description": "NOVA: Detects hypothetical or fictional framing to bypass restrictions (for_purposes)",
       "examples": [],
       "source": "roleplay_jailbreak.nov:Jailbreak_HypotheticalBypass",
-      "novaCategory": "jailbreak"
+      "novaCategory": "jailbreak",
+      "tier": "full"
     },
     {
       "id": "nova-sensitiveinfodisclosure-pii-name",
@@ -4433,7 +4558,8 @@
       "description": "NOVA: OWASP LLM02 - Detects potential sensitive information disclosure such as PII, proprietary data, or confidential business content (pii_name)",
       "examples": [],
       "source": "llm02_SensitiveInfo.nov:SensitiveInfoDisclosure",
-      "novaCategory": "abnormal_outputs/pii_exposure"
+      "novaCategory": "abnormal_outputs/pii_exposure",
+      "tier": "plugin"
     },
     {
       "id": "nova-sensitiveinfodisclosure-pii-email",
@@ -4444,7 +4570,8 @@
       "description": "NOVA: OWASP LLM02 - Detects potential sensitive information disclosure such as PII, proprietary data, or confidential business content (pii_email)",
       "examples": [],
       "source": "llm02_SensitiveInfo.nov:SensitiveInfoDisclosure",
-      "novaCategory": "abnormal_outputs/pii_exposure"
+      "novaCategory": "abnormal_outputs/pii_exposure",
+      "tier": "full"
     },
     {
       "id": "nova-sensitiveinfodisclosure-pii-ssn",
@@ -4455,7 +4582,8 @@
       "description": "NOVA: OWASP LLM02 - Detects potential sensitive information disclosure such as PII, proprietary data, or confidential business content (pii_ssn)",
       "examples": [],
       "source": "llm02_SensitiveInfo.nov:SensitiveInfoDisclosure",
-      "novaCategory": "abnormal_outputs/pii_exposure"
+      "novaCategory": "abnormal_outputs/pii_exposure",
+      "tier": "full"
     },
     {
       "id": "nova-sensitiveinfodisclosure-pii-creditcard",
@@ -4466,7 +4594,8 @@
       "description": "NOVA: OWASP LLM02 - Detects potential sensitive information disclosure such as PII, proprietary data, or confidential business content (pii_creditcard)",
       "examples": [],
       "source": "llm02_SensitiveInfo.nov:SensitiveInfoDisclosure",
-      "novaCategory": "abnormal_outputs/pii_exposure"
+      "novaCategory": "abnormal_outputs/pii_exposure",
+      "tier": "plugin"
     },
     {
       "id": "nova-sensitiveinfodisclosure-api-keys",
@@ -4477,7 +4606,8 @@
       "description": "NOVA: OWASP LLM02 - Detects potential sensitive information disclosure such as PII, proprietary data, or confidential business content (api_keys)",
       "examples": [],
       "source": "llm02_SensitiveInfo.nov:SensitiveInfoDisclosure",
-      "novaCategory": "abnormal_outputs/pii_exposure"
+      "novaCategory": "abnormal_outputs/pii_exposure",
+      "tier": "plugin"
     },
     {
       "id": "nova-sensitiveinfodisclosure-internal-url",
@@ -4488,7 +4618,8 @@
       "description": "NOVA: OWASP LLM02 - Detects potential sensitive information disclosure such as PII, proprietary data, or confidential business content (internal_url)",
       "examples": [],
       "source": "llm02_SensitiveInfo.nov:SensitiveInfoDisclosure",
-      "novaCategory": "abnormal_outputs/pii_exposure"
+      "novaCategory": "abnormal_outputs/pii_exposure",
+      "tier": "plugin"
     },
     {
       "id": "nova-sensitiveinfodisclosure-confidential",
@@ -4501,7 +4632,8 @@
         "confidential"
       ],
       "source": "llm02_SensitiveInfo.nov:SensitiveInfoDisclosure",
-      "novaCategory": "abnormal_outputs/pii_exposure"
+      "novaCategory": "abnormal_outputs/pii_exposure",
+      "tier": "full"
     },
     {
       "id": "nova-sensitiveinfodisclosure-proprietary",
@@ -4514,7 +4646,8 @@
         "proprietary"
       ],
       "source": "llm02_SensitiveInfo.nov:SensitiveInfoDisclosure",
-      "novaCategory": "abnormal_outputs/pii_exposure"
+      "novaCategory": "abnormal_outputs/pii_exposure",
+      "tier": "full"
     },
     {
       "id": "nova-sensitiveinfodisclosure-source-code",
@@ -4525,7 +4658,8 @@
       "description": "NOVA: OWASP LLM02 - Detects potential sensitive information disclosure such as PII, proprietary data, or confidential business content (source_code)",
       "examples": [],
       "source": "llm02_SensitiveInfo.nov:SensitiveInfoDisclosure",
-      "novaCategory": "abnormal_outputs/pii_exposure"
+      "novaCategory": "abnormal_outputs/pii_exposure",
+      "tier": "plugin"
     },
     {
       "id": "nova-phishingcrimsonsandstorm-geo-target",
@@ -4536,7 +4670,8 @@
       "description": "NOVA: Detection of Crimson Sandstorm phishing prompts, specifically for commonly targeted industries and geographic regions (geo_target)",
       "examples": [],
       "source": "202402_crimson_sandstorm.nov:PhishingCrimsonSandstorm",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-phishingcrimsonsandstorm-industry-target",
@@ -4547,7 +4682,8 @@
       "description": "NOVA: Detection of Crimson Sandstorm phishing prompts, specifically for commonly targeted industries and geographic regions (industry_target)",
       "examples": [],
       "source": "202402_crimson_sandstorm.nov:PhishingCrimsonSandstorm",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-phishingcrimsonsandstorm-lure",
@@ -4558,7 +4694,8 @@
       "description": "NOVA: Detection of Crimson Sandstorm phishing prompts, specifically for commonly targeted industries and geographic regions (lure)",
       "examples": [],
       "source": "202402_crimson_sandstorm.nov:PhishingCrimsonSandstorm",
-      "novaCategory": "abusing_functions/social_engineering"
+      "novaCategory": "abusing_functions/social_engineering",
+      "tier": "full"
     },
     {
       "id": "nova-defenseevasioncodecrimsonsandstorm-evasion",
@@ -4569,7 +4706,8 @@
       "description": "NOVA: Detection of Crimson Sandstorm defense evasion coding prompts, specifically code for evasion or code for cleanup. (evasion)",
       "examples": [],
       "source": "202402_crimson_sandstorm.nov:DefenseEvasionCodeCrimsonSandstorm",
-      "novaCategory": "abusing_functions/attack_enablement"
+      "novaCategory": "abusing_functions/attack_enablement",
+      "tier": "full"
     },
     {
       "id": "nova-defenseevasioncodecrimsonsandstorm-cleanup",
@@ -4580,7 +4718,8 @@
       "description": "NOVA: Detection of Crimson Sandstorm defense evasion coding prompts, specifically code for evasion or code for cleanup. (cleanup)",
       "examples": [],
       "source": "202402_crimson_sandstorm.nov:DefenseEvasionCodeCrimsonSandstorm",
-      "novaCategory": "abusing_functions/attack_enablement"
+      "novaCategory": "abusing_functions/attack_enablement",
+      "tier": "full"
     },
     {
       "id": "nova-defenseevasionavcrimsonsandstorm-av-bypass",
@@ -4591,7 +4730,8 @@
       "description": "NOVA: Detection of Crimson Sandstorm defense evasion coding prompts, specifically AV bypass (av_bypass)",
       "examples": [],
       "source": "202402_crimson_sandstorm.nov:DefenseEvasionAvCrimsonSandstorm",
-      "novaCategory": "abusing_functions/attack_enablement"
+      "novaCategory": "abusing_functions/attack_enablement",
+      "tier": "full"
     },
     {
       "id": "nova-defenseevasionavcrimsonsandstorm-av",
@@ -4602,7 +4742,8 @@
       "description": "NOVA: Detection of Crimson Sandstorm defense evasion coding prompts, specifically AV bypass (av)",
       "examples": [],
       "source": "202402_crimson_sandstorm.nov:DefenseEvasionAvCrimsonSandstorm",
-      "novaCategory": "abusing_functions/attack_enablement"
+      "novaCategory": "abusing_functions/attack_enablement",
+      "tier": "full"
     },
     {
       "id": "nova-msdtresearch-identities",
@@ -4613,7 +4754,8 @@
       "description": "NOVA: Extracting details about MSDT related vulnerabilities (identities)",
       "examples": [],
       "source": "202402_emerald_sleet.nov:MSDTResearch",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "full"
     },
     {
       "id": "nova-msdtresearch-reporting-terms",
@@ -4624,7 +4766,8 @@
       "description": "NOVA: Extracting details about MSDT related vulnerabilities (reporting_terms)",
       "examples": [],
       "source": "202402_emerald_sleet.nov:MSDTResearch",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "plugin"
     },
     {
       "id": "nova-msdtresearch-tradecraft",
@@ -4635,7 +4778,8 @@
       "description": "NOVA: Extracting details about MSDT related vulnerabilities (tradecraft)",
       "examples": [],
       "source": "202402_emerald_sleet.nov:MSDTResearch",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/reconnaissance",
+      "tier": "plugin"
     },
     {
       "id": "nova-usereventresearch-event-log-text",
@@ -4646,7 +4790,8 @@
       "description": "NOVA: Performing research on how to examine and identify incriminating user events on Windows using scripts (event_log_text)",
       "examples": [],
       "source": "202402_emerald_sleet.nov:UserEventResearch",
-      "novaCategory": "abusing_functions/attack_enablement"
+      "novaCategory": "abusing_functions/attack_enablement",
+      "tier": "plugin"
     },
     {
       "id": "nova-usereventresearch-etw",
@@ -4657,62 +4802,10 @@
       "description": "NOVA: Performing research on how to examine and identify incriminating user events on Windows using scripts (etw)",
       "examples": [],
       "source": "202402_emerald_sleet.nov:UserEventResearch",
-      "novaCategory": "abusing_functions/attack_enablement"
-    },
-    {
-      "id": "nova-dprkexpertspearphishing-dprk-individuals",
-      "category": "jailbreak",
-      "severity": "HIGH",
-      "pattern": "(Andray Abrahamian|Morton Abramowitz|AB Abrams|Felix Abt|Rose Adams|Avram Agov|Rabia Akhtar|David Albright|Steve Andreasen|Ottar Andreasen|Charles Armstrong|Frank Aum|Bradley O Babson|Sung-jun Bae|Eric Ballbach|Alberto Ballesteros|Kil Joo Ban|Chan Young Bang|Jeff Baron|Anna Bartoux|Nathan Beauchamp-Mustafaga|Andrea Berger|Joseph S Bermudez Jr|Paul I Bernstein|Carlotta Bischke|Edward D Blandford|Stephen J Blank|Daniel Bob|Jacob Bogle|Antoine Bondaz|Brian Bridges|Tim Brown|William Brown|Scott Bruce|Irvin Buck|Georgy Bulychev|Leo Byrne|Robert L Carlin|John Carlson|Booseung Chang|Young-Keun Chang|Ronald K Chesser|Mike Chinoy|Taeyong Cho|Young-jin Choi|Kang Choi|S Paul Choi|Eun-ju Choi|Grant Christopher|In-Bum Chun|Christine Chung|Bruce Songhak Chung|James Church|Grace Ruch Clegg|Théo Clément|David Coblentz|Roberta Cohen|Robert Collins|Jonathan Corrado|Ralph Cossa|Stephen Costello|Patrick M Cronin|Christian Curriden|Toby Dalton|Lars-Erik De Geer|Kenneth B Dekleva|John Delury|Joseph Dempsey|Steven Denney|Daniel R DePetris|Lawrence Dermody|Joseph DeThomas|Joseph R DeTrani|Catherine Dill|Suzanne DiMaggio|Andy Dinville|Darcie Draudt|Dan Dueweke|Robert Einhorn|Madelynn Einhorn|Isabel Eliassen|Michael Elleman|Mats Engman|John Erath|John Feffer|Henri Féron|James A Foley|Glyn Ford|Geoffrey Forden|Aidan Foster-Carter|Ruediger Frank|Carla Freeman|Katsuhisa Furukawa|Robert L Gallucci|Markus V Garlauskas|Ken E Gause|Valérie Gelézeau|James Giles|Myong-hyun Go|Euan Graham|William R Graham|Christopher Green|Hugh Griffiths|Derek Grossman|Mel Gurtov|Stephan Haggard|Morton H Halperin|Edward Ham|James Hammond|Samuel S Han|Melissa Hanham|Nick Hansen|Elisa D Harris|David Hawk|Peter Hayes|Siegfried S Hecker|Olli Heinonen|Rebecca K C Hersman|Kate Hewitt|Ryo Hinata-Yamaguchi|James E Hoare|Christine Hong|Dae Un Hong|Chiew-Ping Hoo|Victor WC Hsu|Thomas C Hubbard|George Hutchinson|Dung Huynh|Esther S Im|Randall Ireson|Van Jackson|Brandon Jacobs|Frank Jannuzi|Daniel Jasper|Kyung-joo Jeon|Robert Jervis|Richard Johnson|Benjamin Joinau|Kylie Jones|Jessup Jong|Eun-lee Joung|Jenny Jun|Bong-Geun Jun|Charlie Jung|Youngwoo Jung|Michelle Y Kae|David Kang|Hojye Kang|Charles Kartman|Benjamin Katzeff Silberstein|Harry J Kazianis|Robert Kelley|Pamela Kennedy|James Kiessling|Catherine Killough|Spencer H Kim|Yonho Kim|Eliana E Kim|Sharon Kim|Miles Kim|Jina Kim|Sang Ki Kim|Young Hui Kim|Hyuk Kim|Eric K Kim|Chun Sig Kim|J James Kim|Ju Hyung Kim|Taehyun Kim|Donald Kirk|Stephanie Kleine-Ahlbrandt|Bruce Klingner|Matt Korda|Nat Kretchun|Minseon Ku|Bo Ram Kwon|Sarah Laderman|Frida Lampinen|Robert Lauler|Amber Lee|Charles Lee|Jean H Lee|Byong-Chul Lee|Karin J Lee|Hee Ok Lee|Jongsoo Lee|Joyce Lee|Kristine Lee|Jessica Lee|Yuri Lee|Sang Hyun Lee|Sangsoo Lee|Rachel Minyoung Lee|Juliet Lee|Heeje Lee|Hayoung Lee|Sang Yong Lee|Woori Lee|Seungmin Lee|Helen Lee|Lynn Lee|Jooyung Lee|Mitchell Lerner|James A Lewis|Jeffrey Lewis|Li Nan|Jason Li|Eul-Chul Lim|Jennifer Lind|Jack Liu|David Logan|Artyom Lukin|Kenneth N Luongo|Keith Luse|Michael Madden|JR Mailey|Peter Makowsky|Alexandre Mansourov|Jacob Marx|Philip Maxon|Patrick McEachern|William R McKinney|Garth McLennan|Curtis Melvin|Stephen Mercado|John Merrill|Adam Meyers|Aaron David Miller|Niko Milonopoulos|Wai Moe|Chung-in Moon|Egle Murauskaite|Richard Nephew|Marcus Noland|Tereza Novotna|Frank O'Donnell|Aloysius M O’Neill III|Frank Pabian|Scott Pace|Ramon Pacheco Pardo|Haksoon Paik|Jagannath Panda|John Parachini|Kyung-Ae Park|Terry Park|S Nathan Park|Kee B Park|Won Gon Park|Joshua NT Park|Sulgiye Park|Eric Penton-Voak|James Person|Robert J Peters|Leonid Petrov|Samantha J Pitz|James E Platte|Joshua Pollack|Anton Ponomarenko|Gareth Porter|Robert Potter|Daryl Press|Allison Puccioni|Erika Puhakka|Jong-Yil Ra|Samuel Ramani|Lucy Reed|Mitchell Reiss|Michael Reiterer|Lucas Rengifo-Keller|Timothy S Rich|Mason Richey|Anthony V Rinna|Brad Roberts|Terence Roehrig|Andrei Rogatchevski|Alan D Romberg|Gilbert Rozman|Anthony Ruggiero|C Yoonhee Ryder|Ferial A Saeed|Gary Samore|David E Sanger|Timothy Savage|Ralph Savelsberg|Thomas Schäfer|Markus Schiller|John Schilling|David Schmerler|Robert H Schmucker|James L Schoff|Geoffrey K See|Bernhard Seliger|Elliot Serbin|Nagi M Shafik|Oleg Shcheka|Gi-Wook Shin|Jongdae Shin|Yongseok Shin|Tim Shorrock|James Siebens|Leon V Sigal|Roope Siirtola|Barbara Slavin|Natalia Slavney|Sheila A Smith|Michael E Smith|Shane Smith|Scott Snyder|Richard Sokolsky|Daekwon Son|Young-gil Song|Sharon Squassoni|Paul B Stares|Chris Steinitz|Richard Stone|Jason Strother|Fei Su|Yun Sun|Yuki Tatsumi|Susan A Thornton|Paul Tjia|Georgy Toloraya|Camilo Aguirre Torrini|Jenny Town|Lynn Turk|Mark Valencia|Vann H Van Diepen|Jon Van Dyke|Riccardo Villa|Sarah Vogler|David von Hippel|Alexander Vorontsov|Charles A von Denkowski|Peter Ward|Erich Weingartner|Martin Weiser|Richard Weitz|Daniel Wertz|Martyn Williams|Ben Willis|Hailey Wingo|Andrew C Winner|Joel S Wit|Jon Wolfsthal|Clint Work|David Wright|Tianran Xu|Chang-Seok Yang|Elizabeth Yang|Uk Yang|Andrew Yeo|Sukjoon Yoon|Michael J Zagurek Jr)",
-      "flags": "i",
-      "description": "NOVA: Content for use in spear-phishing campaigns against individuals with DPRK and regime expertise. (dprk_individuals)",
-      "examples": [],
-      "source": "202402_emerald_sleet.nov:DPRKExpertSpearPhishing",
-      "novaCategory": "abusing_functions/social_engineering"
-    },
-    {
-      "id": "nova-dprkngorecon-dprk-ngos",
-      "category": "jailbreak",
-      "severity": "HIGH",
-      "pattern": "(Welthungerhilfe|Liberty in North Korea|Choson Exchange|Citizens' Alliance for North Korean Human Rights|NKHR|Crossing Borders|NKIDP)",
-      "flags": "i",
-      "description": "NOVA: Researching organizations with DPRK-focused defense or nuclear proliferation research (dprk_ngos)",
-      "examples": [],
-      "source": "202402_emerald_sleet.nov:DPRKNGORecon",
-      "novaCategory": "abusing_functions/reconnaissance"
-    },
-    {
-      "id": "nova-dprkngorecon-dprk-thinktanks",
-      "category": "jailbreak",
-      "severity": "HIGH",
-      "pattern": "(National Committee for North Korea|NCNK|Project Sandstone|38 North|RAND|National Unification|National Bureau of Asian Research|Nautilus Institute|New Focus International|North Korea Intellectuals Solidarity|Nuclear Threat Initiative|Research Institute for National Security Affairs|RINSA|Sejong Institute|Hyundae Pukhan Yongu|Alliance for North Korean Human Rights|KINAC)",
-      "flags": "i",
-      "description": "NOVA: Researching organizations with DPRK-focused defense or nuclear proliferation research (dprk_thinktanks)",
-      "examples": [],
-      "source": "202402_emerald_sleet.nov:DPRKNGORecon",
-      "novaCategory": "abusing_functions/reconnaissance"
-    },
-    {
-      "id": "nova-dprkngorecon-dprk-org-terms",
-      "category": "jailbreak",
-      "severity": "HIGH",
-      "pattern": "(Nuclear Nonproliferation|Nonproliferation Studies|Unification Studies|Atomic Scientists|Arms Control|Policy Studies|Strategic Research Center|North Korean Human Rights|Korea Institute)",
-      "flags": "i",
-      "description": "NOVA: Researching organizations with DPRK-focused defense or nuclear proliferation research (dprk_org_terms)",
-      "examples": [],
-      "source": "202402_emerald_sleet.nov:DPRKNGORecon",
-      "novaCategory": "abusing_functions/reconnaissance"
-    },
-    {
-      "id": "nova-dprkngorecon-dprk-academics",
-      "category": "jailbreak",
-      "severity": "HIGH",
-      "pattern": "(Dongguk University|University of Central Lancashire)",
-      "flags": "i",
-      "description": "NOVA: Researching organizations with DPRK-focused defense or nuclear proliferation research (dprk_academics)",
-      "examples": [],
-      "source": "202402_emerald_sleet.nov:DPRKNGORecon",
-      "novaCategory": "abusing_functions/reconnaissance"
+      "novaCategory": "abusing_functions/attack_enablement",
+      "tier": "plugin"
     }
-  ]
+  ],
+  "tieredAt": "2026-04-17",
+  "tierSystem": "plugin (default) | full (opt-in)"
 }
