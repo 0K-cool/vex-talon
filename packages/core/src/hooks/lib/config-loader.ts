@@ -46,31 +46,51 @@ export interface InjectionPattern {
   tier?: PatternTier;
 }
 
-/**
- * Resolve the active pattern tier from OK_TALON_PATTERN_TIER env var.
- * Default: 'plugin' — matches the blog's "200+ out of the box" promise
- * and minimizes FP noise for new adopters.
- *
- * Set OK_TALON_PATTERN_TIER=full to opt into the expanded 454-pattern set
- * (includes broad NOVA single-word rules and LOW-severity 0din patterns).
- */
+// Resolve the active pattern tier from OK_TALON_PATTERN_TIER env var.
+// Default: 'plugin' — curated out-of-the-box set, minimizes FP noise.
+// Set OK_TALON_PATTERN_TIER=full to opt into the expanded set (broad NOVA
+// single-word rules + LOW-severity 0din patterns).
+//
+// Normalizes via trim + lowercase so `OK_TALON_PATTERN_TIER=full ` (trailing
+// space from a .zshrc export) or `FULL` still work. Warns on unknown values
+// so typos like `fulll` surface in stderr instead of silently downgrading.
+// (Port of 0K-cool/vex PR #10 fix.)
 export function getActivePatternTier(): PatternTier {
-  const envTier = (process.env.OK_TALON_PATTERN_TIER || 'plugin').toLowerCase();
-  return envTier === 'full' ? 'full' : 'plugin';
+  const raw = process.env.OK_TALON_PATTERN_TIER;
+  if (raw === undefined) return 'plugin';
+  const normalized = raw.trim().toLowerCase();
+  if (normalized === 'full') return 'full';
+  if (normalized === 'plugin' || normalized === '') return 'plugin';
+  console.error(
+    `[ConfigLoader] Unknown OK_TALON_PATTERN_TIER='${raw}' — defaulting to plugin`,
+  );
+  return 'plugin';
 }
 
-/**
- * Filter patterns by active tier. Rules:
- *  - Active tier 'full': keep all patterns regardless of tier field
- *  - Active tier 'plugin': keep only patterns with tier='plugin' OR missing tier
- *    (missing tier defaults to plugin for backward-compat with manual patterns)
- */
+// Filter patterns by active tier. Rules:
+//  - Active tier 'full': keep all patterns regardless of tier field
+//  - Active tier 'plugin': keep only patterns with tier='plugin' OR missing tier
+//    (missing tier defaults to plugin for backward-compat with manual patterns)
+//
+// Normalizes the stored tier field — a JSON typo like `tier: "Plugin "` would
+// otherwise silently drop the pattern from plugin-tier coverage. Warn-and-keep
+// on unknown stored values rather than silent drop. (Port of 0K-cool/vex PR #10 fix.)
 export function filterByTier<T extends { tier?: PatternTier }>(
   patterns: T[],
   active: PatternTier,
 ): T[] {
   if (active === 'full') return patterns;
-  return patterns.filter((p) => p.tier === undefined || p.tier === 'plugin');
+  return patterns.filter((p) => {
+    if (p.tier === undefined) return true;
+    const t = (p.tier as string).trim().toLowerCase();
+    if (t !== 'plugin' && t !== 'full') {
+      console.error(
+        `[ConfigLoader] Unknown pattern tier '${p.tier}' — treating as plugin`,
+      );
+      return true;
+    }
+    return t === 'plugin';
+  });
 }
 
 // Code Enforcer Patterns
