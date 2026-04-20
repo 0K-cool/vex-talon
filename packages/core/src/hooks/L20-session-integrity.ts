@@ -275,12 +275,25 @@ async function main(): Promise<void> {
         };
         recordsChanged = true;
 
-        // Lock old session files (not the current session) to read-only
-        // Current session needs write access for Claude Code to append
+        // Lock old session files (not the current session) to read-only.
+        // Current session needs write access for Claude Code to append.
+        //
+        // Two defects fixed here (ported from 0K-cool/vex PR #10):
+        //  1. `filename.includes(currentSessionId)` was a substring match — a
+        //     short/attacker-crafted session_id could match multiple filenames
+        //     and skip locking on all of them (ATLAS AML.T0064 bypass vector).
+        //     Exact equality closes it.
+        //  2. When `currentSessionId` is empty (stdin JSON missing session_id),
+        //     the old `length > 10` guard evaluated to false → isCurrentSession
+        //     became false → the ACTIVE session got locked to 0o400 → Claude
+        //     Code hits EACCES on the next append. Fail-open here: if we can't
+        //     identify the current session, skip the chmod entirely.
         const currentSessionId = input.session_id || '';
-        const isCurrentSession = filename.includes(currentSessionId) && currentSessionId.length > 10;
+        const sessionIdResolvable = currentSessionId.length > 10;
+        const isCurrentSession =
+          sessionIdResolvable && filename === `${currentSessionId}.jsonl`;
 
-        if (!isCurrentSession) {
+        if (sessionIdResolvable && !isCurrentSession) {
           try {
             chmodSync(filePath, 0o400); // read-only
             records[filename].locked = true;
