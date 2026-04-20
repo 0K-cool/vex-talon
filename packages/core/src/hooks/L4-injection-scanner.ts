@@ -33,6 +33,7 @@ import {
   loadInjectionPatterns,
   type InjectionPattern as LoadedPattern,
 } from './lib/config-loader';
+import { isDiagnosticBashCommand } from './lib/diagnostic-allowlist';
 
 // ============================================================================
 // Types
@@ -598,6 +599,19 @@ async function main() {
     const SCAN_TOOLS = ['Read', 'WebFetch', 'WebSearch', 'Bash'];
     if (!data.tool_name || !SCAN_TOOLS.includes(data.tool_name)) {
       process.exit(0);
+    }
+
+    // Diagnostic-command allowlist (Phase 2 contextual-scope fix):
+    // pure inspection commands (git status, ls, ps, stat, wc, ...) emit
+    // structural system state, not attacker-controlled content. NOVA
+    // patterns don't apply; running them on this output produces false
+    // positives. Skip L4 for these.
+    if (data.tool_name === 'Bash') {
+      const bashCommand = data.tool_input?.command || '';
+      if (isDiagnosticBashCommand(bashCommand)) {
+        recordSuccess(HOOK_NAME);
+        process.exit(0);
+      }
     }
 
     // Extract content from tool response
