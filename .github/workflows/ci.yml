@@ -91,7 +91,7 @@ jobs:
           # override `--ignore-scripts`, enabling install-time RCE from
           # fork-controlled lockfiles. Pinning to a post-1.1.x version
           # closes that vector.
-          bun-version: '1.2.8'
+          bun-version: '1.3.3'
           cache: true
       - name: bun install + test
         if: steps.bun-setup.conclusion == 'success'
