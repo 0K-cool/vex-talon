@@ -12,7 +12,28 @@
  */
 
 import { describe, it, expect, afterEach } from 'vitest';
-import { loadInjectionPatterns, clearConfigCache } from '../src/hooks/lib/config-loader';
+import {
+  loadInjectionPatterns,
+  clearConfigCache,
+  getActivePatternTier,
+  filterByTier,
+  validatePatterns,
+  mergeInjectionPatterns,
+} from '../src/hooks/lib/config-loader';
+import {
+  getActivePatterns,
+  clearPatternCache,
+} from '../src/hooks/L4-injection-scanner';
+
+// Note on env-dependent tests below (OK_TALON_PATTERN_TIER block):
+// `getActivePatternTier()` reads `process.env.OK_TALON_PATTERN_TIER`
+// at CALL time (config-loader.ts:58-59), not at module-load time. So
+// mutating the env var + calling the function produces fresh results
+// without needing to re-import the module. The previous pattern of
+// `const { fn } = require(...)` inside each `it()` block was
+// unnecessary — and it was failing under vitest because Node's
+// native require() resolver does not handle `.ts` extensions, which
+// vitest only transforms for top-level ESM imports.
 
 describe('loadInjectionPatterns — merged config (Phase 1)', () => {
   afterEach(() => {
@@ -122,10 +143,6 @@ describe('loadInjectionPatterns — merged config (Phase 1)', () => {
 
 describe('L4 hook wire-up — getActivePatterns()', () => {
   it('L4 hook uses merged loader output at runtime (not stale inline array)', () => {
-    const {
-      getActivePatterns,
-      clearPatternCache,
-    } = require('../src/hooks/L4-injection-scanner');
     clearPatternCache();
     const active = getActivePatterns();
     // At plugin tier default: ~175 loader + 22 inline = ~195 effective.
@@ -139,10 +156,6 @@ describe('L4 hook wire-up — getActivePatterns()', () => {
   });
 
   it('L4 active patterns are compiled RegExp objects (not strings)', () => {
-    const {
-      getActivePatterns,
-      clearPatternCache,
-    } = require('../src/hooks/L4-injection-scanner');
     clearPatternCache();
     const active = getActivePatterns();
     for (const p of active) {
@@ -153,8 +166,7 @@ describe('L4 hook wire-up — getActivePatterns()', () => {
 
 describe('mergeInjectionPatterns — collision precedence', () => {
   it('manual wins ID collision against NOVA and 0din', () => {
-    const { mergeInjectionPatterns } = require('../src/hooks/lib/config-loader');
-    const manual = [{
+const manual = [{
       id: 'COLLIDE-001',
       category: 'jailbreak',
       severity: 'HIGH',
@@ -183,8 +195,7 @@ describe('mergeInjectionPatterns — collision precedence', () => {
   });
 
   it('NOVA wins when manual is absent and 0din collides by id', () => {
-    const { mergeInjectionPatterns } = require('../src/hooks/lib/config-loader');
-    const nova = [{ id: 'X', pattern: 'nova-p', severity: 'HIGH', category: 'jailbreak', description: 'nova' }];
+const nova = [{ id: 'X', pattern: 'nova-p', severity: 'HIGH', category: 'jailbreak', description: 'nova' }];
     const odin = [{ id: 'X', pattern: 'odin-p', severity: 'LOW', category: 'encoding', description: 'odin' }];
     const merged = mergeInjectionPatterns([], nova, odin);
     expect(merged.length).toBe(1);
@@ -192,8 +203,7 @@ describe('mergeInjectionPatterns — collision precedence', () => {
   });
 
   it('pattern-string collision also honors precedence', () => {
-    const { mergeInjectionPatterns } = require('../src/hooks/lib/config-loader');
-    // Different IDs but same regex — the later source must drop.
+// Different IDs but same regex — the later source must drop.
     const nova = [{ id: 'N', pattern: 'SHARED', severity: 'HIGH', category: 'jailbreak', description: 'nova' }];
     const odin = [{ id: 'O', pattern: 'SHARED', severity: 'LOW', category: 'encoding', description: 'odin' }];
     const merged = mergeInjectionPatterns([], nova, odin);
@@ -202,8 +212,7 @@ describe('mergeInjectionPatterns — collision precedence', () => {
   });
 
   it('all-empty input returns empty array (not undefined)', () => {
-    const { mergeInjectionPatterns } = require('../src/hooks/lib/config-loader');
-    const merged = mergeInjectionPatterns([], [], []);
+const merged = mergeInjectionPatterns([], [], []);
     expect(Array.isArray(merged)).toBe(true);
     expect(merged.length).toBe(0);
   });
@@ -220,20 +229,17 @@ describe('OK_TALON_PATTERN_TIER env var — adoption protection', () => {
 
   it('default tier is "plugin" when env var unset', () => {
     delete process.env.OK_TALON_PATTERN_TIER;
-    const { getActivePatternTier } = require('../src/hooks/lib/config-loader');
-    expect(getActivePatternTier()).toBe('plugin');
+expect(getActivePatternTier()).toBe('plugin');
   });
 
   it('OK_TALON_PATTERN_TIER=full switches to expanded set', () => {
     process.env.OK_TALON_PATTERN_TIER = 'full';
-    const { getActivePatternTier } = require('../src/hooks/lib/config-loader');
-    expect(getActivePatternTier()).toBe('full');
+expect(getActivePatternTier()).toBe('full');
   });
 
   it('invalid tier values fall back to plugin (defensive)', () => {
     process.env.OK_TALON_PATTERN_TIER = 'nonsense';
-    const { getActivePatternTier } = require('../src/hooks/lib/config-loader');
-    expect(getActivePatternTier()).toBe('plugin');
+expect(getActivePatternTier()).toBe('plugin');
   });
 
   it('plugin tier loads fewer patterns than full tier', () => {
@@ -252,8 +258,7 @@ describe('OK_TALON_PATTERN_TIER env var — adoption protection', () => {
   });
 
   it('filterByTier: plugin tier drops full-only patterns', () => {
-    const { filterByTier } = require('../src/hooks/lib/config-loader');
-    const patterns = [
+const patterns = [
       { id: 'A', tier: 'plugin', pattern: 'a' },
       { id: 'B', tier: 'full', pattern: 'b' },
       { id: 'C', pattern: 'c' }, // no tier → defaults to plugin
@@ -263,8 +268,7 @@ describe('OK_TALON_PATTERN_TIER env var — adoption protection', () => {
   });
 
   it('filterByTier: full tier keeps everything', () => {
-    const { filterByTier } = require('../src/hooks/lib/config-loader');
-    const patterns = [
+const patterns = [
       { id: 'A', tier: 'plugin', pattern: 'a' },
       { id: 'B', tier: 'full', pattern: 'b' },
       { id: 'C', pattern: 'c' },
@@ -276,8 +280,7 @@ describe('OK_TALON_PATTERN_TIER env var — adoption protection', () => {
 
 describe('validatePatterns — category enum check', () => {
   it('drops pattern with invalid category', () => {
-    const { validatePatterns } = require('../src/hooks/lib/config-loader');
-    const patterns = [
+const patterns = [
       { id: 'A', pattern: 'foo', severity: 'HIGH', category: 'jailbreak' },
       { id: 'B', pattern: 'bar', severity: 'HIGH', category: 'jailbreaks' }, // typo
       { id: 'C', pattern: 'baz', severity: 'HIGH', category: 'encoding' },
