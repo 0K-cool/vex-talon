@@ -1,0 +1,36 @@
+# Dependabot keeps SHA-pinned GitHub Actions current AND surfaces JS
+# dependency updates. Without this, pinned deps are frozen in time
+# (drift prevented but security patches never arrive).
+#
+# Scope:
+#   - GitHub Actions in `.github/workflows/*.yml`
+#   - npm-ecosystem deps in the pnpm workspace (root `package.json` +
+#     `pnpm-lock.yaml`). The `npm` ecosystem handles pnpm-lock.yaml —
+#     Dependabot abstracts across the three JS package managers.
+#
+# Security updates (for CVE-graph hits) run org-wide automatically
+# regardless of this file — they were enabled on 0K-cool on
+# 2026-04-21. This file adds the SCHEDULED version-update cadence
+# on top.
+
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "javascript"
