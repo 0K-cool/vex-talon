@@ -1,0 +1,96 @@
+name: CI
+
+# Public-repo CI. PR review handled by the CodeRabbit GitHub App
+# (install: https://github.com/apps/coderabbitai) — not by workflow-level
+# Claude CI actions, which burn Anthropic credits on every push.
+#
+# Why NOT the generic public-repo CI template from
+# `0K-cool/vex .claude/templates/workflows/public-repo-ci.yml`:
+# that template targets bun or pytest. 0k-talon is a pnpm + turbo
+# workspace, so we run a pnpm-aware custom pipeline that ports the
+# template's hardening lessons but swaps the runtime.
+#
+# Hardening lineage:
+#   - PRs #17, #19, #20 on 0K-cool/vex (template evolution)
+#   - PR #77 on 0K-cool/athena (athena's monorepo-aware custom CI)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Default to read-only. Jobs opt UP from here, not DOWN — none need
+# write right now.
+permissions:
+  contents: read
+
+# Cancel in-progress runs only for PR events. Cancelling on push-to-main
+# would let a force-push storm DoS the default-branch CI lane during
+# release verification.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  static-analysis:
+    name: Semgrep
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: semgrep/semgrep-action@713efdd345f3035192eaa63f56867b88e63e4e5d  # v1 (upstream only publishes v1 / v1-debug — no semver)
+        with:
+          config: |
+            p/default
+            p/security-audit
+            p/secrets
+
+  tests:
+    name: pnpm + turbo
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@b307475762933b98ed359c036b0e51f26b63b74b  # v5.0.0
+        with:
+          # Matches `packageManager: pnpm@9.0.0` in package.json. Dependabot
+          # does NOT update `with:` parameter values, so this drifts
+          # silently unless bumped manually alongside the action SHA.
+          version: 9
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e  # v6.4.0
+        with:
+          # `engines.node` in package.json declares `>=20.0.0`. Pinning
+          # 20 here for reproducibility rather than `latest-lts`.
+          node-version: "20"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: |
+          set -eo pipefail
+          # `--frozen-lockfile` pins the install to the resolved graph
+          # in pnpm-lock.yaml — a fork PR cannot introduce new dep
+          # resolutions at install time. pnpm has safer postinstall
+          # defaults than npm so we do not `--ignore-scripts` unless
+          # a specific package surfaces issues.
+          pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: |
+          set -eo pipefail
+          # `pnpm test` -> `turbo run test` -> invokes `vitest run` in
+          # any workspace package that declares a `test` script.
+          # turbo.json: tests dependsOn ^build, so shared packages
+          # are built before tests execute.
+          pnpm test
