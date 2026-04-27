@@ -187,13 +187,23 @@ export function parseSections(content: string): Section[] {
  * Compile pattern defs into RegExp objects. Always case-insensitive.
  * Strips the `g` flag to avoid `lastIndex` statefulness bugs when
  * patterns are reused across multiple inputs.
+ *
+ * Pattern source is the local memory config file (under
+ * `~/.0k-talon/config/memory/`) plus hardcoded fallbacks in the hook —
+ * never PR input or untrusted network data. Local-config trust boundary
+ * is the same surface that already gates filesystem write access; if
+ * an attacker can write that file, ReDoS via crafted patterns is the
+ * least of the user's problems. Bad regex syntax is caught and skipped
+ * by the try/catch below.
  */
+// nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp
 export function compilePatterns(defs: readonly PatternDef[]): CompiledPattern[] {
   const compiled: CompiledPattern[] = [];
   for (const def of defs) {
     try {
       const rawFlags = (def.flags || '') + 'i';
       const flags = rawFlags.replace(/g/gi, '');
+      // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp
       compiled.push({ ...def, regex: new RegExp(def.pattern, flags) });
     } catch {
       // Skip invalid regex
