@@ -30,29 +30,27 @@ export function hashContent(content: string): string {
 const HASH_RE = /^[0-9a-f]{64}$/;
 
 /**
- * Build a per-entry cache path. `hash` MUST be a SHA-256 hex digest
- * (validated). `cacheDir` MUST come from talon-paths (never user input).
+ * Build a per-entry cache path. `hash` is constrained to a SHA-256 hex
+ * digest by the public read/write functions before they reach this
+ * helper. `cacheDir` MUST come from talon-paths (never user input).
  *
  * Semgrep flags `path.join` with non-literal arguments as a possible
  * traversal vector. Here both inputs are internally constrained:
  * - `hash` is a 64-char [0-9a-f] string (no slashes, no `..`)
  * - `cacheDir` is built from getQuarantinePath(), itself rooted under
  *   the validated TALON_DIR (see lib/talon-paths.ts)
- * Throws on a malformed hash so a future caller bug surfaces loudly.
  */
 function entryPath(hash: string, cacheDir: string): string {
-  if (!HASH_RE.test(hash)) {
-    throw new Error(`verdict-cache: invalid hash format: ${hash.slice(0, 16)}...`);
-  }
   // nosemgrep: javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal
   return join(cacheDir, `${hash}.json`);
 }
 
 /**
  * Read a cached verdict. Returns null on cache miss, expired entry,
- * or any read/parse error. Never throws.
+ * malformed hash, or any read/parse error. Never throws.
  */
 export function getCachedVerdict(hash: string, cacheDir: string): Verdict | null {
+  if (!HASH_RE.test(hash)) return null;
   const file = entryPath(hash, cacheDir);
   if (!existsSync(file)) return null;
   try {
@@ -76,9 +74,10 @@ export function getCachedVerdict(hash: string, cacheDir: string): Verdict | null
 
 /**
  * Write a verdict to cache. Atomic via temp-file + rename. Silent on
- * I/O errors — caching is best-effort, never block on it.
+ * malformed hash or I/O errors — caching is best-effort, never block.
  */
 export function setCachedVerdict(hash: string, verdict: Verdict, cacheDir: string): void {
+  if (!HASH_RE.test(hash)) return;
   try {
     if (!existsSync(cacheDir)) mkdirSync(cacheDir, { recursive: true, mode: 0o700 });
     const entry: CacheEntry = { timestamp: Date.now(), verdict };
