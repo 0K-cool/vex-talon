@@ -42,8 +42,20 @@ import {
   type Finding,
   type PatternDef,
   type CompiledPattern,
+  type Section,
   type SectionFindings,
 } from './lib/memory-guardian-lib';
+import {
+  classifyContent,
+  decideAction,
+  isClassifierEnabled,
+  type Verdict,
+} from './lib/classifier';
+import {
+  hashContent,
+  getCachedVerdict,
+  setCachedVerdict,
+} from './lib/verdict-cache';
 
 const HOOK_NAME = 'L3-auto-memory-guardian';
 const MEMORY_INDEX_FILENAME = 'MEMORY.md';
@@ -263,23 +275,89 @@ function quarantineFile(filePath: string): string {
   }
 }
 
+interface ClassifierResolution {
+  title: string;
+  verdict: Verdict;
+  quarantine: boolean;
+  reason: string;
+}
+
+/**
+ * Smart-tier gate: for each section with CRITICAL findings, classify
+ * the section body via Haiku. Sections that classify as DESCRIPTION
+ * with high confidence are removed from the findings map (no quarantine).
+ *
+ * Caller has already checked `isClassifierEnabled()`. Verdicts are
+ * cached by SHA-256 of the section body for 24h.
+ */
+async function applyClassifierGate(
+  sections: readonly Section[],
+  findings: SectionFindings,
+  apiKey: string,
+  cacheDir: string,
+): Promise<{ filtered: SectionFindings; resolutions: ClassifierResolution[] }> {
+  const filtered: SectionFindings = new Map();
+  const resolutions: ClassifierResolution[] = [];
+
+  for (const section of sections) {
+    const sectionFindings = findings.get(section.title);
+    if (!sectionFindings || sectionFindings.length === 0) continue;
+    const hasCritical = sectionFindings.some((f) => f.severity === 'CRITICAL');
+    if (!hasCritical) {
+      // Non-critical findings keep their normal alert-only behavior.
+      filtered.set(section.title, sectionFindings);
+      continue;
+    }
+
+    const hash = hashContent(section.body);
+    let verdict = getCachedVerdict(hash, cacheDir);
+    if (!verdict) {
+      verdict = await classifyContent(section.body, { apiKey });
+      setCachedVerdict(hash, verdict, cacheDir);
+    }
+    const action = decideAction(verdict);
+    resolutions.push({
+      title: section.title,
+      verdict,
+      quarantine: action.quarantine,
+      reason: action.reason,
+    });
+
+    if (action.quarantine) {
+      filtered.set(section.title, sectionFindings);
+    }
+    // If !quarantine: drop these findings → surgicalQuarantineSections
+    // won't extract this section. Phase 2 spared a false positive.
+  }
+
+  return { filtered, resolutions };
+}
+
 /**
  * Surgical handler for MEMORY.md: scan each `## ` section, extract only
- * those with CRITICAL findings, write the cleaned MEMORY.md back, and
- * persist each extracted section as its own quarantine file.
+ * those with CRITICAL findings (filtered through the smart classifier
+ * if enabled), write the cleaned MEMORY.md back, and persist each
+ * extracted section as its own quarantine file.
  *
- * Returns the number of sections quarantined and the per-section paths.
- * Falls back to whole-file quarantine on any I/O failure (fail safe).
+ * Returns the number of sections quarantined, per-section paths, and
+ * any classifier resolutions for the audit log.
+ * Falls back to whole-file quarantine on I/O failure (fail safe).
  */
-function surgicalQuarantineMemoryIndex(
+async function surgicalQuarantineMemoryIndex(
   filePath: string,
   content: string,
   patterns: CompiledPattern[],
-): { quarantinedSectionPaths: string[]; perSectionFindings: Finding[] } {
+  classifierApiKey?: string,
+  cacheDir?: string,
+): Promise<{
+  quarantinedSectionPaths: string[];
+  perSectionFindings: Finding[];
+  classifierResolutions: ClassifierResolution[];
+}> {
   const sections = parseSections(content);
 
   // Build per-section findings
-  const findingsBySection: SectionFindings = new Map();
+  const rawFindings: SectionFindings = new Map();
   const allFindings: Finding[] = [];
   for (const section of sections) {
     const sectionFindings = scanContent(
@@ -289,15 +367,24 @@ function surgicalQuarantineMemoryIndex(
       section.startLine - 1,
     );
     if (sectionFindings.length > 0) {
-      findingsBySection.set(section.title, sectionFindings);
+      rawFindings.set(section.title, sectionFindings);
       allFindings.push(...sectionFindings);
     }
+  }
+
+  // Smart-tier gate (optional)
+  let findingsBySection = rawFindings;
+  let classifierResolutions: ClassifierResolution[] = [];
+  if (classifierApiKey && cacheDir) {
+    const gated = await applyClassifierGate(sections, rawFindings, classifierApiKey, cacheDir);
+    findingsBySection = gated.filtered;
+    classifierResolutions = gated.resolutions;
   }
 
   const result = surgicalQuarantineSections(sections, findingsBySection);
 
   if (result.extracted.length === 0) {
-    return { quarantinedSectionPaths: [], perSectionFindings: allFindings };
+    return { quarantinedSectionPaths: [], perSectionFindings: allFindings, classifierResolutions };
   }
 
   const quarantineDir = getQuarantinePath(HOOK_NAME);
@@ -329,10 +416,11 @@ function surgicalQuarantineMemoryIndex(
     return {
       quarantinedSectionPaths: wholePath ? [wholePath] : [],
       perSectionFindings: allFindings,
+      classifierResolutions,
     };
   }
 
-  return { quarantinedSectionPaths: sectionPaths, perSectionFindings: allFindings };
+  return { quarantinedSectionPaths: sectionPaths, perSectionFindings: allFindings, classifierResolutions };
 }
 
 function outputAlert(allFindings: Map<string, Finding[]>, quarantined: string[]): void {
@@ -457,12 +545,21 @@ async function main() {
       process.exit(0);
     }
 
+    // Smart-tier classifier — opt-in per session via env. When enabled,
+    // CRITICAL pattern matches are run through Haiku before quarantine
+    // to filter out documentation FPs (e.g. "the attack used 'ignore
+    // previous instructions' to bypass" is a description, not an order).
+    const classifierOn = isClassifierEnabled();
+    const classifierApiKey = classifierOn ? process.env.ANTHROPIC_API_KEY ?? '' : '';
+    const cacheDir = join(getQuarantinePath(HOOK_NAME), '..', 'classifier-cache');
+
     // Scan all memory files. For files marked with a trusted source in
     // YAML frontmatter, skip scanning entirely and record the skip.
     const allFindings = new Map<string, Finding[]>();
     const trustedSkipped: Array<{ file: string; source: string }> = [];
     const surgicalQuarantines: string[] = [];
     const wholeFileQuarantines: string[] = [];
+    const classifierSkipped: Array<{ file: string; entity: string; verdict: string; confidence: number; reason: string }> = [];
     let totalFindingCount = 0;
     let quarantinedEntities = 0;
 
@@ -479,9 +576,16 @@ async function main() {
       const isMemoryIndex = basename(file) === MEMORY_INDEX_FILENAME;
 
       if (isMemoryIndex) {
-        // Surgical path: scan + extract per ## section, write cleaned MEMORY.md back.
-        const { quarantinedSectionPaths, perSectionFindings } =
-          surgicalQuarantineMemoryIndex(file, body, patterns);
+        // Surgical path: scan + extract per ## section. Classifier (if
+        // enabled) filters out DESCRIPTION-class matches before extraction.
+        const { quarantinedSectionPaths, perSectionFindings, classifierResolutions } =
+          await surgicalQuarantineMemoryIndex(
+            file,
+            body,
+            patterns,
+            classifierOn ? classifierApiKey : undefined,
+            classifierOn ? cacheDir : undefined,
+          );
         if (perSectionFindings.length > 0) {
           allFindings.set(file, perSectionFindings);
           totalFindingCount += perSectionFindings.length;
@@ -490,17 +594,51 @@ async function main() {
           surgicalQuarantines.push(...quarantinedSectionPaths);
           quarantinedEntities += quarantinedSectionPaths.length;
         }
+        for (const r of classifierResolutions) {
+          if (!r.quarantine) {
+            classifierSkipped.push({
+              file: basename(file),
+              entity: r.title,
+              verdict: r.verdict.verdict,
+              confidence: r.verdict.confidence,
+              reason: r.reason,
+            });
+          }
+        }
       } else {
-        // Topic file path: 1 file = 1 entity, whole-file quarantine on CRITICAL.
+        // Topic file path: 1 file = 1 entity. Classifier (if enabled)
+        // can also veto whole-file quarantine for documentation FPs.
         const findings = scanContent(body, patterns, file);
         if (findings.length > 0) {
           allFindings.set(file, findings);
           totalFindingCount += findings.length;
           if (findings.some((f) => f.severity === 'CRITICAL')) {
-            const qPath = quarantineFile(file);
-            if (qPath) {
-              wholeFileQuarantines.push(qPath);
-              quarantinedEntities += 1;
+            let shouldQuarantine = true;
+            if (classifierOn) {
+              const hash = hashContent(body);
+              let verdict = getCachedVerdict(hash, cacheDir);
+              if (!verdict) {
+                verdict = await classifyContent(body, { apiKey: classifierApiKey });
+                setCachedVerdict(hash, verdict, cacheDir);
+              }
+              const action = decideAction(verdict);
+              shouldQuarantine = action.quarantine;
+              if (!action.quarantine) {
+                classifierSkipped.push({
+                  file: basename(file),
+                  entity: basename(file),
+                  verdict: verdict.verdict,
+                  confidence: verdict.confidence,
+                  reason: action.reason,
+                });
+              }
+            }
+            if (shouldQuarantine) {
+              const qPath = quarantineFile(file);
+              if (qPath) {
+                wholeFileQuarantines.push(qPath);
+                quarantinedEntities += 1;
+              }
             }
           }
         }
@@ -550,6 +688,8 @@ async function main() {
       action: allQuarantined.length > 0 ? 'QUARANTINE' : 'ALERT',
       severity: maxSeverity,
       surgical: surgicalQuarantines.length > 0,
+      classifier_tier: classifierOn ? 'smart' : 'off',
+      classifier_skipped: classifierSkipped,
       files_scanned: memoryFiles.length,
       files_with_findings: allFindings.size,
       total_findings: totalFindingCount,
