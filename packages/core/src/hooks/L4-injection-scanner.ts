@@ -34,12 +34,29 @@ import {
   type InjectionPattern as LoadedPattern,
 } from './lib/config-loader';
 import { isDiagnosticBashCommand } from './lib/diagnostic-allowlist';
+import {
+  applyL4ClassifierGate,
+  classifyContent,
+  isL4ClassifierEnabled,
+  resolveL4Backend,
+  type L4ClassifierGateResult,
+  type Verdict,
+  type VerdictLabel,
+} from './lib/classifier';
 
 // ============================================================================
 // Types
 // ============================================================================
 
 const HOOK_NAME = 'L4-injection-scanner';
+
+// L4 Smart Tier — semantic classifier gate (mirrors PAI v3.13.1 wiring).
+// Window slice fed to the classifier when an ALERT-class pattern matches;
+// 200 chars total is enough context for INSTRUCTION-vs-DESCRIPTION verdict
+// without blowing the Haiku token budget on long Bash outputs.
+const L4_CLASSIFIER_WINDOW_BEFORE = 50;
+const L4_CLASSIFIER_WINDOW_AFTER = 150;
+const L4_CLASSIFIER_TIMEOUT_MS = 8000;
 
 type InjectionCategory = 'instruction_override' | 'jailbreak' | 'encoding' | 'context_manipulation';
 type InjectionSeverity = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
@@ -58,6 +75,8 @@ interface InjectionMatch {
   severity: InjectionSeverity;
   description: string;
   matchedText: string;
+  /** Index of the match within normalizedContent. Drives the L4 classifier window. */
+  position: number;
 }
 
 interface HookInput {
@@ -87,6 +106,14 @@ interface AuditEntry {
   escalation_level?: 'NORMAL' | 'ELEVATED' | 'CRITICAL';
   session_detection_count?: number;
   session_near_miss_count?: number;
+  // L4 smart-tier classifier fields. All optional — populated only when
+  // VEX_L4_CLASSIFIER=smart and a backend is available. Lets offline
+  // FP-rate audits distinguish "pattern-tier alert" from
+  // "classifier-confirmed alert" from "classifier-downgraded to LOG".
+  classifier_verdict?: VerdictLabel | 'DISABLED';
+  classifier_confidence?: number;
+  classifier_reasoning?: string;
+  classifier_downgraded?: boolean;
 }
 
 // ============================================================================
@@ -476,6 +503,7 @@ function scanForInjections(content: string): {
   matches: InjectionMatch[];
   highestSeverity: InjectionSeverity | null;
   categories: InjectionCategory[];
+  normalizedContent: string;
 } {
   const normalizedContent = normalizeUnicode(content);
   const matches: InjectionMatch[] = [];
@@ -490,6 +518,7 @@ function scanForInjections(content: string): {
         severity: pattern.severity,
         description: pattern.description,
         matchedText: match[0].substring(0, 100),
+        position: match.index ?? 0,
       });
       categoriesSet.add(pattern.category);
     }
@@ -509,6 +538,7 @@ function scanForInjections(content: string): {
     matches,
     highestSeverity,
     categories: Array.from(categoriesSet),
+    normalizedContent,
   };
 }
 
@@ -634,10 +664,62 @@ async function main() {
 
     const scanDuration = Date.now() - startTime;
 
-    // Determine action
+    // Determine pattern-tier action (pre-classifier).
+    const patternShouldAlert = !!(
+      scanResult.detected &&
+      scanResult.highestSeverity &&
+      (scanResult.highestSeverity === 'CRITICAL' || scanResult.highestSeverity === 'HIGH')
+    );
+
+    // L4 Smart Tier — semantic classifier gate.
+    //
+    // When VEX_L4_CLASSIFIER=smart and a backend is available, ask
+    // Haiku whether the matched content is an actual INSTRUCTION or a
+    // DESCRIPTION that just happens to mention attack vocabulary (e.g.
+    // CodeRabbit JSON output, file listings of quarantine paths,
+    // security architecture docs). High-confidence DESCRIPTION →
+    // downgrade to LOG. Anything else (AMBIGUOUS, ERROR, low-conf,
+    // INSTRUCTION) keeps the alert (fail-safe).
+    let classifierGate: L4ClassifierGateResult = applyL4ClassifierGate({
+      patternShouldAlert,
+      verdict: null,
+    });
+    if (
+      patternShouldAlert &&
+      scanResult.matches.length > 0 &&
+      isL4ClassifierEnabled()
+    ) {
+      const firstMatch = scanResult.matches[0]!;
+      const cstart = Math.max(0, firstMatch.position - L4_CLASSIFIER_WINDOW_BEFORE);
+      const cend = Math.min(
+        scanResult.normalizedContent.length,
+        firstMatch.position + L4_CLASSIFIER_WINDOW_AFTER,
+      );
+      const classifierWindow = scanResult.normalizedContent.substring(cstart, cend);
+      let verdict: Verdict;
+      try {
+        verdict = await classifyContent(classifierWindow, {
+          backend: resolveL4Backend() ?? undefined,
+          apiKey: process.env.ANTHROPIC_API_KEY,
+          timeoutMs: L4_CLASSIFIER_TIMEOUT_MS,
+        });
+      } catch (err: unknown) {
+        // classifyContent is designed to never throw, but defense-in-depth:
+        // any unexpected throw → ERROR verdict → fail-safe alert.
+        const msg = err instanceof Error ? err.message : String(err);
+        verdict = { verdict: 'ERROR', confidence: 0, reasoning: `classifier threw: ${msg}` };
+      }
+      classifierGate = applyL4ClassifierGate({ patternShouldAlert: true, verdict });
+    }
+
+    // Map gate result → action. Downgrade explicitly forces LOG (not
+    // WARN) so a high-confidence DESCRIPTION verdict doesn't leak
+    // through as a softer-but-still-noisy warning.
     let action: 'ALERT' | 'WARN' | 'LOG' = 'LOG';
-    if (scanResult.detected && (scanResult.highestSeverity === 'CRITICAL' || scanResult.highestSeverity === 'HIGH')) {
+    if (classifierGate.shouldAlert) {
       action = 'ALERT';
+    } else if (classifierGate.downgraded) {
+      action = 'LOG';
     } else if (scanResult.detected || heuristic.suspicious) {
       action = 'WARN';
     }
@@ -671,6 +753,10 @@ async function main() {
       escalation_level: sessionState.escalation_level,
       session_detection_count: sessionState.detection_count,
       session_near_miss_count: sessionState.near_miss_count,
+      classifier_verdict: classifierGate.classifierVerdict,
+      classifier_confidence: classifierGate.classifierConfidence,
+      classifier_reasoning: classifierGate.classifierReasoning,
+      classifier_downgraded: classifierGate.downgraded,
     });
 
     // Output alert if injection detected

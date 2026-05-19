@@ -5,6 +5,26 @@ All notable changes to Vex-Talon will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **L4 Smart Classifier — semantic alert gate for the injection scanner**
+  - Optional Haiku-based classifier gates CRITICAL/HIGH pattern matches before raising an alert
+  - `DESCRIPTION` + confidence ≥ 0.70 → alert downgraded to `LOG` (matched content is documentation, not directives)
+  - `INSTRUCTION`, `AMBIGUOUS`, `ERROR`, low-confidence → alert preserved (fail-safe)
+  - Off by default; opt in with `VEX_L4_CLASSIFIER=smart`
+  - Backend resolution: `claude` CLI on PATH preferred; `ANTHROPIC_API_KEY` fallback (override via `VEX_L4_CLASSIFIER_BACKEND=cli|api`)
+  - Reuses the existing L3 Haiku classifier infrastructure (no new dependencies)
+  - Audit log gains `classifier_verdict` / `classifier_confidence` / `classifier_reasoning` / `classifier_downgraded` fields (all optional, backward-compatible)
+  - 24 new unit tests in `packages/core/tests/l4-classifier-gate.test.ts`
+
+### Changed
+
+- `InjectionMatch` type gains a `position` field (match index within normalized content); drives the classifier window slice. Backward-compatible — existing producers of `InjectionMatch` populate it inside `scanForInjections`.
+- `scanForInjections` return shape gains `normalizedContent: string` so the gate can window-slice the same string that was matched. Backward-compatible addition.
+- `classifier.ts` internals refactored into reusable `LAYER_VARS` / `resolveBackendForVar` / `isLayerEnabled` helpers. Public L3 exports (`resolveBackend`, `isClassifierEnabled`, `classifyContent`) preserve their signatures and behavior.
+
 ## [1.8.0] - 2026-04-15
 
 ### Added
