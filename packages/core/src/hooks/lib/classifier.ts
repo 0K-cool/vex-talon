@@ -1,22 +1,31 @@
 /**
- * L3 Smart Tier — Haiku Classifier
+ * L3 + L4 Smart Tier — Haiku Classifier
  *
- * Phase 2 of Smart L3. After Phase 1 detects a CRITICAL pattern match in
- * a memory section, this classifier decides whether the section is an
- * actual INSTRUCTION (quarantine) or a DESCRIPTION (skip — it's a
- * documentation note that happens to mention attack vocabulary).
+ * Shared semantic classifier used by two layers:
  *
- * Tier toggle:
- *   VEX_L3_CLASSIFIER=off    (default) — no classification, Phase 1 decides
- *   VEX_L3_CLASSIFIER=smart  (opt-in)  — classify each match before quarantine
+ * L3 (SessionStart memory-poisoning defense): after Phase 1 detects a
+ * CRITICAL pattern match in a memory section, this classifier decides
+ * whether the section is an actual INSTRUCTION (quarantine) or a
+ * DESCRIPTION (skip — it's a documentation note that happens to mention
+ * attack vocabulary).
  *
- * Smart mode also requires ANTHROPIC_API_KEY in env. We intentionally do
- * NOT bundle the Anthropic SDK — raw fetch keeps the plugin lean and the
- * dependency surface honest about what runs at SessionStart.
+ * L4 (PostToolUse injection-scanner gate): after the pattern tier flags
+ * a CRITICAL/HIGH match in tool output, this classifier decides whether
+ * the alert should fire or be downgraded to LOG (matched content is
+ * descriptive — e.g. CodeRabbit JSON, security architecture docs).
  *
- * Failure modes are all fail-safe: any classifier error → quarantine
- * (preserve Phase 1 behavior). Memory poisoning detection is never
- * weakened by an API outage.
+ * Tier toggles (independent per layer):
+ *   VEX_L3_CLASSIFIER=off|smart   (default off)
+ *   VEX_L4_CLASSIFIER=off|smart   (default off)
+ *
+ * Smart mode requires a usable backend (claude CLI on PATH OR
+ * ANTHROPIC_API_KEY). We intentionally do NOT bundle the Anthropic SDK
+ * — raw fetch keeps the plugin lean and the dependency surface honest
+ * about what runs at SessionStart / PostToolUse.
+ *
+ * Failure modes are all fail-safe: any classifier error → preserve the
+ * Phase-1 / pattern-tier decision. Detection is never weakened by an
+ * API outage.
  */
 
 import { spawnSync } from 'child_process';
@@ -52,6 +61,13 @@ export interface ClassifyOptions {
   apiKey?: string;
   model?: string;
   timeoutMs?: number;
+  /**
+   * Pre-resolved backend. When set, classifyContent() skips its
+   * internal resolveBackend() call and dispatches directly. Lets L4
+   * callers route through resolveL4Backend() while sharing the same
+   * CLI/API plumbing. Default (undefined) preserves the L3 path.
+   */
+  backend?: Backend;
 }
 
 export interface Action {
@@ -62,10 +78,21 @@ export interface Action {
 }
 
 // ===========================================================================
-// Backend resolution — Phase 4
+// Backend resolution — Phase 4 (parameterized for L3/L4 reuse)
 // ===========================================================================
 
 export type Backend = 'cli' | 'api';
+
+/**
+ * Per-layer env-var names. L3 tier gates SessionStart memory-poisoning
+ * classification; L4 tier gates PostToolUse injection-scanner alerts.
+ * Both layers share the same backend implementation (CLI preferred,
+ * API fallback) — only the tier toggle and per-layer override differ.
+ */
+const LAYER_VARS = {
+  L3: { tier: 'VEX_L3_CLASSIFIER', backend: 'VEX_L3_CLASSIFIER_BACKEND' },
+  L4: { tier: 'VEX_L4_CLASSIFIER', backend: 'VEX_L4_CLASSIFIER_BACKEND' },
+} as const;
 
 /**
  * Returns true if the `claude` binary is reachable via the current
@@ -92,7 +119,24 @@ function claudeCliAvailable(): boolean {
 }
 
 /**
- * Resolve which backend should serve the next classifier call.
+ * Internal: resolve a backend given a specific override env-var name.
+ * Centralizes the cli/api decision logic so per-layer wrappers stay
+ * thin (and identical in behavior aside from which override they read).
+ */
+function resolveBackendForVar(backendEnvVar: string): Backend | null {
+  const explicit = (process.env[backendEnvVar] || '').toLowerCase();
+  const apiKeyPresent = typeof process.env.ANTHROPIC_API_KEY === 'string' && process.env.ANTHROPIC_API_KEY.length > 0;
+
+  if (explicit === 'cli') return claudeCliAvailable() ? 'cli' : null;
+  if (explicit === 'api') return apiKeyPresent ? 'api' : null;
+  // Auto mode — CLI wins when available (MAX subscription, no key needed)
+  if (claudeCliAvailable()) return 'cli';
+  if (apiKeyPresent) return 'api';
+  return null;
+}
+
+/**
+ * Resolve which backend should serve the next L3 classifier call.
  *
  * Explicit override wins (`VEX_L3_CLASSIFIER_BACKEND=cli|api`) — but
  * still gated on actual availability so a missing dep returns null
@@ -106,15 +150,17 @@ function claudeCliAvailable(): boolean {
  * as "smart tier disabled" (silent no-op, runs Phase 1 only).
  */
 export function resolveBackend(): Backend | null {
-  const explicit = (process.env.VEX_L3_CLASSIFIER_BACKEND || '').toLowerCase();
-  const apiKeyPresent = typeof process.env.ANTHROPIC_API_KEY === 'string' && process.env.ANTHROPIC_API_KEY.length > 0;
+  return resolveBackendForVar(LAYER_VARS.L3.backend);
+}
 
-  if (explicit === 'cli') return claudeCliAvailable() ? 'cli' : null;
-  if (explicit === 'api') return apiKeyPresent ? 'api' : null;
-  // Auto mode — CLI wins when available (MAX subscription, no key needed)
-  if (claudeCliAvailable()) return 'cli';
-  if (apiKeyPresent) return 'api';
-  return null;
+/**
+ * L4 counterpart of resolveBackend(). Reads VEX_L4_CLASSIFIER_BACKEND
+ * for explicit override; otherwise mirrors the L3 auto-resolution
+ * (CLI preferred, API fallback). Layers can be configured
+ * independently — e.g. L3 on CLI while L4 forced to API for testing.
+ */
+export function resolveL4Backend(): Backend | null {
+  return resolveBackendForVar(LAYER_VARS.L4.backend);
 }
 
 // ===========================================================================
@@ -122,14 +168,115 @@ export function resolveBackend(): Backend | null {
 // ===========================================================================
 
 /**
- * Returns true if smart-tier classification should run for this session.
- * Requires both the env opt-in AND a usable backend. Defaults to false
- * so plugin installs that haven't configured anything are no-op.
+ * Internal: tier+backend gate parameterized by layer var names. Both
+ * `tierEnvVar=='smart'` AND a usable backend are required; otherwise
+ * the layer is no-op (preserves Phase 1 behavior).
+ */
+function isLayerEnabled(tierEnvVar: string, resolveFn: () => Backend | null): boolean {
+  const tier = (process.env[tierEnvVar] || 'off').toLowerCase();
+  if (tier !== 'smart') return false;
+  return resolveFn() !== null;
+}
+
+/**
+ * Returns true if smart-tier L3 classification should run for this
+ * session. Requires both the env opt-in AND a usable backend. Defaults
+ * to false so plugin installs that haven't configured anything are
+ * no-op.
  */
 export function isClassifierEnabled(): boolean {
-  const tier = (process.env.VEX_L3_CLASSIFIER || 'off').toLowerCase();
-  if (tier !== 'smart') return false;
-  return resolveBackend() !== null;
+  return isLayerEnabled(LAYER_VARS.L3.tier, resolveBackend);
+}
+
+/**
+ * L4 counterpart of isClassifierEnabled(). Reads VEX_L4_CLASSIFIER for
+ * the tier toggle and gates on `resolveL4Backend()`. Both layers can
+ * be enabled independently; the L4 hook calls this once per scan to
+ * decide whether to gate alerts behind a semantic verdict.
+ */
+export function isL4ClassifierEnabled(): boolean {
+  return isLayerEnabled(LAYER_VARS.L4.tier, resolveL4Backend);
+}
+
+// ===========================================================================
+// L4 alert gate — pure decision logic
+// ===========================================================================
+
+/**
+ * Result of asking the classifier whether a pending L4 alert should
+ * actually fire. Carries enough metadata for the audit log to
+ * distinguish "classifier off" from "classifier downgraded" from
+ * "classifier kept the alert."
+ */
+export interface L4ClassifierGateResult {
+  /** True if the L4 alert should fire (display warning + emit decision:'block'). */
+  shouldAlert: boolean;
+  /**
+   * True iff the classifier suppressed an alert that pattern matching
+   * would have raised. Lets the audit log mark FP-suppression events
+   * for offline FP-rate measurement.
+   */
+  downgraded: boolean;
+  /** The verdict label, or 'DISABLED' when no classifier ran. */
+  classifierVerdict: VerdictLabel | 'DISABLED';
+  /** Model confidence in [0,1], or 0 when no classifier ran. */
+  classifierConfidence: number;
+  /** Short reasoning from the model (or empty when disabled). */
+  classifierReasoning: string;
+  /** Human-readable summary for the audit entry's decision reason. */
+  decisionReason: string;
+}
+
+const DISABLED_GATE_BASE = {
+  classifierVerdict: 'DISABLED' as const,
+  classifierConfidence: 0,
+  classifierReasoning: '',
+};
+
+/**
+ * Pure gate function used by the L4 injection scanner. Caller has
+ * already done the pattern match and decided that an alert SHOULD
+ * fire (`patternShouldAlert=true`); this function decides whether
+ * the semantic classifier confirms or downgrades that decision.
+ *
+ * Inputs are deliberately structural (boolean + Verdict|null) so the
+ * function is fully unit-testable without mocking the network/CLI.
+ *
+ *   patternShouldAlert=false        → no alert (gate is a no-op)
+ *   patternShouldAlert=true, v=null → alert (classifier disabled / fail-safe)
+ *   v=DESCRIPTION + high conf       → downgrade to LOG (suppress alert)
+ *   v=INSTRUCTION + high conf       → keep alert
+ *   v=AMBIGUOUS / ERROR / low conf  → keep alert (fail-safe)
+ */
+export function applyL4ClassifierGate(input: {
+  patternShouldAlert: boolean;
+  verdict: Verdict | null;
+}): L4ClassifierGateResult {
+  if (!input.patternShouldAlert) {
+    return {
+      shouldAlert: false,
+      downgraded: false,
+      ...DISABLED_GATE_BASE,
+      decisionReason: 'no alert pending (pattern tier did not request alert)',
+    };
+  }
+  if (input.verdict === null) {
+    return {
+      shouldAlert: true,
+      downgraded: false,
+      ...DISABLED_GATE_BASE,
+      decisionReason: 'classifier disabled (preserving pattern-tier alert)',
+    };
+  }
+  const action = decideAction(input.verdict);
+  return {
+    shouldAlert: action.quarantine,
+    downgraded: !action.quarantine,
+    classifierVerdict: input.verdict.verdict,
+    classifierConfidence: input.verdict.confidence,
+    classifierReasoning: input.verdict.reasoning ?? '',
+    decisionReason: action.reason,
+  };
 }
 
 // ===========================================================================
@@ -260,12 +407,17 @@ interface AnthropicMessagesResponse {
 }
 
 /**
- * Top-level dispatch. Resolves the backend (CLI preferred under PAI's
+ * Top-level dispatch. Resolves the backend (CLI preferred under the
  * local-only philosophy, API as fallback) and forwards to the
  * appropriate implementation. Always returns a Verdict — never throws.
+ *
+ * When `opts.backend` is provided, that pre-resolved backend wins
+ * (used by the L4 caller, which resolves via `resolveL4Backend()`).
+ * Otherwise falls back to L3's `resolveBackend()` — preserves the
+ * original signature for existing L3 callers.
  */
-export async function classifyContent(body: string, opts: ClassifyOptions): Promise<Verdict> {
-  const backend = resolveBackend();
+export async function classifyContent(body: string, opts: ClassifyOptions = {}): Promise<Verdict> {
+  const backend = opts.backend ?? resolveBackend();
   if (backend === 'cli') return classifyViaCli(body, opts);
   if (backend === 'api') return classifyViaApi(body, opts);
   return { verdict: 'ERROR', confidence: 0, reasoning: 'no classifier backend available' };
