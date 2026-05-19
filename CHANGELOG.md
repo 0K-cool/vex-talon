@@ -1,15 +1,34 @@
 # Changelog
 
-All notable changes to Vex-Talon will be documented in this file.
+All notable changes to 0K-Talon will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.9.0] - 2026-05-19
 
 ### Added
 
-- **L4 Smart Classifier — semantic alert gate for the injection scanner**
+- **L3 Smart Classifier — surgical MEMORY.md quarantine + trustedSources gate** (#18)
+  - Auto Memory Guardian's whole-file quarantine narrowed to per-section quarantine for `MEMORY.md`
+  - Parses top-level `## ` sections; only the section containing a CRITICAL pattern match is extracted to a quarantine file, leaving the rest of the file intact
+  - Each extracted section gets its own quarantine artifact; cleaned `MEMORY.md` retains a stub marker in place
+  - Reduces blast radius — one false positive no longer disables the entire auto-memory index
+  - `trustedSources` gate skips quarantine for sources operators explicitly mark trusted
+
+- **L3 Smart Classifier — Haiku semantic gate (Phase 2)** (#19)
+  - Opt-in classifier between Phase 1 detection and quarantine; Haiku 4.5 decides whether a CRITICAL pattern match is an actual INSTRUCTION (quarantine) or a DESCRIPTION (skip — research notes documenting attacks)
+  - Closes the FP class where pattern matches against documentation phrases (e.g. *"the attack used 'ignore previous instructions' to bypass"*) trigger quarantine
+  - Off by default; opt in with `OK_TALON_L3_CLASSIFIER=smart`
+  - `DESCRIPTION` + confidence ≥ 0.70 → skip; everything else → quarantine (fail-safe)
+
+- **L3 Smart Classifier — CLI backend (Phase 4)** (#20)
+  - Auto-routes through the user's Claude Code MAX subscription via `claude -p --model haiku --no-session-persistence` from `/tmp` (no API key charged)
+  - Falls back to direct API when CLI is not on PATH
+  - Override via `OK_TALON_L3_CLASSIFIER_BACKEND=cli|api`
+  - CLI cwd pinned to `/tmp` to prevent auto-loading any `CLAUDE.md` into the classification prompt
+
+- **L4 Smart Classifier — semantic alert gate for the injection scanner** (#21)
   - Optional Haiku-based classifier gates CRITICAL/HIGH pattern matches before raising an alert
   - `DESCRIPTION` + confidence ≥ 0.70 → alert downgraded to `LOG` (matched content is documentation, not directives)
   - `INSTRUCTION`, `AMBIGUOUS`, `ERROR`, low-confidence → alert preserved (fail-safe)
@@ -21,7 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Env-var rename — graceful migration to the `OK_TALON_*` convention** (matches `OK_TALON_PATTERN_TIER`):
+- **Env-var rename — graceful migration to the `OK_TALON_*` convention** (#22, matches `OK_TALON_PATTERN_TIER`):
 
   | Legacy (deprecated) | New canonical |
   |---|---|
@@ -34,7 +53,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `InjectionMatch` type gains a `position` field (match index within normalized content); drives the classifier window slice. Backward-compatible — existing producers of `InjectionMatch` populate it inside `scanForInjections`.
 - `scanForInjections` return shape gains `normalizedContent: string` so the gate can window-slice the same string that was matched. Backward-compatible addition.
-- `classifier.ts` internals refactored into reusable `LAYER_VARS` / `resolveBackendForLayer` / `isLayerEnabled` helpers parameterized by a `{primary, legacy}` var spec. Public L3 exports (`resolveBackend`, `isClassifierEnabled`, `classifyContent`) preserve their signatures and behavior.
+- `classifier.ts` internals refactored into reusable `LAYER_VARS` / `resolveBackendForLayer` / `isLayerEnabled` helpers parameterized by a `{primary, legacy}` var spec. Public L3 + L4 exports preserve their signatures and behavior.
+- `@0k-talon/core` package version synced to 1.9.0 (was drifting at 1.7.5 vs. root 1.8.0). All recent classifier work landed in core; aligning versions matches operational reality.
+
+### Fixed
+
+- **Manual injection patterns missing from public installs** (#16) — committed the 96-pattern `packages/core/src/hooks/config/injection/patterns.json` that had been generated locally on 2026-03-17 but never landed in git. Local dev had `96 manual + NOVA + 0din` patterns; CI / new clones / public users were silently running on `0 manual + NOVA + 0din` only. The plugin tier count dropped well below the public "200+ out-of-box" threshold for anyone outside the original dev machine.
 
 ## [1.8.0] - 2026-04-15
 

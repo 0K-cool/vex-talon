@@ -2,7 +2,7 @@
 
 ![0K-Talon Banner](0k-talon-banner.jpg)
 
-[![Version](https://img.shields.io/badge/version-1.8.0-blue)](https://github.com/0K-cool/0k-talon/releases/tag/v1.8.0)
+[![Version](https://img.shields.io/badge/version-1.9.0-blue)](https://github.com/0K-cool/0k-talon/releases/tag/v1.9.0)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Claude_Code-orange)](https://code.claude.com)
 [![Security Layers](https://img.shields.io/badge/security_layers-21-critical)](README.md#architecture)
@@ -268,7 +268,14 @@ Security events log to `~/.0k-talon/logs/` and a summary report generates when y
 |----------|---------|---------|
 | `OSM_API_TOKEN` | OpenSourceMalware.com API key for real-time supply chain scanning | _(none - uses hardcoded blocklist only)_ |
 | `OK_TALON_PROFILE` | Permission profile: `dev`, `audit`, `client-work`, `research` | `dev` |
+| `OK_TALON_PATTERN_TIER` | L4 injection-scanner pattern set: `plugin` (curated) or `full` (broad opt-in) | `plugin` |
+| `OK_TALON_L3_CLASSIFIER` | L3 Auto Memory Guardian semantic tier: `off` or `smart` (Haiku-gated DESCRIPTION-class skip) | `off` |
+| `OK_TALON_L3_CLASSIFIER_BACKEND` | L3 classifier backend: `cli` (Claude Code MAX), `api` (ANTHROPIC_API_KEY), or unset (auto: CLI preferred) | _(auto)_ |
+| `OK_TALON_L4_CLASSIFIER` | L4 injection scanner semantic tier: `off` or `smart` (Haiku-gated DESCRIPTION-class alert downgrade) | `off` |
+| `OK_TALON_L4_CLASSIFIER_BACKEND` | L4 classifier backend: `cli`, `api`, or unset (auto) | _(auto)_ |
 | `TALON_DIR` | Custom data directory | `~/.0k-talon` |
+
+> `VEX_L3_CLASSIFIER` / `VEX_L4_CLASSIFIER` (and their `_BACKEND` variants) still work as deprecated aliases — they emit a one-time stderr warning per process and will be removed in 0K-Talon v2. See [CHANGELOG](CHANGELOG.md) for the migration table.
 
 ### Permission Profiles (L12)
 
