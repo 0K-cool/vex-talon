@@ -84,15 +84,77 @@ export interface Action {
 export type Backend = 'cli' | 'api';
 
 /**
- * Per-layer env-var names. L3 tier gates SessionStart memory-poisoning
- * classification; L4 tier gates PostToolUse injection-scanner alerts.
- * Both layers share the same backend implementation (CLI preferred,
- * API fallback) — only the tier toggle and per-layer override differ.
+ * Per-layer env-var specs with graceful migration. Each var has a
+ * canonical `primary` name (the plugin-facing `OK_TALON_*` convention,
+ * matches `OK_TALON_PATTERN_TIER`) and a `legacy` name (the
+ * `VEX_*` original from the PAI port). Reads prefer primary; fall back
+ * to legacy with a one-time stderr deprecation warning. The legacy
+ * fallback will be removed in 0K-Talon v2.
  */
+interface VarSpec {
+  readonly primary: string;
+  readonly legacy: string;
+}
+
 const LAYER_VARS = {
-  L3: { tier: 'VEX_L3_CLASSIFIER', backend: 'VEX_L3_CLASSIFIER_BACKEND' },
-  L4: { tier: 'VEX_L4_CLASSIFIER', backend: 'VEX_L4_CLASSIFIER_BACKEND' },
-} as const;
+  L3: {
+    tier: { primary: 'OK_TALON_L3_CLASSIFIER', legacy: 'VEX_L3_CLASSIFIER' },
+    backend: { primary: 'OK_TALON_L3_CLASSIFIER_BACKEND', legacy: 'VEX_L3_CLASSIFIER_BACKEND' },
+  },
+  L4: {
+    tier: { primary: 'OK_TALON_L4_CLASSIFIER', legacy: 'VEX_L4_CLASSIFIER' },
+    backend: { primary: 'OK_TALON_L4_CLASSIFIER_BACKEND', legacy: 'VEX_L4_CLASSIFIER_BACKEND' },
+  },
+} as const satisfies Record<'L3' | 'L4', { tier: VarSpec; backend: VarSpec }>;
+
+// ---------------------------------------------------------------------------
+// Deprecation-warning machinery (module-scoped, fires at most once per
+// legacy var per process). Tests reset this via the underscore-prefixed
+// export below.
+// ---------------------------------------------------------------------------
+
+const warnedLegacyVars = new Set<string>();
+
+function warnLegacyVar(legacy: string, primary: string): void {
+  if (warnedLegacyVars.has(legacy)) return;
+  warnedLegacyVars.add(legacy);
+  process.stderr.write(
+    `[0k-talon] DEPRECATED: ${legacy} is deprecated; use ${primary} instead. ` +
+      `Both work today; ${legacy} will be removed in 0k-talon v2.\n`,
+  );
+}
+
+/**
+ * Test-only: clear the per-process "have we warned about this var" set
+ * so each test starts with a clean slate. Underscore-prefixed to signal
+ * non-public surface; not exported via the package barrel.
+ */
+export function _resetLegacyWarningsForTesting(): void {
+  warnedLegacyVars.clear();
+}
+
+/**
+ * Read a layer env var honoring the graceful migration. Returns the
+ * resolved string value (empty string when neither is set).
+ *
+ * Resolution order:
+ *   1. primary set            → use primary, no warning
+ *   2. legacy set (primary unset) → use legacy, emit one-time warning
+ *   3. neither set            → return ''
+ *
+ * When BOTH are set, primary wins silently — the caller is mid-migration
+ * and likely wants to verify the new name takes effect without alarm.
+ */
+function readLayerEnv(spec: VarSpec): string {
+  const primaryVal = process.env[spec.primary];
+  if (primaryVal !== undefined) return primaryVal;
+  const legacyVal = process.env[spec.legacy];
+  if (legacyVal !== undefined) {
+    warnLegacyVar(spec.legacy, spec.primary);
+    return legacyVal;
+  }
+  return '';
+}
 
 /**
  * Returns true if the `claude` binary is reachable via the current
@@ -119,12 +181,13 @@ function claudeCliAvailable(): boolean {
 }
 
 /**
- * Internal: resolve a backend given a specific override env-var name.
+ * Internal: resolve a backend given the per-layer backend-var spec.
  * Centralizes the cli/api decision logic so per-layer wrappers stay
  * thin (and identical in behavior aside from which override they read).
+ * Honors the graceful primary/legacy migration via `readLayerEnv`.
  */
-function resolveBackendForVar(backendEnvVar: string): Backend | null {
-  const explicit = (process.env[backendEnvVar] || '').toLowerCase();
+function resolveBackendForLayer(spec: VarSpec): Backend | null {
+  const explicit = readLayerEnv(spec).toLowerCase();
   const apiKeyPresent = typeof process.env.ANTHROPIC_API_KEY === 'string' && process.env.ANTHROPIC_API_KEY.length > 0;
 
   if (explicit === 'cli') return claudeCliAvailable() ? 'cli' : null;
@@ -138,7 +201,8 @@ function resolveBackendForVar(backendEnvVar: string): Backend | null {
 /**
  * Resolve which backend should serve the next L3 classifier call.
  *
- * Explicit override wins (`VEX_L3_CLASSIFIER_BACKEND=cli|api`) — but
+ * Explicit override wins (`OK_TALON_L3_CLASSIFIER_BACKEND=cli|api`,
+ * with `VEX_L3_CLASSIFIER_BACKEND` as a deprecated fallback) — but
  * still gated on actual availability so a missing dep returns null
  * rather than burning a call to nowhere.
  *
@@ -150,17 +214,18 @@ function resolveBackendForVar(backendEnvVar: string): Backend | null {
  * as "smart tier disabled" (silent no-op, runs Phase 1 only).
  */
 export function resolveBackend(): Backend | null {
-  return resolveBackendForVar(LAYER_VARS.L3.backend);
+  return resolveBackendForLayer(LAYER_VARS.L3.backend);
 }
 
 /**
- * L4 counterpart of resolveBackend(). Reads VEX_L4_CLASSIFIER_BACKEND
- * for explicit override; otherwise mirrors the L3 auto-resolution
+ * L4 counterpart of resolveBackend(). Reads
+ * `OK_TALON_L4_CLASSIFIER_BACKEND` (with `VEX_L4_CLASSIFIER_BACKEND`
+ * as a deprecated fallback); otherwise mirrors the L3 auto-resolution
  * (CLI preferred, API fallback). Layers can be configured
  * independently — e.g. L3 on CLI while L4 forced to API for testing.
  */
 export function resolveL4Backend(): Backend | null {
-  return resolveBackendForVar(LAYER_VARS.L4.backend);
+  return resolveBackendForLayer(LAYER_VARS.L4.backend);
 }
 
 // ===========================================================================
@@ -168,31 +233,37 @@ export function resolveL4Backend(): Backend | null {
 // ===========================================================================
 
 /**
- * Internal: tier+backend gate parameterized by layer var names. Both
- * `tierEnvVar=='smart'` AND a usable backend are required; otherwise
- * the layer is no-op (preserves Phase 1 behavior).
+ * Internal: tier+backend gate parameterized by layer var spec. Both
+ * tier=='smart' AND a usable backend are required; otherwise the
+ * layer is no-op (preserves Phase 1 behavior). Reads via
+ * `readLayerEnv` so both `OK_TALON_*` (primary) and `VEX_*` (legacy)
+ * names work.
  */
-function isLayerEnabled(tierEnvVar: string, resolveFn: () => Backend | null): boolean {
-  const tier = (process.env[tierEnvVar] || 'off').toLowerCase();
+function isLayerEnabled(tierSpec: VarSpec, resolveFn: () => Backend | null): boolean {
+  const raw = readLayerEnv(tierSpec);
+  const tier = (raw || 'off').toLowerCase();
   if (tier !== 'smart') return false;
   return resolveFn() !== null;
 }
 
 /**
  * Returns true if smart-tier L3 classification should run for this
- * session. Requires both the env opt-in AND a usable backend. Defaults
- * to false so plugin installs that haven't configured anything are
- * no-op.
+ * session. Requires both the env opt-in (`OK_TALON_L3_CLASSIFIER=smart`,
+ * or the deprecated `VEX_L3_CLASSIFIER=smart`) AND a usable backend.
+ * Defaults to false so plugin installs that haven't configured anything
+ * are no-op.
  */
 export function isClassifierEnabled(): boolean {
   return isLayerEnabled(LAYER_VARS.L3.tier, resolveBackend);
 }
 
 /**
- * L4 counterpart of isClassifierEnabled(). Reads VEX_L4_CLASSIFIER for
- * the tier toggle and gates on `resolveL4Backend()`. Both layers can
- * be enabled independently; the L4 hook calls this once per scan to
- * decide whether to gate alerts behind a semantic verdict.
+ * L4 counterpart of isClassifierEnabled(). Reads
+ * `OK_TALON_L4_CLASSIFIER` (with `VEX_L4_CLASSIFIER` as deprecated
+ * fallback) for the tier toggle and gates on `resolveL4Backend()`.
+ * Both layers can be enabled independently; the L4 hook calls this
+ * once per scan to decide whether to gate alerts behind a semantic
+ * verdict.
  */
 export function isL4ClassifierEnabled(): boolean {
   return isLayerEnabled(LAYER_VARS.L4.tier, resolveL4Backend);

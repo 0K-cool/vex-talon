@@ -13,17 +13,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Optional Haiku-based classifier gates CRITICAL/HIGH pattern matches before raising an alert
   - `DESCRIPTION` + confidence ≥ 0.70 → alert downgraded to `LOG` (matched content is documentation, not directives)
   - `INSTRUCTION`, `AMBIGUOUS`, `ERROR`, low-confidence → alert preserved (fail-safe)
-  - Off by default; opt in with `VEX_L4_CLASSIFIER=smart`
-  - Backend resolution: `claude` CLI on PATH preferred; `ANTHROPIC_API_KEY` fallback (override via `VEX_L4_CLASSIFIER_BACKEND=cli|api`)
+  - Off by default; opt in with `OK_TALON_L4_CLASSIFIER=smart`
+  - Backend resolution: `claude` CLI on PATH preferred; `ANTHROPIC_API_KEY` fallback (override via `OK_TALON_L4_CLASSIFIER_BACKEND=cli|api`)
   - Reuses the existing L3 Haiku classifier infrastructure (no new dependencies)
   - Audit log gains `classifier_verdict` / `classifier_confidence` / `classifier_reasoning` / `classifier_downgraded` fields (all optional, backward-compatible)
   - 24 new unit tests in `packages/core/tests/l4-classifier-gate.test.ts`
 
 ### Changed
 
+- **Env-var rename — graceful migration to the `OK_TALON_*` convention** (matches `OK_TALON_PATTERN_TIER`):
+
+  | Legacy (deprecated) | New canonical |
+  |---|---|
+  | `VEX_L3_CLASSIFIER` | `OK_TALON_L3_CLASSIFIER` |
+  | `VEX_L3_CLASSIFIER_BACKEND` | `OK_TALON_L3_CLASSIFIER_BACKEND` |
+  | `VEX_L4_CLASSIFIER` | `OK_TALON_L4_CLASSIFIER` |
+  | `VEX_L4_CLASSIFIER_BACKEND` | `OK_TALON_L4_CLASSIFIER_BACKEND` |
+
+  Both names work today. `VEX_*` emits a one-time stderr deprecation warning per process when used as a fallback. Primary wins on conflict (no warning when both are set — useful during migration). The `VEX_*` fallback will be removed in 0K-Talon v2.
+
 - `InjectionMatch` type gains a `position` field (match index within normalized content); drives the classifier window slice. Backward-compatible — existing producers of `InjectionMatch` populate it inside `scanForInjections`.
 - `scanForInjections` return shape gains `normalizedContent: string` so the gate can window-slice the same string that was matched. Backward-compatible addition.
-- `classifier.ts` internals refactored into reusable `LAYER_VARS` / `resolveBackendForVar` / `isLayerEnabled` helpers. Public L3 exports (`resolveBackend`, `isClassifierEnabled`, `classifyContent`) preserve their signatures and behavior.
+- `classifier.ts` internals refactored into reusable `LAYER_VARS` / `resolveBackendForLayer` / `isLayerEnabled` helpers parameterized by a `{primary, legacy}` var spec. Public L3 exports (`resolveBackend`, `isClassifierEnabled`, `classifyContent`) preserve their signatures and behavior.
 
 ## [1.8.0] - 2026-04-15
 
